@@ -3,142 +3,155 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes, maximum-scale=2.0" />
-    <title>Login Ujian Siswa</title>
+    <title>Ujian Siswa</title>
     <style>
         html, body {
             height: 100%;
             width: 100%;
             margin: 0;
             padding: 0;
-            font-family: 'Inter', Arial, sans-serif;
-            transition: background-color 0.5s ease;
+            /* Default primary color, will be overridden by JS */
+            --primary-color: #0066cc; /* Default for Kelas 7 */
+            --accent-color: #007bff; /* Default button color */
+            --warning-color: #ea4b16; /* Default for Judul Ujian */
         }
+
         body {
+            font-family: 'Inter', Arial, sans-serif;
             background-color: #e0e0e0;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.1),
+                        inset 0 -2px 4px rgba(255,255,255,0.7);
+            text-align: center;
             display: flex;
             justify-content: center;
             align-items: center;
-            text-align: center;
-            box-shadow: inset 0 2px 4px rgba(0,0,0,0.1),
-                        inset 0 -2px 4px rgba(255,255,255,0.7);
+            min-height: 100vh;
+            box-sizing: border-box;
             -webkit-user-select: none;
             -moz-user-select: none;
             -ms-user-select: none;
             user-select: none;
             overflow: hidden;
         }
-        #selectionContainer {
-            max-width: 450px;
+
+        .welcome-screen {
+            max-width: 400px;
             width: 90%;
-            padding: 40px 20px;
-            background-color: white;
-            border-radius: 15px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            margin: 20px auto;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            overflow: hidden;
+            padding: 30px 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            opacity: 1;
+            transition: opacity 0.5s ease-in-out;
         }
-        #selectionContainer h1 {
-            font-size: 2.5em;
+
+        .welcome-screen h2 {
+            font-size: 2em;
             font-weight: bold;
             color: #333;
             margin-bottom: 10px;
         }
-        #selectionContainer p {
+
+        .welcome-screen p {
             font-size: 1.1em;
             color: #666;
-            margin-bottom: 30px;
+            margin-bottom: 20px;
         }
-        .grade-selection-btn {
-            display: block;
-            width: 100%;
-            padding: 18px;
-            margin-bottom: 15px;
-            font-size: 1.2em;
+
+        .welcome-button {
+            padding: 15px 25px;
+            font-size: 1.5em;
             font-weight: bold;
             color: white;
             border: none;
-            border-radius: 50px; /* Disesuaikan agar lebih oval */
+            border-radius: 9999px; /* More oval */
             cursor: pointer;
-            transition: transform 0.2s ease, box-shadow 0.2s ease;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
         }
-        .grade-selection-btn:hover {
+
+        .welcome-button:hover {
             transform: translateY(-3px);
-            box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.3);
         }
-        #selectGrade7 { background-color: #3498db; border-bottom: 4px solid #2980b9; }
-        #selectGrade8 { background-color: #f39c12; border-bottom: 4px solid #d35400; }
-        #selectGrade9 { background-color: #c0392b; border-bottom: 4px solid #a93226; }
+
+        .welcome-button:active {
+            transform: translateY(0);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+
+        .btn-kelas7 {
+            background-color: #007bff; /* Biru */
+        }
+        .btn-kelas7:hover {
+            background-color: #0056b3;
+        }
+
+        .btn-kelas8 {
+            background-color: #ff9900; /* Oranye */
+        }
+        .btn-kelas8:hover {
+            background-color: #cc7a00;
+        }
+
+        .btn-kelas9 {
+            background-color: #800000; /* Maroon */
+        }
+        .btn-kelas9:hover {
+            background-color: #5a0000;
+        }
 
         .container {
-            max-width: 450px; /* Disesuaikan agar sama dengan selectionContainer */
+            max-width: 400px;
             width: 90%;
             margin: 20px auto;
             border: 1px solid #ddd;
             background: white;
-            border-radius: 15px; /* Disesuaikan agar sama */
-            box-shadow: 0 10px 25px rgba(0,0,0,0.1); /* Disesuaikan agar sama */
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
             overflow: hidden;
             flex-shrink: 0;
-            opacity: 1;
+            opacity: 0;
             transition: opacity 0.5s ease-in-out;
+            display: none; /* Awalnya tersembunyi */
         }
+        .container.show {
+            display: block;
+            opacity: 1;
+        }
+
         .header-box {
-            background-color: #0066cc;
+            background-color: var(--primary-color);
             padding: 20px 15px;
             color: white;
-            position: relative;
-            transition: background-color 0.5s ease;
         }
-        #backToSelectionBtn {
-            position: absolute;
-            top: 15px;
-            left: 15px;
-            background: rgba(255,255,255,0.2);
-            border: 1px solid rgba(255,255,255,0.5);
-            color: white;
-            width: 40px;
-            height: 40px;
-            padding: 0;
-            font-size: 1.5em;
-            border-radius: 50%;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
+
         .header-box .logo {
             width: 80px;
         }
+
         .title {
             font-size: 22px;
             font-weight: bold;
             margin-top: 10px;
             color: white;
         }
+
         .card-body {
             padding: 20px;
         }
+
         .judul-ujian {
-            color: #333;
+            color: var(--warning-color); /* Dynamic color */
             font-size: 22px;
             font-weight: bold;
             margin: 10px 0;
-            transition: color 0.5s ease;
         }
-
-        body.theme-blue .header-box, body.theme-blue #countdownDisplay { background-color: #0066cc; }
-        body.theme-blue .judul-ujian { color: #0066cc; }
-        body.theme-blue #loginBtn { background-color: #007bff; }
-        body.theme-blue #loginBtn:hover { background-color: #0056b3; }
-        
-        body.theme-orange .header-box, body.theme-orange #countdownDisplay { background-color: #e67e22; }
-        body.theme-orange .judul-ujian { color: #e67e22; }
-        body.theme-orange #loginBtn { background-color: #f39c12; }
-        body.theme-orange #loginBtn:hover { background-color: #d35400; }
-
-        body.theme-maroon .header-box, body.theme-maroon #countdownDisplay { background-color: #a93226; }
-        body.theme-maroon .judul-ujian { color: #a93226; }
-        body.theme-maroon #loginBtn { background-color: #c0392b; }
-        body.theme-maroon #loginBtn:hover { background-color: #922b21; }
 
         .token-input-group {
             display: flex;
@@ -150,6 +163,7 @@
             overflow: hidden;
             transition: border-color 0.3s ease, box-shadow 0.3s ease;
         }
+
         .token-input-group input {
             padding: 10px;
             font-size: 16px;
@@ -159,11 +173,13 @@
             text-align: center;
             height: 40px;
         }
+
         #inputTokenPrefix {
             flex-grow: 1;
             min-width: 0;
             border-right: 1px solid #ccc;
         }
+
         .token-separator {
             background-color: #f0f0f0;
             padding: 10px 5px;
@@ -175,6 +191,7 @@
             height: 40px;
             box-sizing: border-box;
         }
+
         #displayStudentId {
             width: 70px;
             min-width: 70px;
@@ -182,6 +199,7 @@
             background-color: #f0f0f0;
             cursor: not-allowed;
         }
+
         input {
             padding: 10px;
             width: calc(100% - 20px);
@@ -194,12 +212,14 @@
             text-align: center;
             transition: border-color 0.3s ease, box-shadow 0.3s ease;
         }
+
         .custom-dropdown-container {
             position: relative;
             width: calc(100% - 20px);
             margin: 10px auto;
             display: block;
         }
+
         .custom-dropdown-display {
             padding: 10px;
             width: 100%;
@@ -217,13 +237,16 @@
             color: #555;
             transition: border-color 0.3s ease, box-shadow 0.3s ease;
         }
+
         .custom-dropdown-display.selected {
             color: #000;
         }
+
         .custom-dropdown-display.disabled {
             background-color: #f0f0f0;
             cursor: not-allowed;
         }
+
         .custom-dropdown-display::after {
             content: '▼';
             position: absolute;
@@ -231,19 +254,22 @@
             font-size: 0.8em;
             color: #888;
         }
+
         .token-input-group.is-valid {
             border-color: #28a745;
             box-shadow: 0 0 0 0.2rem rgba(40, 167, 69, 0.25);
         }
+
         .token-input-group.is-invalid {
             border-color: #dc3545;
             box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25);
         }
+
         button {
             padding: 10px 20px;
             font-size: 16px;
             width: 100%;
-            background-color: #007bff;
+            background-color: var(--accent-color); /* Dynamic color */
             color: white;
             border: none;
             border-radius: 5px;
@@ -252,24 +278,30 @@
             margin: 10px auto;
             display: block;
         }
+
         button:hover {
-            background-color: #0056b3;
+            background-color: var(--primary-color); /* Slightly darker shade of primary for hover */
         }
+
         button:active {
             transform: scale(0.98);
         }
+
         #btnBatal {
             background-color: #dc3545;
         }
+
         #btnBatal:hover {
             background-color: #c82333;
         }
+
         .message {
             margin-bottom: 10px;
             font-size: 14px;
             min-height: 30px;
             text-align: center;
         }
+
         .spinner {
             border: 3px solid #f3f3f3;
             border-top: 3px solid black;
@@ -281,16 +313,19 @@
             vertical-align: middle;
             margin-left: 10px;
         }
+
         @keyframes spin {
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
+
         .footer {
             margin-top: 20px;
             font-size: 12px;
             color: #666;
             padding-bottom: 10px;
         }
+
         .custom-modal {
             display: none;
             position: fixed;
@@ -303,10 +338,12 @@
             opacity: 0;
             transition: opacity 0.3s ease-in-out;
         }
+
         .custom-modal.show {
             display: flex;
             opacity: 1;
         }
+
         .custom-modal-content {
             background: white;
             padding: 20px;
@@ -319,20 +356,23 @@
             display: flex;
             flex-direction: column;
         }
+
         .custom-modal-content h4 {
             font-size: 1.5em;
             font-weight: bold;
-            color: #0066cc;
+            color: var(--primary-color); /* Dynamic color */
             margin-bottom: 15px;
             text-align: center;
             flex-shrink: 0;
         }
+
         .custom-modal-list {
             list-style: none;
             padding: 0;
             margin: 0;
             flex-grow: 1;
         }
+
         .custom-modal-list li {
             padding: 12px 15px;
             border-bottom: 1px solid #eee;
@@ -341,18 +381,22 @@
             font-size: 1.1em;
             transition: background-color 0.2s ease;
         }
+
         .custom-modal-list li:nth-child(odd) {
             background-color: white;
         }
         .custom-modal-list li:nth-child(even) {
             background-color: #f9f9f9;
         }
+
         .custom-modal-list li:last-child {
             border-bottom: none;
         }
+
         .custom-modal-list li:hover {
             background-color: #e0e0e0;
         }
+
         #confirmModal {
             display: none;
             position: fixed;
@@ -365,10 +409,12 @@
             opacity: 0;
             transition: opacity 0.3s ease-in-out;
         }
+
         #confirmModal.show {
             display: flex;
             opacity: 1;
         }
+
         #confirmModal .modal-content {
             background: white;
             padding: 25px;
@@ -377,38 +423,46 @@
             text-align: left;
             box-shadow: 0 5px 15px rgba(0,0,0,0.2);
         }
+
         #confirmModal .modal-content h4 {
             font-size: 1.8em;
             font-weight: bold;
-            color: #0066cc;
+            color: var(--primary-color); /* Dynamic color */
             margin-bottom: 15px;
             text-align: center;
         }
+
         #confirmModal .modal-content .info-table {
             width: 100%;
             border-collapse: collapse;
             margin-bottom: 15px;
         }
+
         #confirmModal .modal-content .info-table tr {
             border-bottom: 1px solid #eee;
         }
+
         #confirmModal .modal-content .info-table tr:last-child {
             border-bottom: none;
         }
+
         #confirmModal .modal-content .info-table td {
             padding: 8px 0;
             font-size: 1.1em;
         }
+
         #confirmModal .modal-content td:first-child {
             font-weight: bold;
             color: #333;
             width: 120px;
             padding-right: 10px;
         }
+
         #confirmModal .modal-content td:last-child {
             text-align: left;
             color: #000;
         }
+
         .checkbox-container {
             display: flex;
             align-items: center;
@@ -419,6 +473,7 @@
             color: #333;
             padding-left: 10px;
         }
+
         .checkbox-container input[type="checkbox"] {
             width: 18px;
             height: 18px;
@@ -428,10 +483,12 @@
             box-shadow: none;
             display: inline-block;
         }
+
         .checkbox-container label {
             cursor: pointer;
             vertical-align: middle;
         }
+
         #modalMessage {
             color: red;
             font-size: 0.9em;
@@ -440,6 +497,7 @@
             margin-bottom: 10px;
             min-height: 1.2em;
         }
+
         #examContainer {
             display: none;
             position: fixed;
@@ -453,7 +511,9 @@
             opacity: 0;
             transition: opacity 0.5s ease-in-out;
         }
+
         #countdownDisplay {
+            background-color: var(--primary-color); /* Dynamic color */
             color: white;
             padding: 10px;
             font-size: 1.5em;
@@ -464,11 +524,12 @@
             flex-shrink: 0;
             gap: 10px;
             overflow: hidden;
-            transition: background-color 0.5s ease;
         }
+
         #countdownDisplay #timerText {
             flex-shrink: 0;
         }
+
         #countdownDisplay #studentNameDisplay,
         #countdownDisplay #classDisplay {
             white-space: nowrap;
@@ -477,6 +538,7 @@
             flex-grow: 1;
             min-width: 0;
         }
+
         #examContentWrapper {
             display: flex;
             flex-grow: 1;
@@ -485,6 +547,7 @@
             overflow: hidden;
             background-color: transparent;
         }
+
         #examIframe {
             flex-grow: 1;
             width: 100%;
@@ -505,6 +568,7 @@
             cursor: grabbing;
             pointer-events: none;
         }
+
         #topIframeBlocker {
             position: absolute;
             top: 0;
@@ -515,6 +579,7 @@
             z-index: 550;
             pointer-events: auto;
         }
+
         #answerSidebar {
             position: absolute;
             top: 0;
@@ -529,9 +594,11 @@
             transition: transform 0.3s ease-in-out;
             z-index: 600;
         }
+
         #answerSidebar.open {
             transform: translateX(0);
         }
+
         #sidebarToggle {
             background-color: #28a745;
             color: white;
@@ -556,10 +623,12 @@
             transform: translateX(0);
             opacity: 0.5;
         }
+
         #sidebarToggle:hover {
             background-color: #218838;
             opacity: 1;
         }
+
         #sidebarToggle #sidebarText {
             writing-mode: horizontal-tb;
             text-orientation: unset;
@@ -568,6 +637,7 @@
             padding: 10px 5px;
             font-size: 0.8em;
         }
+
         #closeSidebarButton {
             background-color: #dc3545;
             color: white;
@@ -592,10 +662,12 @@
             box-sizing: border-box;
             opacity: 0.5;
         }
+
         #closeSidebarButton:hover {
             background-color: #c82333;
             opacity: 1;
         }
+
         #closeSidebarButton #closeSidebarText {
             writing-mode: horizontal-tb;
             text-orientation: unset;
@@ -604,18 +676,23 @@
             padding: 10px 5px;
             font-size: 0.8em;
         }
+
         #examContentWrapper.sidebar-open #examIframe {
             width: calc(100% - 250px);
         }
+
         #examContentWrapper.sidebar-open #sidebarToggle {
             display: none;
         }
+
         #examContentWrapper.sidebar-open #answerSidebar {
             transform: translateX(0);
         }
+
         #examContentWrapper.sidebar-open #closeSidebarButton {
             display: flex;
         }
+
         #answerListContainer {
             flex-grow: 1;
             overflow-y: auto;
@@ -626,6 +703,7 @@
             flex-shrink: 1;
             margin-left: 56px;
         }
+
         .answer-box {
             background-color: #f0f0f0;
             border: 1px solid #ccc;
@@ -640,9 +718,11 @@
             height: 30px;
             transition: background-color 0.2s ease, border-color 0.2s ease;
         }
+
         .answer-box:hover {
             background-color: #e0e0e0;
         }
+
         .answer-box .question-number {
             font-weight: bold;
             margin-bottom: 2px;
@@ -650,20 +730,24 @@
             font-size: 0.7em;
             line-height: 1;
         }
+
         .answer-box .selected-answer {
             font-weight: bold;
             color: #555;
             font-size: 0.7em;
             line-height: 1;
         }
+
         .answer-box.answered {
             background-color: #d4edda;
             border-color: #28a745;
         }
+
         .answer-box.unanswered {
             background-color: #f8d7da;
             border-color: #dc3545;
         }
+
         .submission-warning-message {
             color: red;
             font-weight: bold;
@@ -672,8 +756,9 @@
             font-size: 0.9em;
             min-height: 1.2em;
         }
+
         #submitAnswersButton {
-            background-color: #007bff;
+            background-color: var(--accent-color); /* Dynamic color */
             color: white;
             padding: 12px;
             margin-top: 0px;
@@ -688,9 +773,11 @@
             flex-shrink: 0;
             transition: background-color 0.2s ease;
         }
+
         #submitAnswersButton:hover {
-            background-color: #0056b3;
+            background-color: var(--primary-color); /* Dynamic color */
         }
+
         .custom-modal {
             display: none;
             position: fixed;
@@ -703,10 +790,12 @@
             opacity: 0;
             transition: opacity 0.3s ease-in-out;
         }
+
         .custom-modal.show {
             display: flex;
             opacity: 1;
         }
+
         .custom-modal-content {
             background: white;
             padding: 20px;
@@ -719,6 +808,7 @@
             display: flex;
             flex-direction: column;
         }
+
         #answerSelectionModal .modal-content {
             background: white;
             padding: 25px;
@@ -728,11 +818,13 @@
             box-shadow: 0 5px 15px rgba(0,0,0,0.2);
             text-align: center;
         }
+
         #answerSelectionModal h4 {
             font-size: 1.5em;
-            color: #0066cc;
+            color: var(--primary-color); /* Dynamic color */
             margin-bottom: 20px;
         }
+
         #answerOptions {
             display: flex;
             flex-wrap: wrap;
@@ -740,6 +832,7 @@
             gap: 10px;
             margin-bottom: 20px;
         }
+
         #answerOptions button {
             width: 60px;
             height: 60px;
@@ -750,18 +843,22 @@
             border: 1px solid #ccc;
             transition: background-color 0.2s ease, transform 0.1s ease;
         }
+
         #answerOptions button:hover {
             background-color: #e0e0e0;
             transform: translateY(-2px);
         }
+
         #answerOptions button:active {
             transform: translateY(0);
         }
+
         #answerOptions button.selected {
             background-color: #28a745;
             color: white;
             border-color: #28a745;
         }
+
         #clearAnswerButton {
             background-color: #dc3545;
             color: white;
@@ -775,6 +872,7 @@
         #clearAnswerButton:hover {
             background-color: #c82333;
         }
+
         #warningOverlay {
             display: none;
             position: fixed;
@@ -795,6 +893,7 @@
             display: flex;
             opacity: 1;
         }
+
         .warning-content-box {
             background: rgba(255, 255, 255, 0.03);
             padding: 30px;
@@ -806,6 +905,7 @@
             box-sizing: border-box;
             pointer-events: none;
         }
+
         #warningCountdown {
             font-size: 4em;
             font-weight: bold;
@@ -815,16 +915,19 @@
             pointer-events: none;
             animation: blink-smooth 1.5s infinite alternate;
         }
+
         @keyframes blink-smooth {
             0% { opacity: 1; }
             100% { opacity: 0.5; }
         }
+
         #warningMessage {
             font-size: 1.5em;
             color: black;
             font-weight: bold;
             pointer-events: none;
         }
+
         #submissionConfirmationOverlay {
             display: none;
             position: fixed;
@@ -845,6 +948,7 @@
             display: flex;
             opacity: 1;
         }
+
         .submission-content {
             background: white;
             padding: 30px;
@@ -855,17 +959,20 @@
             text-align: center;
             box-sizing: border-box;
         }
+
         #submissionConfirmationOverlay h1 {
             font-size: 2.5em;
             margin-bottom: 15px;
             font-weight: bold;
             color: #4CAF50;
         }
+
         #submissionConfirmationOverlay p {
             font-size: 1.1em;
             color: #333;
             margin-bottom: 20px;
         }
+
         #submissionConfirmationOverlay button {
             padding: 12px 25px;
             font-size: 1.2em;
@@ -877,14 +984,17 @@
             transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
             box-shadow: 0 4px 8px rgba(0,0,0,0.2);
         }
+
         #submissionConfirmationOverlay button:hover {
             background-color: #45a049;
             transform: translateY(-2px);
         }
+
         #submissionConfirmationOverlay button:active {
             transform: translateY(0);
             box-shadow: 0 2px 5px rgba(0,128,0,0.4);
         }
+
         #fullscreenExitWarningOverlay {
             display: none;
             position: fixed;
@@ -929,7 +1039,7 @@
         .exit-warning-button {
             padding: 12px 25px;
             font-size: 1.2em;
-            background-color: #007bff;
+            background-color: var(--accent-color); /* Dynamic color */
             color: white;
             border: none;
             border-radius: 8px;
@@ -938,8 +1048,9 @@
             box-shadow: 0 4px 8px rgba(0,0,0,0.2);
         }
         .exit-warning-button:hover {
-            background-color: #0056b3;
+            background-color: var(--primary-color); /* Dynamic color */
         }
+
         .no-select {
             -webkit-touch-callout: none;
             -webkit-user-select: none;
@@ -948,6 +1059,7 @@
             -ms-user-select: none;
             user-select: none;
         }
+
         #fullscreenOverlay {
             display: none;
             position: fixed;
@@ -970,7 +1082,7 @@
             pointer-events: auto;
         }
         #fullscreenOverlay .overlay-content {
-            background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-color) 100%); /* Dynamic color */
             color: white;
             padding: 40px;
             border-radius: 15px;
@@ -981,12 +1093,14 @@
             box-sizing: border-box;
             animation: fadeInScale 0.5s ease-out forwards;
         }
+
         #fullscreenOverlay .overlay-title {
             font-size: 2.5em;
             font-weight: bold;
             margin-bottom: 20px;
             text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
         }
+
         #fullscreenOverlay .overlay-instructions {
             list-style: none;
             padding: 0;
@@ -994,12 +1108,14 @@
             font-size: 1.2em;
             line-height: 1.6;
         }
+
         #fullscreenOverlay .overlay-instructions li {
             margin-bottom: 10px;
             position: relative;
             padding-left: 30px;
             text-align: left;
         }
+
         #fullscreenOverlay .overlay-instructions li::before {
             content: '✅';
             position: absolute;
@@ -1007,6 +1123,7 @@
             color: #d4edda;
             font-size: 1.2em;
         }
+
         #fullscreenOverlay .overlay-button {
             background-color: #28a745;
             color: white;
@@ -1018,15 +1135,18 @@
             transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
             box-shadow: 0 5px 15px rgba(0,0,0,0.2);
         }
+
         #fullscreenOverlay .overlay-button:hover {
             background-color: #218838;
             transform: translateY(-3px);
             box-shadow: 0 8px 20px rgba(0,0,0,0.3);
         }
+
         #fullscreenOverlay .overlay-button:active {
             transform: translateY(0);
             box-shadow: 0 2px 5px rgba(0,0,0,0.2);
         }
+
         #zoomControls {
             position: absolute;
             top: 10px;
@@ -1041,18 +1161,20 @@
             box-shadow: 0 2px 5px rgba(0,0,0,0.3);
             transition: all 0.3s ease-in-out;
         }
+
         #mainToggleBtnContainer {
             display: flex;
             gap: 5px;
             margin-bottom: 5px;
         }
+
         #zoomControls button {
             width: 40px;
             height: 40px;
             font-size: 1.5em;
             font-weight: bold;
             color: white;
-            background-color: #007bff;
+            background-color: var(--accent-color); /* Dynamic color */
             border: none;
             border-radius: 5px;
             cursor: pointer;
@@ -1063,19 +1185,23 @@
             margin: 0;
             opacity: 0.5;
         }
+
         #zoomControls button:hover {
-            background-color: #0056b3;
+            background-color: var(--primary-color); /* Dynamic color */
             transform: scale(1.05);
             opacity: 1;
         }
+
         #zoomControls button:active {
             transform: scale(0.95);
         }
+
         #zoomControls button:disabled {
             background-color: #cccccc;
             cursor: not-allowed;
             opacity: 0.5;
         }
+
         #controlsGrid {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
@@ -1086,17 +1212,21 @@
             opacity: 0;
             pointer-events: none;
         }
+
         #zoomControls.show-controls #controlsGrid {
             height: auto;
             opacity: 1;
             pointer-events: auto;
         }
+
         #refreshIframeBtn .icon {
             font-size: 1.2em;
         }
+
         #panLeftBtn .icon, #panRightBtn .icon {
             font-size: 1.5em;
         }
+
         @keyframes fadeInScale {
             from {
                 opacity: 0;
@@ -1107,8 +1237,27 @@
                 transform: scale(1);
             }
         }
+
         @media (max-width: 600px) {
-            .container, #selectionContainer {
+            .welcome-screen {
+                margin-top: 40px;
+                margin-bottom: 40px;
+                border-radius: 0;
+                box-shadow: none;
+                width: 100%;
+            }
+            .welcome-screen h2 {
+                font-size: 1.8em;
+            }
+            .welcome-screen p {
+                font-size: 0.9em;
+            }
+            .welcome-button {
+                font-size: 1.2em;
+                padding: 12px 20px;
+            }
+
+            .container {
                 margin-top: 40px;
                 margin-bottom: 40px;
                 border-radius: 0;
@@ -1201,6 +1350,7 @@
                 font-size: 1em;
                 padding: 10px 20px;
             }
+
             .custom-modal-content {
                 padding: 15px;
                 width: 95%;
@@ -1213,6 +1363,7 @@
                 padding: 10px 12px;
                 font-size: 1em;
             }
+
             #answerSidebar {
                 width: 180px;
                 transform: translateX(calc(100% - 56px));
@@ -1266,6 +1417,7 @@
                 font-size: 1.2em;
             }
         }
+
         @media (max-width: 400px) {
             .header-box .logo {
                 width: 60px;
@@ -1298,55 +1450,52 @@
     </style>
 </head>
 <body>
-    <div id="selectionContainer">
-        <h1>SELAMAT DATANG</h1>
+    <div id="welcomeScreen" class="welcome-screen">
+        <h2>SELAMAT DATANG</h2>
         <p>Silakan pilih jenjang kelas Anda untuk melanjutkan ke halaman ujian.</p>
-        <button id="selectGrade7" class="grade-selection-btn">KELAS 7</button>
-        <button id="selectGrade8" class="grade-selection-btn">KELAS 8</button>
-        <button id="selectGrade9" class="grade-selection-btn">KELAS 9</button>
+        <button id="btnKelas7" class="welcome-button btn-kelas7">KELAS 7</button>
+        <button id="btnKelas8" class="welcome-button btn-kelas8">KELAS 8</button>
+        <button id="btnKelas9" class="welcome-button btn-kelas9">KELAS 9</button>
     </div>
 
-    <div id="appContainer" style="display: none;">
-        <div class="container">
-            <div class="header-box">
-                <button id="backToSelectionBtn" title="Kembali ke Pemilihan Kelas">&#8617;</button>
-                <img src="https://raw.githubusercontent.com/smp2pajangan/gambar/refs/heads/main/logosmpn2pjg.png" alt="Logo" class="logo" />
-                <div class="title">SMPN 2 PAJANGAN</div>
+    <div id="loginContainer" class="container">
+        <div class="header-box">
+            <img src="https://raw.githubusercontent.com/smp2pajangan/gambar/refs/heads/main/logosmpn2pjg.png" alt="Logo" class="logo" />
+            <div class="title">SMPN 2 PAJANGAN</div>
+        </div>
+        <div class="card-body">
+            <div class="judul-ujian" id="loginJudulUjian">UJIAN KELAS</div>
+            <div id="locationBlocked" style="display: none; color: red; margin-bottom: 10px; font-weight: bold; text-align: center;">
+                AKSES UJIAN DIBLOKIR, silahkan aktifkan lokasi perangkat Anda di SMPN 2 Pajangan! Setelah diaktifkan, silahkan refresh halaman login!
             </div>
-            <div class="card-body">
-                <div class="judul-ujian">UJIAN KELAS</div>
-                <div id="locationBlocked" style="display: none; color: red; margin-bottom: 10px; font-weight: bold; text-align: center;">
-                    AKSES UJIAN DIBLOKIR, silahkan aktifkan lokasi perangkat Anda di SMPN 2 Pajangan! Setelah diaktifkan, silahkan refresh halaman login!
-                </div>
-                <p class="message" id="message"></p>
-                <p id="locationStatus" style="color: gray; font-size: 12px; text-align: center;">Memuat status lokasi...</p>
+            <p class="message" id="message"></p>
+            <p id="locationStatus" style="color: gray; font-size: 12px; text-align: center;">Memuat status lokasi...</p>
 
-                <div class="custom-dropdown-container">
-                    <div id="customSelectKelasDisplay" class="custom-dropdown-display" data-placeholder="-- Pilih Kelas --">
-                        -- Pilih Kelas --
-                    </div>
-                    <input type="hidden" id="selectKelas" value="" />
+            <div class="custom-dropdown-container">
+                <div id="customSelectKelasDisplay" class="custom-dropdown-display" data-placeholder="-- Pilih Kelas --">
+                    -- Pilih Kelas --
                 </div>
-
-                <div class="custom-dropdown-container">
-                    <div id="customSelectNamaSiswaDisplay" class="custom-dropdown-display" data-placeholder="-- Pilih Nama Siswa --">
-                        -- Pilih Nama Siswa --
-                    </div>
-                    <input type="hidden" id="selectNamaSiswa" value="" />
-                </div>
-
-                <div class="token-input-group">
-                    <input type="text" id="inputTokenPrefix" placeholder="TOKEN (contoh: ABCDE)" />
-                    <span class="token-separator">-</span>
-                    <input type="text" id="displayStudentId" placeholder="ID Siswa" readonly />
-                </div>
-
-                <button id="loginBtn">Login</button>
+                <input type="hidden" id="selectKelas" value="" />
             </div>
-            <div class="footer">
-                © Admin SMPN 2 Pajangan<br>
-                <span id="datetime"></span>
+
+            <div class="custom-dropdown-container">
+                <div id="customSelectNamaSiswaDisplay" class="custom-dropdown-display" data-placeholder="-- Pilih Nama Siswa --">
+                    -- Pilih Nama Siswa --
+                </div>
+                <input type="hidden" id="selectNamaSiswa" value="" />
             </div>
+
+            <div class="token-input-group">
+                <input type="text" id="inputTokenPrefix" placeholder="TOKEN (contoh: ABCDE)" />
+                <span class="token-separator">-</span>
+                <input type="text" id="displayStudentId" placeholder="ID Siswa" readonly />
+            </div>
+
+            <button id="loginBtn">Login</button>
+        </div>
+        <div class="footer">
+            © Admin SMPN 2 Pajangan<br>
+            <span id="datetime"></span>
         </div>
     </div>
 
@@ -1510,7 +1659,7 @@
 
     <div id="classModal" class="custom-modal">
         <div class="custom-modal-content">
-            <h4>Pilih Kelas</h4>
+            <h4 id="classModalTitle">Pilih Kelas</h4>
             <ul id="classModalList" class="custom-modal-list">
             </ul>
         </div>
@@ -1526,95 +1675,131 @@
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.8.1/firebase-app.js";
-        import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/11.8.1/firebase-auth.js";
         import { getDatabase, ref, get, child, runTransaction, set, onValue, off, update, remove } from "https://www.gstatic.com/firebasejs/11.8.1/firebase-database.js";
+        import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/11.8.1/firebase-auth.js";
 
         const allFirebaseConfigs = {
-            'ujianpdf-7abc': {
+            'kelas7-group1': {
                 apiKey: "AIzaSyBJBl_HWsOsnBBI1EPs1yQlJd0Hso8HcSo",
                 authDomain: "ujianpdf-7abc.firebaseapp.com",
                 databaseURL: "https://ujianpdf-7abc-default-rtdb.firebaseio.com",
                 projectId: "ujianpdf-7abc",
-                storageBucket: "ujianpdf-7abc.appspot.com",
+                storageBucket: "ujianpdf-7abc.firebasestorage.app",
                 messagingSenderId: "1035978389542",
-                appId: "1:1035978389542:web:413eb32b04c0d09bc48ee7"
+                appId: "1:1035978389542:web:413eb32b04c0d09bc48ee7",
+                theme: {
+                    primary: '#0066cc', // Darker blue for header, countdown, etc.
+                    accent: '#007bff',  // Lighter blue for buttons
+                    warning: '#0066cc' // Judul Ujian same as primary
+                },
+                allowedClasses: ['7A', '7B', '7C']
             },
-            'ujianpdf-7def': {
+            'kelas7-group2': {
                 apiKey: "AIzaSyDQKdbwaG0Tg7_tfHs0hCbNR3xlqT3vWLA",
                 authDomain: "ujianpdf-7def.firebaseapp.com",
                 databaseURL: "https://ujianpdf-7def-default-rtdb.firebaseio.com",
                 projectId: "ujianpdf-7def",
-                storageBucket: "ujianpdf-7def.appspot.com",
+                storageBucket: "ujianpdf-7def.firebasestorage.app",
                 messagingSenderId: "210211262444",
-                appId: "1:210211262444:web:a06a988913ede65369bac9"
+                appId: "1:210211262444:web:a06a988913ede65369bac9",
+                theme: {
+                    primary: '#0066cc',
+                    accent: '#007bff',
+                    warning: '#0066cc'
+                },
+                allowedClasses: ['7D', '7E', '7F']
             },
-            'ujianpdf-8abc': {
+            'kelas8-group1': {
                 apiKey: "AIzaSyAsbVn2qVIgH278ZjPfkMihlGYmyL8zJFA",
                 authDomain: "ujianpdf8abc-3bedf.firebaseapp.com",
                 databaseURL: "https://ujianpdf8abc-3bedf-default-rtdb.firebaseio.com",
                 projectId: "ujianpdf8abc-3bedf",
-                storageBucket: "ujianpdf8abc-3bedf.appspot.com",
+                storageBucket: "ujianpdf8abc-3bedf.firebasestorage.app",
                 messagingSenderId: "408487358048",
-                appId: "1:408487358048:web:10cc8796510f4b8ab99d05"
+                appId: "1:408487358048:web:10cc8796510f4b8ab99d05",
+                theme: {
+                    primary: '#cc7a00', // Darker orange
+                    accent: '#ff9900',  // Lighter orange
+                    warning: '#ff9900' // Judul Ujian same as accent
+                },
+                allowedClasses: ['8A', '8B', '8C']
             },
-            'ujianpdf-8def': {
+            'kelas8-group2': {
                 apiKey: "AIzaSyBvkIMTkJkDqe2nKspIMXOCeT9vc6h8xjA",
                 authDomain: "ujianpdf8def-9bdcd.firebaseapp.com",
                 databaseURL: "https://ujianpdf8def-9bdcd-default-rtdb.firebaseio.com",
                 projectId: "ujianpdf8def-9bdcd",
-                storageBucket: "ujianpdf8def-9bdcd.appspot.com",
+                storageBucket: "ujianpdf8def-9bdcd.firebasestorage.app",
                 messagingSenderId: "69381651529",
-                appId: "1:69381651529:web:af517e87735d2ad51a9398"
+                appId: "1:69381651529:web:af517e87735d2ad51a9398",
+                theme: {
+                    primary: '#cc7a00',
+                    accent: '#ff9900',
+                    warning: '#ff9900'
+                },
+                allowedClasses: ['8D', '8E', '8F']
             },
-            'ujianpdf-9abc': {
+            'kelas9-group1': {
                 apiKey: "AIzaSyCjf42a3CCB3IuNto2K8MGpTX_SM1FXyrw",
                 authDomain: "ujianpdf-9abc.firebaseapp.com",
                 databaseURL: "https://ujianpdf-9abc-default-rtdb.firebaseio.com",
                 projectId: "ujianpdf-9abc",
-                storageBucket: "ujianpdf-9abc.appspot.com",
+                storageBucket: "ujianpdf-9abc.firebasestorage.app",
                 messagingSenderId: "939178637981",
-                appId: "1:939178637981:web:b9a15dfa72180d15d77274"
+                appId: "1:939178637981:web:b9a15dfa72180d15d77274",
+                theme: {
+                    primary: '#5a0000', // Darker maroon
+                    accent: '#800000',  // Lighter maroon
+                    warning: '#800000' // Judul Ujian same as accent
+                },
+                allowedClasses: ['9A', '9B', '9C']
             },
-            'ujianpdf-9def': {
+            'kelas9-group2': {
                 apiKey: "AIzaSyDK50Amn6N8gl_q6CVhDjV_DRPpdCpCTrw",
                 authDomain: "ujianpdf-9def.firebaseapp.com",
                 databaseURL: "https://ujianpdf-9def-default-rtdb.firebaseio.com",
                 projectId: "ujianpdf-9def",
-                storageBucket: "ujianpdf-9def.appspot.com",
+                storageBucket: "ujianpdf-9def.firebasestorage.app",
                 messagingSenderId: "450883192159",
-                appId: "1:450883192159:web:6ad39c42db5756ff0f62ea"
+                appId: "1:450883192159:web:6ad39c42db5756ff0f62ea",
+                theme: {
+                    primary: '#5a0000',
+                    accent: '#800000',
+                    warning: '#800000'
+                },
+                allowedClasses: ['9D', '9E', '9F']
             }
         };
-
-        function getClassGroupKey(className) {
-            if (!className) return null;
-            const grade = parseInt(className.charAt(0), 10);
-            const classLetter = className.charAt(1).toUpperCase();
-
-            if (grade === 7) {
-                if (['A', 'B', 'C'].includes(classLetter)) return 'ujianpdf-7abc';
-                if (['D', 'E', 'F'].includes(classLetter)) return 'ujianpdf-7def';
-            } else if (grade === 8) {
-                if (['A', 'B', 'C'].includes(classLetter)) return 'ujianpdf-8abc';
-                if (['D', 'E', 'F'].includes(classLetter)) return 'ujianpdf-8def';
-            } else if (grade === 9) {
-                 if (['A', 'B', 'C'].includes(classLetter)) return 'ujianpdf-9abc';
-                if (['D', 'E', 'F'].includes(classLetter)) return 'ujianpdf-9def';
-            }
-            return null;
-        }
 
         const firebaseApps = {};
         const firebaseDBs = {};
         const firebaseAuths = {};
         let currentDb = null;
         let currentAuth = null;
-        let selectedGrade = null;
+        let currentSelectedGrade = null;
+        let currentClassGroupKeys = [];
+
+        function getClassGroupKeysByGrade(grade) {
+            const keys = [];
+            for (const key in allFirebaseConfigs) {
+                if (key.startsWith(`kelas${grade}`)) {
+                    keys.push(key);
+                }
+            }
+            return keys;
+        }
 
         async function getFirebaseInstanceForClass(className) {
-            const classGroupKey = getClassGroupKey(className);
+            let classGroupKey = null;
+            for (const key in allFirebaseConfigs) {
+                if (allFirebaseConfigs[key].allowedClasses.includes(className)) {
+                    classGroupKey = key;
+                    break;
+                }
+            }
+
             if (!classGroupKey || !allFirebaseConfigs[classGroupKey]) {
-                console.error(`Error: Tidak ada konfigurasi Firebase yang ditemukan untuk grup kelas: ${className}`);
+                console.error(`Error: Tidak ada konfigurasi Firebase yang ditemukan untuk kelas: ${className}`);
                 return null;
             }
 
@@ -1623,22 +1808,20 @@
                 const appInstance = initializeApp(config, classGroupKey);
                 firebaseApps[classGroupKey] = appInstance;
                 firebaseDBs[classGroupKey] = getDatabase(appInstance);
-                const authInstance = getAuth(appInstance);
-                firebaseAuths[classGroupKey] = authInstance;
+                firebaseAuths[classGroupKey] = getAuth(appInstance);
+                console.log(`Aplikasi Firebase diinisialisasi untuk grup kelas: ${classGroupKey}`);
 
                 try {
-                    await signInAnonymously(authInstance);
-                    console.log(`Login anonim berhasil untuk grup: ${classGroupKey}`);
+                    await signInAnonymously(firebaseAuths[classGroupKey]);
+                    console.log(`Berhasil login anonim untuk aplikasi Firebase: ${classGroupKey}`);
                 } catch (error) {
-                    console.error(`Gagal login anonim untuk grup ${classGroupKey}:`, error);
-                    message.style.color = "red";
-                    message.textContent = "Gagal melakukan autentikasi ke server.";
+                    console.error(`Gagal login anonim untuk aplikasi Firebase ${classGroupKey}:`, error);
                     return null;
                 }
             }
             return { db: firebaseDBs[classGroupKey], auth: firebaseAuths[classGroupKey] };
         }
-        
+
         function getDbRefs() {
             if (!currentDb) {
                 console.error("Instance database (currentDb) tidak diinisialisasi.");
@@ -1658,14 +1841,17 @@
 
         let isLocationEnabled = true;
         let firebaseAllowedRadiusKm = 0.075;
+
         let isLockEnabledGlobal = false;
         let lockKeyGlobal = "";
         let toleranceLimitGlobal = 0;
         let currentAttemptsLeft = 0;
+
         const allowedLatitude = -7.8589546;
         const allowedLongitude = 110.2655596;
-        const appContainer = document.getElementById('appContainer');
-        const selectionContainer = document.getElementById('selectionContainer');
+
+        const welcomeScreen = document.getElementById('welcomeScreen');
+        const loginContainer = document.getElementById('loginContainer');
         const examContainer = document.getElementById('examContainer');
         const countdownDisplay = document.getElementById('countdownDisplay');
         const timerText = document.getElementById('timerText');
@@ -1676,24 +1862,30 @@
         const overlayUnderstandBtn = document.getElementById('overlayUnderstandBtn');
         const warningOverlay = document.getElementById('warningOverlay');
         const warningCountdown = document.getElementById('warningCountdown');
+
         const locationBlockedDiv = document.getElementById('locationBlocked');
         const message = document.getElementById('message');
         const loginBtn = document.getElementById('loginBtn');
         const confirmModal = document.getElementById('confirmModal');
         const locationStatus = document.getElementById('locationStatus');
+        
         const inputTokenPrefix = document.getElementById('inputTokenPrefix');
         const displayStudentId = document.getElementById('displayStudentId');
+        
         const customSelectKelasDisplay = document.getElementById('customSelectKelasDisplay');
         const hiddenSelectKelas = document.getElementById('selectKelas');
         const customSelectNamaSiswaDisplay = document.getElementById('customSelectNamaSiswaDisplay');
         const hiddenSelectNamaSiswa = document.getElementById('selectNamaSiswa');
+
         const confirmCheckbox = document.getElementById('confirmCheckbox');
         const modalMessage = document.getElementById('modalMessage');
         const modalExamDuration = document.getElementById('modalExamDuration');
+
         const submissionConfirmationOverlay = document.getElementById('submissionConfirmationOverlay');
-        const submissionOverlayTitle = document.getElementById('submissionOverlayTitle'); 
-        const submissionOverlayMessage = document.getElementById('submissionOverlayMessage'); 
+        const submissionOverlayTitle = document.getElementById('submissionOverlayTitle');
+        const submissionOverlayMessage = document.getElementById('submissionOverlayMessage');
         const backToLoginFromSubmissionBtn = document.getElementById('backToLoginFromSubmissionBtn');
+
         const fullscreenExitWarningOverlay = document.getElementById('fullscreenExitWarningOverlay');
         const exitWarningTitle = document.getElementById('exitWarningTitle');
         const exitWarningMessage = document.getElementById('exitWarningMessage');
@@ -1703,19 +1895,24 @@
         const lockKeyMessage = document.getElementById('lockKeyMessage');
         const lockKeySubmitBtn = document.getElementById('lockKeySubmitBtn');
         const reEnterFullscreenBtn = document.getElementById('reEnterFullscreenBtn');
+
         const classModal = document.getElementById('classModal');
         const classModalList = document.getElementById('classModalList');
         const studentModal = document.getElementById('studentModal');
         const studentModalList = document.getElementById('studentModalList');
+
         const answerSidebar = document.getElementById('answerSidebar');
         const sidebarToggle = document.getElementById('sidebarToggle');
         const answerListContainer = document.getElementById('answerListContainer');
         const submitAnswersButton = document.getElementById('submitAnswersButton');
         const submissionWarningMessage = document.getElementById('submissionWarningMessage');
+
         const sidebarText = document.getElementById('sidebarText');
         const closeSidebarButton = document.getElementById('closeSidebarButton');
         const closeSidebarText = document.getElementById('closeSidebarText');
+
         const examContentWrapper = document.getElementById('examContentWrapper');
+
         const zoomControls = document.getElementById('zoomControls');
         const toggleControlsBtn = document.getElementById('toggleControlsBtn');
         const controlsGrid = document.getElementById('controlsGrid');
@@ -1725,27 +1922,33 @@
         const panRightBtn = document.getElementById('panRightBtn');
         const refreshIframeBtn = document.getElementById('refreshIframeBtn');
 
+        const loginJudulUjian = document.getElementById('loginJudulUjian');
+
         let allStudentsData = [];
         let selectedStudentData = null;
         let isLocationValid = false;
         let foundTokenGlobal = null;
-        let timerInterval; 
-        let remainingTime; 
+        let timerInterval;
+        let remainingTime;
         let submissionListenerRef = null;
+
         let isInExamMode = false;
         let isAnyModalOpen = false;
-        let totalQuestions = 0; 
-        let studentAnswers = []; 
-        let currentQuestionIndexForModal = -1; 
+
+        let totalQuestions = 0;
+        let studentAnswers = [];
+        let currentQuestionIndexForModal = -1;
 
         const answerSelectionModal = document.getElementById('answerSelectionModal');
         const currentQuestionNumberSpan = document.getElementById('currentQuestionNumber');
         const answerOptionsContainer = document.getElementById('answerOptions');
         const clearAnswerButton = document.getElementById('clearAnswerButton');
+
         const customMessageModal = document.getElementById('customMessageModal');
         const customMessageModalTitle = document.getElementById('customMessageModalTitle');
         const customMessageModalText = document.getElementById('customMessageModalText');
         const customMessageModalButton = document.getElementById('customMessageModalButton');
+
         const customConfirmModal = document.getElementById('customConfirmModal');
         const customConfirmModalTitle = document.getElementById('customConfirmModalTitle');
         const customConfirmModalText = document.getElementById('customConfirmModalText');
@@ -1763,11 +1966,13 @@
         const MAX_ZOOM = 2.0;
         const ZOOM_STEP = 0.1;
         const PAN_STEP = 10;
+
         let isDragging = false;
         let startX, startY;
         let currentTranslateX = 0;
         let currentTranslateY = 0;
         let autoHideTimer;
+
         let panIntervalId = null;
         let panDirection = 0;
         const PAN_START_DELAY = 1500;
@@ -1791,7 +1996,8 @@
                 Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) *
                 Math.sin(dLon / 2) * Math.sin(dLon / 2);
             const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-            return R * c;
+            const d = R * c;
+            return d;
         }
 
         function deg2rad(deg) {
@@ -1805,14 +2011,23 @@
         }
 
         window.formatTokenPrefix = function (inputElement) {
+            if (!inputElement || typeof inputElement.value === 'undefined') {
+                console.error("Error: inputElement atau nilainya tidak terdefinisi dalam formatTokenPrefix.");
+                return;
+            }
+
             const tokenInputGroup = inputElement.closest('.token-input-group');
             if (tokenInputGroup) {
                 tokenInputGroup.classList.remove('is-valid', 'is-invalid');
             }
+
             let value = inputElement.value.toUpperCase().replace(/[^A-Z0-9]/g, '');
             inputElement.value = value;
+
             if (value.length > 0) {
                 if (tokenInputGroup) tokenInputGroup.classList.add('is-valid');
+            } else {
+                if (tokenInputGroup) tokenInputGroup.classList.remove('is-valid');
             }
             updateLoginButtonStatus();
         };
@@ -1821,17 +2036,32 @@
             const isLocationCheckPassed = (isLocationEnabled && isTouchDevice()) ? isLocationValid : true;
             const isClassAndStudentSelected = hiddenSelectKelas.value !== "" && hiddenSelectNamaSiswa.value !== "";
             const isTokenPrefixFilled = inputTokenPrefix.value.trim() !== "";
+            const isStudentIdDisplayed = displayStudentId.value.trim() !== "";
 
-            inputTokenPrefix.disabled = !isClassAndStudentSelected;
-            if (!isClassAndStudentSelected) {
+            if (isClassAndStudentSelected) {
+                inputTokenPrefix.disabled = false;
+            } else {
+                inputTokenPrefix.disabled = true;
                 inputTokenPrefix.value = "";
                 const tokenInputGroup = inputTokenPrefix.closest('.token-input-group');
-                if (tokenInputGroup) tokenInputGroup.classList.remove('is-valid', 'is-invalid');
+                if (tokenInputGroup) {
+                    tokenInputGroup.classList.remove('is-valid', 'is-invalid');
+                }
             }
 
-            customSelectNamaSiswaDisplay.classList.toggle('disabled', hiddenSelectKelas.value === "");
-            loginBtn.disabled = !(isLocationCheckPassed && isClassAndStudentSelected && isTokenPrefixFilled);
-            loginBtn.style.opacity = loginBtn.disabled ? 0.6 : 1;
+            if (hiddenSelectKelas.value === "") {
+                customSelectNamaSiswaDisplay.classList.add('disabled');
+            } else {
+                customSelectNamaSiswaDisplay.classList.remove('disabled');
+            }
+
+            if (isLocationCheckPassed && isClassAndStudentSelected && isTokenPrefixFilled && isStudentIdDisplayed) {
+                loginBtn.disabled = false;
+                loginBtn.style.opacity = 1;
+            } else {
+                loginBtn.disabled = true;
+                loginBtn.style.opacity = 0.6;
+            }
         }
 
         window.tutupModal = async function () {
@@ -1841,15 +2071,24 @@
             modalMessage.textContent = "";
             confirmCheckbox.checked = false;
             updateLoginButtonStatus();
+
             sessionStorage.clear();
         };
 
         function checkLocation(latitude, longitude) {
             const distance = getDistanceFromLatLonInKm(allowedLatitude, allowedLongitude, latitude, longitude);
-            isLocationValid = distance <= firebaseAllowedRadiusKm;
-            locationBlockedDiv.style.display = isLocationValid ? 'none' : 'block';
-            locationStatus.textContent = isLocationValid ? "Lokasi valid." : `Anda berada ${distance.toFixed(2)} km dari lokasi.`;
-            locationStatus.style.color = isLocationValid ? "green" : "red";
+            if (distance <= firebaseAllowedRadiusKm) {
+                locationBlockedDiv.style.display = 'none';
+                isLocationValid = true;
+                locationStatus.textContent = "Lokasi valid.";
+                locationStatus.style.color = "green";
+            } else {
+                locationBlockedDiv.style.display = 'block';
+                locationBlockedDiv.textContent = 'AKSES UJIAN DIBLOKIR, silahkan aktifkan lokasi perangkat Anda di SMPN 2 Pajangan! Setelah diaktifkan, silahkan refresh halaman login!';
+                isLocationValid = false;
+                locationStatus.textContent = `Anda berada ${distance.toFixed(2)} km dari lokasi yang diizinkan.`;
+                locationStatus.style.color = "red";
+            }
             updateLoginButtonStatus();
         }
 
@@ -1858,8 +2097,30 @@
         }
 
         function handleLocationError(error) {
+            console.error("Error mendapatkan lokasi:", error);
+
             locationBlockedDiv.style.display = 'block';
-            let errorMessage = "Gagal mendapatkan lokasi. Pastikan GPS dan izin lokasi aktif.";
+            locationBlockedDiv.textContent = 'AKSES UJIAN DIBLOKIR, silahkan aktifkan lokasi perangkat Anda di SMPN 2 Pajangan! Setelah diaktifkan, silahkan refresh halaman login!';
+            message.style.color = "orange";
+
+            let errorMessage = "Terjadi kesalahan tak terduga dengan layanan lokasi. Pastikan GPS aktif dan izin lokasi diberikan.";
+
+            if (error && typeof error.code === 'number') {
+                switch(error.code) {
+                    case error.PERMISSION_DENIED:
+                        errorMessage = "Lokasi belum diaktifkan, mohon aktifkan lokasi di pengaturan perangkat Anda.";
+                        break;
+                    case error.POSITION_UNAVAILABLE:
+                        errorMessage = "Informasi lokasi tidak tersedia.";
+                        break;
+                    case error.TIMEOUT:
+                        errorMessage = "Waktu permintaan lokasi habis.";
+                        break;
+                }
+            } else if (error && error.message) {
+                errorMessage = `Terjadi kesalahan: ${error.message}`;
+            }
+
             message.textContent = errorMessage;
             isLocationValid = false;
             updateLoginButtonStatus();
@@ -1876,7 +2137,9 @@
                         maximumAge: 0
                     });
                 } else {
-                    locationBlockedDiv.textContent = 'Geolocation tidak didukung.';
+                    locationBlockedDiv.style.display = 'block';
+                    locationBlockedDiv.textContent = 'Geolocation tidak didukung oleh perangkat ini.';
+                    message.style.color = "red";
                     isLocationValid = false;
                     updateLoginButtonStatus();
                 }
@@ -1888,17 +2151,19 @@
             }
         }
 
-        function loadInitialClassDropdown() {
+        function loadClassDropdownForGrade(grade) {
             customSelectKelasDisplay.classList.add('disabled');
             customSelectNamaSiswaDisplay.classList.add('disabled');
             inputTokenPrefix.disabled = true;
             displayStudentId.value = "";
-            message.innerHTML = `Memuat daftar kelas... <span class="spinner"></span>`;
-            
-            let classNames = [];
-            if (selectedGrade === 7) classNames = ['7A', '7B', '7C', '7D', '7E', '7F'];
-            else if (selectedGrade === 8) classNames = ['8A', '8B', '8C', '8D', '8E', '8F'];
-            else if (selectedGrade === 9) classNames = ['9A', '9B', '9C', '9D', '9E', '9F'];
+            message.innerHTML = `Memuat daftar kelas untuk kelas ${grade}... <span class="spinner"></span>`;
+
+            const classNames = [];
+            currentClassGroupKeys.forEach(groupKey => {
+                const config = allFirebaseConfigs[groupKey];
+                classNames.push(...config.allowedClasses);
+            });
+            classNames.sort();
 
             classModalList.innerHTML = '';
             classNames.forEach(cls => {
@@ -1915,13 +2180,18 @@
         async function loadStudentsAndFilterByClass() {
             if (!currentDb) {
                 message.style.color = "red";
-                message.textContent = "Database belum diinisialisasi.";
+                message.textContent = "Database belum diinisialisasi. Pilih kelas terlebih dahulu.";
                 return;
             }
+
             const dbRefs = getDbRefs();
             if (!dbRefs) return;
 
-            message.innerHTML = `Memuat data siswa... <span class="spinner"></span>`;
+            customSelectNamaSiswaDisplay.classList.add('disabled');
+            inputTokenPrefix.disabled = true;
+            displayStudentId.value = "";
+            message.innerHTML = `Memuat data siswa untuk kelas ${hiddenSelectKelas.value}... <span class="spinner"></span>`;
+
             try {
                 const snapshot = await get(dbRefs.studentsRef);
                 if (snapshot.exists()) {
@@ -1929,15 +2199,17 @@
                     snapshot.forEach(childSnapshot => {
                         allStudentsData.push({ ...childSnapshot.val(), key: childSnapshot.key });
                     });
+
                     filterStudentsByClass();
                     message.textContent = "";
                 } else {
                     message.style.color = "orange";
-                    message.textContent = "Tidak ada data siswa ditemukan.";
+                    message.textContent = "Tidak ada data siswa ditemukan di database ini untuk kelas yang dipilih.";
                 }
             } catch (error) {
+                console.error("Gagal memuat data siswa:", error);
                 message.style.color = "red";
-                message.textContent = "Gagal memuat data siswa.";
+                message.textContent = "Gagal memuat data siswa dari database yang dipilih.";
             }
         }
 
@@ -1945,15 +2217,19 @@
             const selectedClass = hiddenSelectKelas.value;
             studentModalList.innerHTML = '';
             hiddenSelectNamaSiswa.value = '';
-            customSelectNamaSiswaDisplay.textContent = '-- Pilih Nama Siswa --';
+            customSelectNamaSiswaDisplay.textContent = customSelectNamaSiswaDisplay.dataset.placeholder;
             customSelectNamaSiswaDisplay.classList.remove('selected');
             selectedStudentData = null;
             displayStudentId.value = "";
             inputTokenPrefix.value = "";
-            
+            const tokenInputGroup = inputTokenPrefix.closest('.token-input-group');
+            if (tokenInputGroup) {
+                tokenInputGroup.classList.remove('is-valid', 'is-invalid');
+            }
+
             if (selectedClass) {
                 const filteredStudents = allStudentsData.filter(student => student.class === selectedClass);
-                filteredStudents.sort((a, b) => a.name.localeCompare(b.name)).forEach(student => {
+                filteredStudents.sort((a, b) => String(a.name || '').localeCompare(String(b.name || ''))).forEach(student => {
                     const listItem = document.createElement('li');
                     listItem.textContent = student.name;
                     listItem.dataset.value = student.id;
@@ -1987,13 +2263,14 @@
             const instances = await getFirebaseInstanceForClass(className);
             if (!instances) {
                 message.style.color = "red";
-                message.textContent = "Gagal memuat konfigurasi.";
+                message.textContent = "Gagal memuat konfigurasi database untuk kelas ini.";
+                updateLoginButtonStatus();
                 return;
             }
             currentDb = instances.db;
-            currentAuth = instances.auth;
 
             await loadStudentsAndFilterByClass();
+            updateLoginButtonStatus();
         }
 
         function openStudentModal() {
@@ -2011,7 +2288,7 @@
             hiddenSelectNamaSiswa.value = studentId;
             customSelectNamaSiswaDisplay.textContent = studentName;
             customSelectNamaSiswaDisplay.classList.add('selected');
-            selectedStudentData = allStudentsData.find(s => s.id == studentId);
+            selectedStudentData = allStudentsData.find(student => padStudentId(student.id) === padStudentId(studentId));
             displayStudentId.value = padStudentId(studentId);
             closeStudentModal();
             updateLoginButtonStatus();
@@ -2022,20 +2299,30 @@
 
             const minutes = Math.floor(remainingTime / 60);
             const seconds = remainingTime % 60;
-            timerText.textContent = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
-            studentNameDisplay.textContent = selectedStudentData?.name || '';
-            classDisplay.textContent = selectedStudentData?.class || '';
+
+            const formattedTime = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+            timerText.textContent = formattedTime;
+            studentNameDisplay.textContent = selectedStudentData ? selectedStudentData.name : '';
+            classDisplay.textContent = selectedStudentData ? selectedStudentData.class : '';
 
             const thirtyMinutesInSeconds = 30 * 60;
-            submitAnswersButton.disabled = !(remainingTime <= thirtyMinutesInSeconds && remainingTime > 0);
-            submitAnswersButton.style.backgroundColor = submitAnswersButton.disabled ? '#cccccc' : '';
-            submitAnswersButton.style.cursor = submitAnswersButton.disabled ? 'not-allowed' : 'pointer';
+            if (submitAnswersButton) {
+                if (remainingTime <= thirtyMinutesInSeconds && remainingTime > 0) {
+                    submitAnswersButton.disabled = false;
+                    submitAnswersButton.style.backgroundColor = document.documentElement.style.getPropertyValue('--accent-color');
+                    submitAnswersButton.style.cursor = 'pointer';
+                } else {
+                    submitAnswersButton.disabled = true;
+                    submitAnswersButton.style.backgroundColor = '#cccccc';
+                    submitAnswersButton.style.cursor = 'not-allowed';
+                }
+            }
 
             if (remainingTime <= 300 && remainingTime > 0) {
                 countdownDisplay.style.display = 'none';
-                warningCountdown.textContent = timerText.textContent;
+                warningCountdown.textContent = formattedTime;
                 warningOverlay.style.display = 'flex';
-                warningOverlay.style.opacity = 1;
+                setTimeout(() => { warningOverlay.style.opacity = 1; }, 10);
             } else {
                 warningOverlay.style.opacity = 0;
                 setTimeout(() => { warningOverlay.style.display = 'none'; }, 300);
@@ -2045,18 +2332,33 @@
                 clearInterval(timerInterval);
                 timerText.textContent = "00:00";
                 countdownDisplay.style.display = 'block';
+                warningOverlay.style.opacity = 0;
+                setTimeout(() => { warningOverlay.style.display = 'none'; }, 300);
+
+                if (submitAnswersButton) {
+                    submitAnswersButton.disabled = true;
+                    submitAnswersButton.style.backgroundColor = '#cccccc';
+                    submitAnswersButton.style.cursor = 'not-allowed';
+                }
+
+                console.log("Waktu habis! Mengirim jawaban secara otomatis...");
                 submitAnswers(true);
                 return;
             }
+
             remainingTime--;
         }
 
         function showOverlay(initialAnswers = null) {
             globalInitialAnswers = initialAnswers;
-            appContainer.style.display = 'none';
+            loginContainer.style.opacity = 0;
             setTimeout(() => {
+                loginContainer.style.display = 'none';
                 fullscreenOverlay.style.display = 'flex';
                 fullscreenOverlay.classList.add('show');
+                document.body.style.overflow = 'hidden';
+                examIframe.classList.add('blurred');
+                isAnyModalOpen = true;
             }, 500);
         }
 
@@ -2064,388 +2366,875 @@
             fullscreenOverlay.classList.remove('show');
             setTimeout(() => {
                 fullscreenOverlay.style.display = 'none';
-                startExamProcess(globalExamUrl, globalExamDurationMinutes, globalNumQuestions, globalExamStartTime, globalInitialAnswers); 
+                document.body.style.overflow = '';
+                examIframe.classList.remove('blurred');
+                isAnyModalOpen = false;
+                startExamProcess(globalExamUrl, globalExamDurationMinutes, globalNumQuestions, globalExamStartTime, globalInitialAnswers);
             }, 300);
         }
 
         async function showSubmissionConfirmationOverlay(isAutoSubmit) {
             sessionStorage.clear();
+            loginContainer.style.display = 'none';
             examContainer.style.opacity = 0;
             setTimeout(async () => {
                 examContainer.style.display = 'none';
                 submissionConfirmationOverlay.style.display = 'flex';
-                submissionConfirmationOverlay.style.opacity = 1;
-
+                setTimeout(() => { submissionConfirmationOverlay.style.opacity = 1; }, 10);
+                document.body.style.overflow = 'hidden';
                 if (timerInterval) clearInterval(timerInterval);
                 if (submissionListenerRef) {
-                    off(submissionListenerRef);
+                    const dbRefs = getDbRefs();
+                    if (dbRefs) off(dbRefs.submittedExamsRef);
                     submissionListenerRef = null;
                 }
                 isInExamMode = false;
                 toggleExamSecurityFeatures(false);
-                if (document.fullscreenElement) await document.exitFullscreen();
+                if (document.fullscreenElement) {
+                    document.exitFullscreen();
+                }
+                answerSidebar.classList.remove('open');
+                examContentWrapper.classList.remove('sidebar-open');
+                examIframe.style.width = '100%';
+                isAnyModalOpen = true;
 
                 if (isAutoSubmit) {
-                    submissionOverlayTitle.innerHTML = '<span style="color: red;">WAKTU HABIS</span>';
-                    submissionOverlayMessage.innerText = 'Jawaban Anda otomatis terkirim.';
+                    submissionOverlayTitle.innerHTML = '<span style="color: red; font-weight: bold;">WAKTU HABIS</span>';
+                    submissionOverlayMessage.innerText = 'Jawaban kamu otomatis terkirim.';
                 } else {
                     submissionOverlayTitle.innerText = 'SELAMAT!';
-                    submissionOverlayMessage.innerText = 'Jawaban Anda berhasil terkirim.';
+                    submissionOverlayTitle.style.color = '#4CAF50';
+                    submissionOverlayMessage.innerText = 'JAWABAN ANDA BERHASIL TERKIRIM!';
                 }
+                backToLoginFromSubmissionBtn.innerText = 'KEMBALI';
+
+                const tokenFirebaseKey = foundTokenGlobal?.key;
+                const studentId = selectedStudentData?.id ? padStudentId(selectedStudentData.id) : null;
+                const studentFirebaseKey = selectedStudentData?.key;
+                const dbRefs = getDbRefs();
+
+                if (dbRefs && tokenFirebaseKey && studentId && studentFirebaseKey) {
+                    const accessStatusRef = child(dbRefs.examAccessStatusRef, `${tokenFirebaseKey}/${studentId}`);
+                    const studentIsLoggedInRef = child(dbRefs.studentsRef, `${studentFirebaseKey}/isLoggedIn`);
+                    try {
+                        await update(accessStatusRef, { isLoggedIn: false, studentId: studentId });
+                        console.log("isLoggedIn diatur ke false di exam_access_status saat pengiriman.");
+
+                        await set(studentIsLoggedInRef, false);
+                        console.log(`Status isLoggedIn siswa ${selectedStudentData.id} di node siswa diatur ke false saat pengiriman.`);
+
+                    } catch (error) {
+                        console.error("Gagal mengatur isLoggedIn ke false saat pengiriman:", error);
+                    }
+                }
+
             }, 500);
         }
 
-        function toggleExamSecurityFeatures(enable) {
-            const events = ['copy', 'cut', 'paste', 'selectstart', 'contextmenu'];
-            events.forEach(event => {
-                if (enable) document.addEventListener(event, preventDefaultBehavior);
-                else document.removeEventListener(event, preventDefaultBehavior);
-            });
-            document.body.classList.toggle('no-select', enable);
+        function hideSubmissionConfirmationOverlay() {
+            submissionConfirmationOverlay.style.opacity = 0;
+            setTimeout(() => {
+                submissionConfirmationOverlay.style.display = 'none';
+                document.body.style.overflow = '';
+                isAnyModalOpen = false;
+            }, 300);
         }
 
-        function preventDefaultBehavior(e) { e.preventDefault(); }
+        function toggleExamSecurityFeatures(enable) {
+            if (enable) {
+                document.addEventListener('copy', preventDefaultBehavior);
+                document.addEventListener('cut', preventDefaultBehavior);
+                document.addEventListener('paste', preventDefaultBehavior);
+
+                document.body.classList.add('no-select');
+                document.addEventListener('selectstart', preventDefaultBehavior);
+                document.addEventListener('contextmenu', preventDefaultBehavior);
+                
+            } else {
+                document.removeEventListener('copy', preventDefaultBehavior);
+                document.removeEventListener('cut', preventDefaultBehavior);
+                document.removeEventListener('paste', preventDefaultBehavior);
+
+                document.body.classList.remove('no-select');
+                document.removeEventListener('selectstart', preventDefaultBehavior);
+                document.removeEventListener('contextmenu', preventDefaultBehavior);
+            }
+        }
+
+        function preventDefaultBehavior(e) {
+            e.preventDefault();
+            return false;
+        }
 
         function attemptFullscreen() {
-            if (document.fullscreenElement) return;
-            const fsRequest = examContainer.requestFullscreen || examContainer.mozRequestFullScreen || examContainer.webkitRequestFullscreen || examContainer.msRequestFullscreen;
-            fsRequest.call(examContainer).catch(err => console.warn(`Gagal masuk layar penuh: ${err.message}`));
+            if (document.fullscreenElement || document.mozFullScreenElement || document.webkitFullscreenElement || document.msFullscreenElement) {
+                console.log("Sudah dalam mode layar penuh.");
+                return;
+            }
+
+            if (examContainer.requestFullscreen) {
+                examContainer.requestFullscreen().catch(err => {
+                    console.warn(`Gagal masuk layar penuh: ${err.message}`);
+                });
+            } else if (examContainer.mozRequestFullScreen) {
+                examContainer.mozRequestFullScreen().catch(err => console.warn(`Gagal masuk layar penuh (Firefox): ${err.message}`));
+            } else if (examContainer.webkitRequestFullscreen) {
+                examContainer.webkitRequestFullscreen().catch(err => console.warn(`Gagal masuk layar penuh (Webkit): ${err.message}`));
+            } else if (examContainer.msRequestFullscreen) {
+                examContainer.msRequestFullscreen().catch(err => console.warn(`Gagal masuk layar penuh (MS): ${err.message}`));
+            }
         }
 
         async function handleFullscreenChange() {
-            const isFullscreen = !!(document.fullscreenElement || document.mozFullScreenElement || document.webkitFullscreenElement || document.msFullscreenElement);
-            
-            if (!isFullscreen && isInExamMode) {
+            const dbRefs = getDbRefs();
+            if (!dbRefs || !foundTokenGlobal || !selectedStudentData) return;
+
+            const studentId = padStudentId(selectedStudentData.id);
+            const accessStatusRef = child(dbRefs.examAccessStatusRef, `${foundTokenGlobal.key}/${studentId}`);
+
+            if (!document.fullscreenElement && !document.mozFullScreenElement && !document.webkitFullscreenElement && !document.msFullscreenElement && isInExamMode) {
                 examIframe.classList.add('blurred');
-                fullscreenExitWarningOverlay.style.display = 'flex';
-                setTimeout(() => fullscreenExitWarningOverlay.style.opacity = 1, 10);
+                document.body.style.overflow = 'hidden';
+                
+                countdownDisplay.style.display = 'none';
+                zoomControls.style.display = 'none';
+                sidebarToggle.style.display = 'none';
+                closeSidebarButton.style.display = 'none';
+                answerSidebar.classList.remove('open');
+                examContentWrapper.classList.remove('sidebar-open');
+                examIframe.style.width = '100%';
+                isAnyModalOpen = true;
 
                 if (isLockEnabledGlobal) {
-                    let attempts = parseInt(sessionStorage.getItem('attemptsLeft') ?? toleranceLimitGlobal);
-                    if (attempts > 0) {
-                        attempts--;
-                        sessionStorage.setItem('attemptsLeft', attempts);
-                        const dbRefs = getDbRefs();
-                        const studentId = padStudentId(selectedStudentData.id);
-                        const accessStatusRef = child(dbRefs.examAccessStatusRef, `${foundTokenGlobal.key}/${studentId}`);
+                    let currentAttempts = parseInt(sessionStorage.getItem('attemptsLeft')) || toleranceLimitGlobal;
+                    if (currentAttempts > 0) {
+                        currentAttempts--;
+                        sessionStorage.setItem('attemptsLeft', currentAttempts);
                         try {
-                            await update(accessStatusRef, { attemptsLeft: attempts });
+                            await update(accessStatusRef, { attemptsLeft: currentAttempts, studentId: studentId });
                         } catch (error) {
-                            console.error("Gagal update attemptsLeft:", error);
+                            console.error("Gagal memperbarui attemptsLeft di Firebase:", error);
                         }
                     }
-                    currentAttemptsLeft = attempts;
+                    currentAttemptsLeft = currentAttempts;
+
+                    attemptsLeftInfo.style.display = 'block';
+                    lockKeySection.style.display = 'none';
+                    lockKeyInput.value = '';
+                    lockKeyMessage.textContent = '';
 
                     if (currentAttemptsLeft > 0) {
-                        exitWarningMessage.textContent = "Kembali ke mode layar penuh untuk melanjutkan.";
-                        attemptsLeftInfo.textContent = `Kesempatan tersisa: ${currentAttemptsLeft}`;
+                        exitWarningMessage.textContent = "Anda telah keluar dari mode layar penuh. Mohon kembali ke mode layar penuh untuk melanjutkan ujian.";
+                        if (currentAttemptsLeft === 1) {
+                            attemptsLeftInfo.textContent = `Ini adalah kesempatan terakhir Anda untuk keluar dari mode layar penuh!`;
+                        } else {
+                            attemptsLeftInfo.textContent = `Anda memiliki ${currentAttemptsLeft} kesempatan tersisa untuk keluar dari mode layar penuh.`;
+                        }
                         reEnterFullscreenBtn.style.display = 'block';
-                        lockKeySection.style.display = 'none';
                     } else {
-                        exitWarningMessage.textContent = "Kesempatan habis. Masukkan kunci untuk melanjutkan.";
-                        attemptsLeftInfo.textContent = "";
+                        exitWarningMessage.textContent = "Anda telah melebihi batas toleransi keluar dari mode layar penuh. Anda harus memasukkan kunci untuk melanjutkan ujian.";
+                        attemptsLeftInfo.textContent = "Kesempatan keluar sudah habis.";
                         reEnterFullscreenBtn.style.display = 'none';
                         lockKeySection.style.display = 'block';
+                        lockKeyInput.focus();
                     }
+                } else {
+                    exitWarningMessage.textContent = "Anda telah keluar dari mode layar penuh. Mohon kembali ke mode layar penuh untuk melanjutkan ujian.";
+                    attemptsLeftInfo.style.display = 'none';
+                    lockKeySection.style.display = 'none';
+                    reEnterFullscreenBtn.style.display = 'block';
                 }
-            } else if (isFullscreen) {
+
+                fullscreenExitWarningOverlay.style.display = 'flex';
+                setTimeout(() => { fullscreenExitWarningOverlay.style.opacity = 1; }, 10);
+
+            } else if (document.fullscreenElement || document.mozFullScreenElement || document.webkitFullscreenElement || document.msFullscreenElement) {
                 fullscreenExitWarningOverlay.style.opacity = 0;
                 setTimeout(() => { fullscreenExitWarningOverlay.style.display = 'none'; }, 300);
                 examIframe.classList.remove('blurred');
+                document.body.style.overflow = '';
+                isAnyModalOpen = false;
+
+                countdownDisplay.style.display = 'flex';
+                zoomControls.style.display = 'flex';
+                sidebarToggle.style.display = 'flex';
+                closeSidebarButton.style.display = 'none';
             }
         }
 
         function startSubmissionStatusListener() {
-            if (!foundTokenGlobal || !selectedStudentData || !currentDb) return;
+            if (!foundTokenGlobal || !selectedStudentData || !currentDb) {
+                console.warn("Token, data siswa, atau database tidak lengkap untuk memulai listener pengiriman.");
+                return;
+            }
+
             const dbRefs = getDbRefs();
             if (!dbRefs) return;
-            const studentSubmissionRef = child(dbRefs.submittedExamsRef, `${foundTokenGlobal.key}/${padStudentId(selectedStudentData.id)}`);
 
-            if (submissionListenerRef) off(submissionListenerRef);
-            submissionListenerRef = studentSubmissionRef; 
+            const tokenFirebaseKey = foundTokenGlobal.key;
+            const studentId = padStudentId(selectedStudentData.id);
+            
+            const studentSubmissionRef = child(dbRefs.submittedExamsRef, `${tokenFirebaseKey}/${studentId}`);
+
+            if (submissionListenerRef) {
+                off(submissionListenerRef);
+                submissionListenerRef = null;
+            }
+
+            submissionListenerRef = studentSubmissionRef;
+
             onValue(studentSubmissionRef, (snapshot) => {
-                if (snapshot.exists() && snapshot.val().isSubmitted && examContainer.style.display === 'flex') {
-                    showSubmissionConfirmationOverlay(true);
+                if (snapshot.exists() && snapshot.val().isSubmitted === true) {
+                    if (examContainer.style.display === 'flex') {
+                        console.log("Deteksi: Jawaban siswa direkam di Firebase secara real-time.");
+                        showSubmissionConfirmationOverlay(true);
+                        examIframe.src = '';
+                    }
                 }
-            }, (error) => console.error("Listener Gagal:", error));
+            }, (error) => {
+                console.error("Gagal mendengarkan status pengiriman:", error);
+            });
+            console.log("Listener real-time untuk status pengiriman dimulai.");
         }
 
         function startExamProcess(examUrl, examDurationMinutes, numQuestions, examStartTime, initialAnswers = null) {
+            console.log("startExamProcess dipanggil. Jawaban Awal:", initialAnswers);
+
             sessionStorage.setItem('isInExamMode', 'true');
             sessionStorage.setItem('selectedStudentData', JSON.stringify(selectedStudentData));
             sessionStorage.setItem('foundTokenGlobal', JSON.stringify(foundTokenGlobal));
             sessionStorage.setItem('examIframeSrc', examUrl);
-            sessionStorage.setItem('examStartTime', examStartTime);
+            sessionStorage.setItem('examStartTime', Number(examStartTime));
             sessionStorage.setItem('examDurationMinutes', examDurationMinutes);
             sessionStorage.setItem('totalQuestions', numQuestions);
-            sessionStorage.setItem('selectedGrade', selectedGrade);
+            sessionStorage.setItem('selectedClass', hiddenSelectKelas.value);
+            sessionStorage.setItem('selectedGrade', currentSelectedGrade);
 
-            studentAnswers = initialAnswers || Array(numQuestions).fill('');
-            sessionStorage.setItem('studentAnswers', studentAnswers.join(','));
-            
-            appContainer.style.display = 'none';
-            examContainer.style.display = 'flex';
+            if (initialAnswers && initialAnswers.length > 0) {
+                studentAnswers = initialAnswers;
+                sessionStorage.setItem('studentAnswers', studentAnswers.join(','));
+                console.log("studentAnswers diatur dari initialAnswers:", studentAnswers);
+            } else {
+                studentAnswers = Array(numQuestions).fill('');
+                sessionStorage.removeItem('studentAnswers');
+                console.log("studentAnswers diinisialisasi kosong.");
+            }
+
+            loginContainer.style.opacity = 0;
             setTimeout(() => {
-                examContainer.style.opacity = 1;
-                isInExamMode = true;
-                toggleExamSecurityFeatures(true);
-                renderAnswerBoxes();
-            }, 10);
+                loginContainer.style.display = 'none';
+                examContainer.style.display = 'flex';
+                setTimeout(() => {
+                    examContainer.style.opacity = 1;
+                    isInExamMode = true;
+                    toggleExamSecurityFeatures(true);
+                    renderAnswerBoxes();
+                }, 10);
+            }, 500);
 
             examIframe.src = examUrl;
-            const elapsedSeconds = Math.floor((Date.now() - examStartTime) / 1000);
-            remainingTime = (examDurationMinutes * 60) - elapsedSeconds;
             
-            if (timerInterval) clearInterval(timerInterval);
+            const totalDurationSeconds = examDurationMinutes * 60;
+            const elapsedSeconds = Math.floor((Date.now() - examStartTime) / 1000);
+            remainingTime = totalDurationSeconds - elapsedSeconds;
+            
+            console.log(`DEBUG: startExamProcess - totalDurationSeconds: ${totalDurationSeconds}, elapsedSeconds: ${elapsedSeconds}, calculated remainingTime: ${remainingTime}`);
+
+            if (remainingTime < 0) remainingTime = 0;
+            console.log(`DEBUG: startExamProcess - final remainingTime (setelah clamping): ${remainingTime}`);
+
+
             timerInterval = setInterval(updateTimerDisplay, 1000);
+            countdownDisplay.style.display = 'flex';
             updateTimerDisplay();
+
             attemptFullscreen();
             history.pushState(null, '', location.href);
             startSubmissionStatusListener();
+
+            sidebarToggle.style.display = 'flex';
+            closeSidebarButton.style.display = 'none';
         }
 
         async function restoreExamState() {
-            if (sessionStorage.getItem('isInExamMode') !== 'true') return;
+            const storedIsInExamMode = sessionStorage.getItem('isInExamMode');
+            if (storedIsInExamMode === 'true') {
+                const storedSelectedStudentData = JSON.parse(sessionStorage.getItem('selectedStudentData'));
+                const storedFoundTokenGlobal = JSON.parse(sessionStorage.getItem('foundTokenGlobal'));
+                const storedExamIframeSrc = sessionStorage.getItem('examIframeSrc');
+                const storedExamDurationMinutes = parseInt(sessionStorage.getItem('examDurationMinutes'), 10);
+                const storedTotalQuestions = parseInt(sessionStorage.getItem('totalQuestions'), 10);
+                const storedSelectedClass = sessionStorage.getItem('selectedClass');
+                const storedSelectedGrade = sessionStorage.getItem('selectedGrade');
 
-            const storedData = {
-                student: JSON.parse(sessionStorage.getItem('selectedStudentData')),
-                token: JSON.parse(sessionStorage.getItem('foundTokenGlobal')),
-                iframeSrc: sessionStorage.getItem('examIframeSrc'),
-                duration: parseInt(sessionStorage.getItem('examDurationMinutes'), 10),
-                totalQuestions: parseInt(sessionStorage.getItem('totalQuestions'), 10),
-                grade: parseInt(sessionStorage.getItem('selectedGrade'), 10),
-                startTime: Number(sessionStorage.getItem('examStartTime'))
-            };
+                let storedExamStartTimeRaw = sessionStorage.getItem('examStartTime');
+                let storedExamStartTime = Number(storedExamStartTimeRaw);
 
-            if (Object.values(storedData).some(val => !val)) {
-                sessionStorage.clear();
-                return;
-            }
+                if (isNaN(storedExamStartTime) || storedExamStartTime <= 0) {
+                    console.error("Restore State: Gagal mengambil examStartTime yang valid dari sessionStorage. Menggunakan 0. Raw:", storedExamStartTimeRaw);
+                    storedExamStartTime = 0;
+                }
 
-            await selectGrade(storedData.grade, true);
-            selectedStudentData = storedData.student;
-            foundTokenGlobal = storedData.token;
-            totalQuestions = storedData.totalQuestions;
+                console.log("Restore State: selectedStudentData", storedSelectedStudentData);
+                console.log("Restore State: foundTokenGlobal", storedFoundTokenGlobal);
+                console.log("Restore State: storedExamStartTime (setelah parsing):", storedExamStartTime);
+                console.log("Restore State: storedExamDurationMinutes:", storedExamDurationMinutes);
+                console.log("Restore State: storedTotalQuestions (dari sessionStorage):", storedTotalQuestions);
+                console.log("Restore State: storedSelectedClass:", storedSelectedClass);
+                console.log("Restore State: storedSelectedGrade:", storedSelectedGrade);
 
-            const instances = await getFirebaseInstanceForClass(`${storedData.grade}A`);
-            if (!instances) { sessionStorage.clear(); return; }
-            currentDb = instances.db;
-            currentAuth = instances.auth;
-            
-            const dbRefs = getDbRefs();
-            if (!dbRefs) { sessionStorage.clear(); return; }
+                if (storedSelectedStudentData && storedFoundTokenGlobal && storedExamIframeSrc &&
+                    !isNaN(storedExamStartTime) && storedExamStartTime > 0 &&
+                    !isNaN(storedExamDurationMinutes) && storedExamDurationMinutes > 0 &&
+                    !isNaN(storedTotalQuestions) && storedTotalQuestions >= 0 &&
+                    storedSelectedClass && storedSelectedGrade) {
+                    
+                    selectedStudentData = storedSelectedStudentData;
+                    foundTokenGlobal = storedFoundTokenGlobal;
+                    isInExamMode = true;
+                    totalQuestions = storedTotalQuestions;
+                    currentSelectedGrade = storedSelectedGrade;
 
-            const studentId = padStudentId(selectedStudentData.id);
-            const accessStatusRef = child(dbRefs.examAccessStatusRef, `${foundTokenGlobal.key}/${studentId}`);
-            const studentAnswersPath = child(dbRefs.studentAnswersRef, `${foundTokenGlobal.key}/${studentId}`);
-            
-            let loadedAnswers = Array(totalQuestions).fill('');
-            let storedAttemptsLeft = toleranceLimitGlobal;
+                    // Apply theme colors first
+                    const gradeConfig = allFirebaseConfigs[`kelas${currentSelectedGrade}-group1`]; // Assuming first group has theme
+                    if (gradeConfig && gradeConfig.theme) {
+                        document.documentElement.style.setProperty('--primary-color', gradeConfig.theme.primary);
+                        document.documentElement.style.setProperty('--accent-color', gradeConfig.theme.accent);
+                        document.documentElement.style.setProperty('--warning-color', gradeConfig.theme.warning);
 
-            try {
-                const answersSnapshot = await get(studentAnswersPath);
-                if (answersSnapshot.exists()) loadedAnswers = answersSnapshot.val().answers?.split(',') || loadedAnswers;
-                
-                const accessStatusSnapshot = await get(accessStatusRef);
-                if (accessStatusSnapshot.exists()) {
-                    const accessData = accessStatusSnapshot.val();
-                    storedAttemptsLeft = accessData.attemptsLeft ?? storedAttemptsLeft;
-                    if (accessData.isLoggedIn) {
-                        message.textContent = "Anda sudah login di perangkat lain. Hubungi admin.";
+                        // Also update element specific styles
+                        document.querySelector('.header-box').style.backgroundColor = gradeConfig.theme.primary;
+                        document.querySelector('.judul-ujian').style.color = gradeConfig.theme.warning;
+                        document.querySelector('#loginBtn').style.backgroundColor = gradeConfig.theme.accent;
+                        document.querySelector('#loginBtn:hover').style.backgroundColor = gradeConfig.theme.primary;
+                        document.querySelector('#countdownDisplay').style.backgroundColor = gradeConfig.theme.primary;
+                        document.querySelector('#customMessageModalButton').style.backgroundColor = gradeConfig.theme.accent;
+                        document.querySelector('#customConfirmModalConfirmBtn').style.backgroundColor = gradeConfig.theme.accent;
+                        document.querySelector('#zoomControls button').style.backgroundColor = gradeConfig.theme.accent;
+                        document.querySelector('#zoomControls button:hover').style.backgroundColor = gradeConfig.theme.primary;
+                        document.querySelector('#fullscreenOverlay .overlay-content').style.background = `linear-gradient(135deg, ${gradeConfig.theme.primary} 0%, ${gradeConfig.theme.primary} 100%)`;
+                        document.querySelector('.custom-modal-content h4').style.color = gradeConfig.theme.primary;
+                        document.querySelector('#confirmModal .modal-content h4').style.color = gradeConfig.theme.primary;
+                        document.querySelector('#answerSelectionModal h4').style.color = gradeConfig.theme.primary;
+                        document.querySelector('#submitAnswersButton').style.backgroundColor = gradeConfig.theme.accent;
+                        document.querySelector('#submitAnswersButton:hover').style.backgroundColor = gradeConfig.theme.primary;
+                        document.querySelector('.exit-warning-button').style.backgroundColor = gradeConfig.theme.accent;
+                        document.querySelector('.exit-warning-button:hover').style.backgroundColor = gradeConfig.theme.primary;
+
+                    }
+                    loginJudulUjian.textContent = `UJIAN KELAS ${currentSelectedGrade}`;
+
+                    const instances = await getFirebaseInstanceForClass(storedSelectedClass);
+                    if (!instances) {
+                        console.error("Restore State: Gagal menginisialisasi database untuk kelas yang disimpan. Membersihkan sesi.");
                         sessionStorage.clear();
-                        showSelectionScreen();
                         return;
                     }
-                }
-            } catch (error) { console.error("Gagal memuat status:", error); }
-            
-            sessionStorage.setItem('attemptsLeft', storedAttemptsLeft);
-            currentAttemptsLeft = storedAttemptsLeft;
-            remainingTime = (storedData.duration * 60) - Math.floor((Date.now() - storedData.startTime) / 1000);
+                    currentDb = instances.db;
+                    
+                    const dbRefs = getDbRefs();
+                    if (!dbRefs) {
+                        console.error("Restore State: Gagal mendapatkan referensi database saat memulihkan jawaban.");
+                        sessionStorage.clear();
+                        return;
+                    }
 
-            if (remainingTime > 0) {
-                selectionContainer.style.display = 'none';
-                appContainer.style.display = 'none';
-                startExamProcess(storedData.iframeSrc, storedData.duration, storedData.totalQuestions, storedData.startTime, loadedAnswers);
-            } else {
-                sessionStorage.clear();
-                examContainer.style.display = 'flex';
-                examContainer.style.opacity = 1;
-                submitAnswers(true);
+                    const tokenFirebaseKey = foundTokenGlobal.key;
+                    const studentId = padStudentId(selectedStudentData.id);
+                    const accessStatusRef = child(dbRefs.examAccessStatusRef, `${tokenFirebaseKey}/${studentId}`);
+                    const studentAnswersPath = child(dbRefs.studentAnswersRef, `${tokenFirebaseKey}/${studentId}`);
+                    
+                    let loadedAnswers = Array(totalQuestions).fill('');
+                    let storedAttemptsLeft = toleranceLimitGlobal;
+
+                    try {
+                        const answersSnapshot = await get(studentAnswersPath);
+                        if (answersSnapshot.exists()) {
+                            const savedAnswersData = answersSnapshot.val();
+                            loadedAnswers = savedAnswersData.answers ? savedAnswersData.answers.split(',') : Array(totalQuestions).fill('');
+                            console.log("Restore State: Jawaban siswa dimuat dari Firebase:", loadedAnswers);
+                        } else {
+                            console.log("Restore State: Tidak ada jawaban yang disimpan di Firebase pada jalur ini, dimulai dengan array kosong.");
+                        }
+
+                        const accessStatusSnapshot = await get(accessStatusRef);
+                        if (accessStatusSnapshot.exists()) {
+                            const accessData = accessStatusSnapshot.val();
+                            if (accessData.attemptsLeft !== undefined) {
+                                storedAttemptsLeft = accessData.attemptsLeft;
+                            }
+                            if (accessData.isLoggedIn === true) {
+                                message.style.color = "red";
+                                message.textContent = "Anda sudah Login di perangkat lain. Mohon hubungi admin untuk mereset akun Anda.";
+                                welcomeScreen.style.display = 'none';
+                                loginContainer.style.display = 'flex';
+                                loginContainer.style.opacity = 1;
+                                examContainer.style.display = 'none';
+                                sessionStorage.clear();
+                                updateLoginButtonStatus();
+                                return;
+                            }
+                        }
+                    } catch (error) {
+                        console.error("Restore State: Gagal memuat jawaban atau status akses dari Firebase:", error);
+                    }
+                    sessionStorage.setItem('attemptsLeft', storedAttemptsLeft);
+                    currentAttemptsLeft = storedAttemptsLeft;
+
+                    const elapsedSeconds = Math.floor((Date.now() - storedExamStartTime) / 1000);
+                    const totalDurationSeconds = storedExamDurationMinutes * 60;
+                    remainingTime = totalDurationSeconds - elapsedSeconds;
+
+                    if (remainingTime > 0) {
+                        welcomeScreen.style.display = 'none';
+                        loginContainer.style.opacity = 0;
+                        setTimeout(() => {
+                            loginContainer.style.display = 'none';
+                            examContainer.style.display = 'flex';
+                            setTimeout(() => {
+                                examContainer.style.opacity = 1;
+                                startExamProcess(storedExamIframeSrc, storedExamDurationMinutes, storedTotalQuestions, storedExamStartTime, loadedAnswers);
+                                examContentWrapper.classList.remove('sidebar-open');
+                                sidebarToggle.style.display = 'flex';
+                                closeSidebarButton.style.display = 'none';
+                            }, 10);
+                        }, 500);
+                    } else {
+                        sessionStorage.clear();
+                        welcomeScreen.style.display = 'none';
+                        loginContainer.style.display = 'none';
+                        examContainer.style.display = 'flex';
+                        examContainer.style.opacity = 1;
+                        timerText.textContent = "00:00";
+                        countdownDisplay.style.display = 'block';
+                        submitAnswers(true);
+                    }
+                } else {
+                    console.warn("Restore State: Status ujian tidak lengkap atau tidak valid ditemukan di penyimpanan sesi. Membersihkan.");
+                    sessionStorage.clear();
+                }
             }
         }
 
-        async function handleLanjutClick(examDurationMinutes, numQuestions, initialAnswers = null) {
+        async function handleLanjutClick(fullTokenId, examDurationMinutes, numQuestions, initialAnswers = null) {
             if (!confirmCheckbox.checked) {
-                modalMessage.textContent = "Anda harus mencentang cekbox untuk melanjutkan!";
                 modalMessage.style.display = 'block';
+                modalMessage.textContent = "Anda harus mencentang cekbox untuk melanjutkan!";
+                return;
+            } else {
+                modalMessage.style.display = 'none';
+            }
+
+            confirmModal.classList.remove('show');
+            isAnyModalOpen = false;
+
+            if (!foundTokenGlobal || !selectedStudentData || !currentDb) {
+                console.error("Error: Data ujian, data siswa, atau database tidak ditemukan untuk pengalihan (handleLanjutClick).");
+                message.style.color = "red";
+                message.textContent = "Terjadi kesalahan saat menyiapkan tautan ujian. Pastikan koneksi internet Anda stabil dan coba lagi.";
+                updateLoginButtonStatus();
+                loginContainer.style.display = 'flex';
+                examContainer.style.display = 'none';
+                sessionStorage.clear();
                 return;
             }
-            modalMessage.style.display = 'none';
-            confirmModal.classList.remove('show');
+
             message.innerHTML = `Mencatat akses ujian... <span class="spinner"></span>`;
-            
+
             const dbRefs = getDbRefs();
+            if (!dbRefs) return;
+
+            const tokenFirebaseKey = foundTokenGlobal.key;
             const studentId = padStudentId(selectedStudentData.id);
-            const accessStatusRef = child(dbRefs.examAccessStatusRef, `${foundTokenGlobal.key}/${studentId}`);
-            
+            const accessStatusRef = child(dbRefs.examAccessStatusRef, `${tokenFirebaseKey}/${studentId}`);
+            const studentFirebaseKey = selectedStudentData.key;
+
             try {
-                const txResult = await runTransaction(accessStatusRef, (currentData) => {
-                    if (currentData?.isLoggedIn) return; // Abort
-                    const now = Date.now();
-                    return {
-                        accessCount: (currentData?.accessCount || 0) + 1,
-                        firstLoginTimestamp: currentData?.firstLoginTimestamp || now,
-                        lastAccessTimestamp: now,
-                        isLoggedIn: true,
-                        examStartTime: currentData?.examStartTime || now,
-                        studentId: studentId,
-                        attemptsLeft: toleranceLimitGlobal
-                    };
+                let examAccessDataAfterTransaction = await runTransaction(accessStatusRef, (currentAccess) => {
+                    const nowAccess = Date.now();
+                    let updatedAccess = currentAccess;
+
+                    if (currentAccess === null || currentAccess.isLoggedIn === false) {
+                        updatedAccess = {
+                            accessCount: (currentAccess ? currentAccess.accessCount || 0 : 0) + 1,
+                            firstLoginTimestamp: currentAccess ? currentAccess.firstLoginTimestamp : nowAccess,
+                            lastAccessTimestamp: nowAccess,
+                            isLoggedIn: true,
+                            examStartTime: currentAccess ? currentAccess.examStartTime : nowAccess,
+                            studentId: studentId,
+                            attemptsLeft: toleranceLimitGlobal
+                        };
+                        if (updatedAccess.logoutTimestamp) {
+                            delete updatedAccess.logoutTimestamp;
+                        }
+                    } else {
+                        updatedAccess.accessCount = (currentAccess.accessCount || 0) + 1;
+                        updatedAccess.lastAccessTimestamp = nowAccess;
+                        updatedAccess.isLoggedIn = true;
+                        if (foundTokenGlobal.isForceActive && (!currentAccess.examStartTime || isNaN(currentAccess.examStartTime) || currentAccess.examStartTime <= 0)) {
+                            updatedAccess.examStartTime = nowAccess;
+                        }
+                        updatedAccess.studentId = currentAccess.studentId || studentId;
+                        updatedAccess.attemptsLeft = currentAccess.attemptsLeft !== undefined ? currentAccess.attemptsLeft : toleranceLimitGlobal;
+                    }
+                    return updatedAccess;
                 });
 
-                if (txResult.committed) {
-                    const studentIsLoggedInRef = child(dbRefs.studentsRef, `${selectedStudentData.key}/isLoggedIn`);
-                    await set(studentIsLoggedInRef, true);
+                if (examAccessDataAfterTransaction.committed) {
+                    console.log(`Akses ke token ${foundTokenGlobal.key} oleh siswa ${selectedStudentData.id} berhasil diperbarui. accessCount baru: ${examAccessDataAfterTransaction.snapshot.val().accessCount}`);
                     
-                    let url = foundTokenGlobal.googleDriveUrl;
-                    if (url.includes('drive.google.com/file/d/')) {
-                        url = url.replace('/view', '/preview');
-                        if (!url.includes('chrome=false')) {
-                            url += (url.includes('?') ? '&' : '?') + 'chrome=false';
+                    if (studentFirebaseKey) {
+                        const studentIsLoggedInRef = child(dbRefs.studentsRef, `${studentFirebaseKey}/isLoggedIn`);
+                        await set(studentIsLoggedInRef, true);
+                        console.log(`Status isLoggedIn siswa ${selectedStudentData.id} di node siswa diatur ke true pada 'Lanjutkan'.`);
+                    } else {
+                        console.warn(`Tidak dapat menemukan kunci Firebase untuk siswa ${selectedStudentData.id} untuk memperbarui status isLoggedIn di node siswa.`);
+                    }
+
+                    globalExamUrl = foundTokenGlobal.googleDriveUrl;
+
+                    if (globalExamUrl.includes('drive.google.com/file/d/')) {
+                        globalExamUrl = globalExamUrl.replace('/view', '/preview');
+                        
+                        if (!globalExamUrl.includes('/preview')) {
+                            const parts = globalExamUrl.split('/file/d/');
+                            if (parts.length > 1) {
+                                const fileIdAndRest = parts[1].split('/');
+                                const fileId = fileIdAndRest[0];
+                                globalExamUrl = `${parts[0]}/file/d/${fileId}/preview`;
+                                if (fileIdAndRest.length > 1) {
+                                    globalExamUrl += fileIdAndRest.slice(1).join('/');
+                                }
+                            }
+                        }
+
+                        const hasQueryParams = globalExamUrl.includes('?');
+                        if (!globalExamUrl.includes('chrome=false')) {
+                            globalExamUrl += hasQueryParams ? '&chrome=false' : '?chrome=false';
                         }
                     }
-                    globalExamUrl = url;
+                    console.log("Final Google Drive URL:", globalExamUrl);
+
                     globalExamDurationMinutes = examDurationMinutes;
                     globalNumQuestions = numQuestions;
-                    globalExamStartTime = Number(txResult.snapshot.val().examStartTime);
-                    showOverlay(initialAnswers);
+                    globalExamStartTime = Number(examAccessDataAfterTransaction.snapshot.val().examStartTime);
+                    globalInitialAnswers = initialAnswers;
+
+                    if (isNaN(globalExamStartTime) || globalExamStartTime <= 0) {
+                        console.error("Kesalahan Kritis: globalExamStartTime tidak valid setelah transaksi di handleLanjutClick. Menggunakan Date.now() sebagai fallback.");
+                        globalExamStartTime = Date.now();
+                    }
+                    
+                    currentAttemptsLeft = toleranceLimitGlobal;
+                    sessionStorage.setItem('attemptsLeft', currentAttemptsLeft);
+
+                    message.textContent = "";
+                    showOverlay(globalInitialAnswers);
                 } else {
-                    message.textContent = "Gagal merekam akses. Sesi mungkin sudah aktif.";
+                    console.warn("Transaksi untuk status akses ujian dibatalkan di handleLanjutClick.");
+                    message.style.color = "orange";
+                    message.textContent = "Gagal merekam akses ujian. Silakan coba lagi.";
+                    updateLoginButtonStatus();
+                    loginContainer.style.display = 'flex';
+                    examContainer.style.display = 'none';
+                    sessionStorage.clear();
                 }
+
             } catch (err) {
-                message.textContent = "Terjadi kesalahan saat memulai sesi ujian.";
+                console.error("Error di handleLanjutClick (selama transaksi akses ujian):", err);
+                message.style.color = "red";
+                message.textContent = "Terjadi kesalahan saat merekam akses ujian. Silakan coba lagi atau hubungi administrator.";
+                updateLoginButtonStatus();
+                loginContainer.style.display = 'flex';
+                examContainer.style.display = 'none';
+                sessionStorage.clear();
             }
         }
-        
+
         function toggleSidebar() {
-            examContentWrapper.classList.toggle('sidebar-open');
+            const isSidebarOpen = examContentWrapper.classList.contains('sidebar-open');
+            
+            if (!isSidebarOpen) {
+                examContentWrapper.classList.add('sidebar-open');
+                sidebarToggle.style.display = 'none';
+                closeSidebarButton.style.display = 'flex';
+            } else {
+                examContentWrapper.classList.remove('sidebar-open');
+                sidebarToggle.style.display = 'flex';
+                closeSidebarButton.style.display = 'none';
+
+                submissionWarningMessage.textContent = '';
+            }
             resetIframePan();
         }
 
         function closeSidebarOnClickOutside(event) {
-            if (examContentWrapper.classList.contains('sidebar-open') && !answerSidebar.contains(event.target) && !sidebarToggle.contains(event.target)) {
-                toggleSidebar();
+            if (examContentWrapper.classList.contains('sidebar-open')) {
+                const isAnswerSelectionModalVisible = answerSelectionModal.classList.contains('show');
+                if (!answerSidebar.contains(event.target) &&
+                    event.target !== sidebarToggle &&
+                    !sidebarToggle.contains(event.target) &&
+                    event.target !== closeSidebarButton &&
+                    !closeSidebarButton.contains(event.target) &&
+                    (!isAnyModalOpen || !answerSelectionModal.contains(event.target))) {
+                    toggleSidebar();
+                }
             }
         }
 
         function renderAnswerBoxes() {
+            const effectiveTotalQuestions = (totalQuestions > 0) ? totalQuestions : studentAnswers.length;
+            console.log(`Merender kotak jawaban. Total pertanyaan efektif: ${effectiveTotalQuestions}`);
+            
             answerListContainer.innerHTML = '';
-            for (let i = 0; i < totalQuestions; i++) {
-                const answer = studentAnswers[i] || '...';
-                const box = document.createElement('div');
-                box.className = `answer-box ${studentAnswers[i] ? 'answered' : 'unanswered'}`;
-                box.dataset.questionIndex = i;
-                box.innerHTML = `<span class="question-number">${i + 1}</span><span class="selected-answer">${answer}</span>`;
-                box.addEventListener('click', () => openAnswerSelectionModal(i));
-                answerListContainer.appendChild(box);
+            for (let i = 0; i < effectiveTotalQuestions; i++) {
+                const questionNumber = i + 1;
+                const answer = studentAnswers[i];
+                const answerBox = document.createElement('div');
+                answerBox.classList.add('answer-box');
+                answerBox.dataset.questionIndex = i;
+                answerBox.innerHTML = `
+                    <span class="question-number">${questionNumber}</span>
+                    <span class="selected-answer">${answer || '...'}</span>
+                `;
+                if (answer) {
+                    answerBox.classList.add('answered');
+                    answerBox.classList.remove('unanswered');
+                } else {
+                    answerBox.classList.add('unanswered');
+                    answerBox.classList.remove('answered');
+                }
+                answerBox.addEventListener('click', () => openAnswerSelectionModal(i));
+                answerListContainer.appendChild(answerBox);
+                console.log(`Kotak jawaban dibuat dan ditambahkan untuk pertanyaan: ${questionNumber}, Jawaban: ${answer}`);
             }
         }
 
         function openAnswerSelectionModal(index) {
             currentQuestionIndexForModal = index;
             currentQuestionNumberSpan.textContent = index + 1;
+
+            const currentAnswer = studentAnswers[index];
             answerOptionsContainer.querySelectorAll('button').forEach(button => {
-                button.classList.toggle('selected', button.dataset.answer === studentAnswers[index]);
+                if (button.dataset.answer === currentAnswer) {
+                    button.classList.add('selected');
+                } else {
+                    button.classList.remove('selected');
+                }
             });
+
             answerSelectionModal.classList.add('show');
+            isAnyModalOpen = true;
         }
 
         function closeAnswerSelectionModal() {
             answerSelectionModal.classList.remove('show');
+            currentQuestionIndexForModal = -1;
+            isAnyModalOpen = false;
         }
 
         function selectAnswer(answer) {
             if (currentQuestionIndexForModal !== -1) {
                 studentAnswers[currentQuestionIndexForModal] = answer;
                 renderAnswerBoxes();
+                sessionStorage.setItem('studentAnswers', studentAnswers.join(','));
                 saveStudentAnswersToFirebase();
                 closeAnswerSelectionModal();
             }
         }
 
         function clearAnswer() {
-            selectAnswer('');
+            if (currentQuestionIndexForModal !== -1) {
+                studentAnswers[currentQuestionIndexForModal] = '';
+                renderAnswerBoxes();
+                sessionStorage.setItem('studentAnswers', studentAnswers.join(','));
+                saveStudentAnswersToFirebase();
+                closeAnswerSelectionModal();
+            }
         }
 
         async function saveStudentAnswersToFirebase() {
-            if (!foundTokenGlobal || !selectedStudentData) return;
+            if (!foundTokenGlobal || !selectedStudentData || !currentDb) {
+                console.warn("Data token, data siswa, atau database tidak lengkap. Tidak dapat menyimpan jawaban ke Firebase.");
+                return;
+            }
+
             const dbRefs = getDbRefs();
+            if (!dbRefs) return;
+
+            const tokenFirebaseKey = foundTokenGlobal.key;
             const studentId = padStudentId(selectedStudentData.id);
-            const path = child(dbRefs.studentAnswersRef, `${foundTokenGlobal.key}/${studentId}`);
+            const studentAnswersPath = child(dbRefs.studentAnswersRef, `${tokenFirebaseKey}/${studentId}`);
+
             try {
-                await set(path, {
+                await set(studentAnswersPath, {
                     answers: studentAnswers.join(','),
                     timestamp: Date.now(),
+                    studentName: selectedStudentData.name,
+                    studentClass: selectedStudentData.class,
+                    token: foundTokenGlobal.token,
+                    subject: foundTokenGlobal.subject,
                     studentId: studentId
                 });
-            } catch (error) { console.error("Gagal simpan jawaban:", error); }
+                console.log("Jawaban siswa berhasil disimpan ke Firebase.");
+            } catch (error) {
+                console.error("Gagal menyimpan jawaban siswa ke Firebase:", error);
+            }
         }
 
         async function submitAnswers(isAutoSubmit = false) {
+            submissionWarningMessage.textContent = '';
+
+            if (!foundTokenGlobal || !selectedStudentData || !currentDb) {
+                submissionWarningMessage.textContent = 'Error: Data ujian, data siswa, atau database tidak ditemukan. Tidak dapat mengirimkan jawaban.';
+                return;
+            }
+
+            const dbRefs = getDbRefs();
+            if (!dbRefs) return;
+
             if (!isAutoSubmit) {
-                const unansweredCount = studentAnswers.filter(a => !a).length;
-                if (unansweredCount > 0) {
-                    submissionWarningMessage.textContent = `Ada ${unansweredCount} jawaban kosong!`;
+                const unansweredQuestions = studentAnswers.filter(answer => answer === '').length;
+                if (unansweredQuestions > 0) {
+                    submissionWarningMessage.textContent = `Ada ${unansweredQuestions} jawaban yang belum terisi! Harap periksa kembali.`;
                     return;
                 }
-                if (!await window.showCustomConfirmModal("Konfirmasi", "Yakin ingin mengirimkan jawaban?")) return;
             }
+
+            if (!isAutoSubmit) {
+                const confirmed = await window.showCustomConfirmModal("Konfirmasi Pengiriman", "Apakah Anda yakin ingin mengirimkan semua jawaban? Setelah dikirim, Anda tidak dapat mengubahnya lagi.");
+                if (!confirmed) {
+                    return;
+                }
+            }
+
             submitAnswersButton.disabled = true;
-            submitAnswersButton.textContent = 'Mengirim...';
+            submitAnswersButton.textContent = 'Mengirim Jawaban...';
+            submitAnswersButton.style.backgroundColor = '#cccccc';
+
+            const tokenFirebaseKey = foundTokenGlobal.key;
+            const studentId = padStudentId(selectedStudentData.id);
+            const studentFirebaseKey = selectedStudentData.key;
+
             try {
                 await saveStudentAnswersToFirebase();
-                const dbRefs = getDbRefs();
-                const studentId = padStudentId(selectedStudentData.id);
-                const submittedPath = child(dbRefs.submittedExamsRef, `${foundTokenGlobal.key}/${studentId}`);
-                await set(submittedPath, { isSubmitted: true, timestamp: Date.now(), studentId });
-                const accessStatusRef = child(dbRefs.examAccessStatusRef, `${foundTokenGlobal.key}/${studentId}`);
-                await update(accessStatusRef, { isLoggedIn: false });
-                const studentIsLoggedInRef = child(dbRefs.studentsRef, `${selectedStudentData.key}/isLoggedIn`);
-                await set(studentIsLoggedInRef, false);
+
+                const submittedExamPath = child(dbRefs.submittedExamsRef, `${tokenFirebaseKey}/${studentId}`);
+                await set(submittedExamPath, {
+                    isSubmitted: true,
+                    timestamp: Date.now(),
+                    studentId: studentId
+                });
+                console.log("Status ujian berhasil diperbarui menjadi dikirim di submitted_exams.");
+
+                const accessStatusRef = child(dbRefs.examAccessStatusRef, `${tokenFirebaseKey}/${studentId}`);
+                await update(accessStatusRef, {
+                    isLoggedIn: false,
+                    studentId: studentId,
+                    attemptsLeft: toleranceLimitGlobal
+                });
+                console.log("isLoggedIn diatur ke false dan attemptsLeft direset di exam_access_status saat pengiriman.");
+
+                if (studentFirebaseKey) {
+                    const studentIsLoggedInRef = child(dbRefs.studentsRef, `${studentFirebaseKey}/isLoggedIn`);
+                    await set(studentIsLoggedInRef, false);
+                    console.log(`Status isLoggedIn siswa ${selectedStudentData.id} di node siswa diatur ke false saat pengiriman.`);
+                } else {
+                    console.warn(`Tidak dapat menemukan kunci Firebase untuk siswa ${selectedStudentData.id} untuk memperbarui status isLoggedIn di node siswa.`);
+                }
+
                 showSubmissionConfirmationOverlay(isAutoSubmit);
+
             } catch (error) {
-                submissionWarningMessage.textContent = 'Gagal mengirim. Hubungi admin.';
-                submitAnswersButton.disabled = false;
+                console.error("Gagal mengirimkan jawaban:", error);
+                submissionWarningMessage.textContent = 'Gagal mengirimkan jawaban. Silakan coba lagi atau hubungi administrator.';
+            } finally {
+                submitAnswersButton.textContent = 'KIRIM JAWABAN';
             }
         }
 
-        window.showCustomMessageModal = function (title, text) {
+        window.showCustomMessageModal = function (title, messageText, type = 'info') {
             customMessageModalTitle.textContent = title;
-            customMessageModalText.textContent = text;
+            customMessageModalText.textContent = messageText;
+
+            customMessageModalTitle.style.color = '';
+            customMessageModalButton.style.backgroundColor = '';
+            switch (type) {
+                case 'success':
+                    customMessageModalTitle.style.color = '#4CAF50';
+                    customMessageModalButton.style.backgroundColor = '#4CAF50';
+                    break;
+                case 'error':
+                    customMessageModalTitle.style.color = '#dc3545';
+                    customMessageModalButton.style.backgroundColor = '#dc3545';
+                    break;
+                case 'warning':
+                    customMessageModalTitle.style.color = '#ffc107';
+                    customMessageModalButton.style.backgroundColor = '#ffc107';
+                    break;
+                default:
+                    customMessageModalTitle.style.color = document.documentElement.style.getPropertyValue('--primary-color');
+                    customMessageModalButton.style.backgroundColor = document.documentElement.style.getPropertyValue('--accent-color');
+            }
+
             customMessageModal.classList.add('show');
+            isAnyModalOpen = true;
         }
+
         window.hideCustomMessageModal = function () {
             customMessageModal.classList.remove('show');
+            isAnyModalOpen = false;
         }
-        window.showCustomConfirmModal = function (title, text) {
-            return new Promise(resolve => {
+
+        window.showCustomConfirmModal = function (title, messageText) {
+            return new Promise((resolve) => {
                 customConfirmModalTitle.textContent = title;
-                customConfirmModalText.textContent = text;
+                customConfirmModalText.textContent = messageText;
+
                 customConfirmModal.classList.add('show');
-                const onConfirm = () => cleanup(true);
-                const onCancel = () => cleanup(false);
-                const cleanup = (result) => {
-                    customConfirmModalConfirmBtn.removeEventListener('click', onConfirm);
-                    customConfirmModalCancelBtn.removeEventListener('click', onCancel);
+                isAnyModalOpen = true;
+
+                const handleConfirm = () => {
                     customConfirmModal.classList.remove('show');
-                    resolve(result);
+                    isAnyModalOpen = false;
+                    customConfirmModalConfirmBtn.removeEventListener('click', handleConfirm);
+                    customConfirmModalCancelBtn.removeEventListener('click', handleCancel);
+                    resolve(true);
                 };
-                customConfirmModalConfirmBtn.addEventListener('click', onConfirm);
-                customConfirmModalCancelBtn.addEventListener('click', onCancel);
+
+                const handleCancel = () => {
+                    customConfirmModal.classList.remove('show');
+                    isAnyModalOpen = false;
+                    customConfirmModalConfirmBtn.removeEventListener('click', handleConfirm);
+                    customConfirmModalCancelBtn.removeEventListener('click', handleCancel);
+                    resolve(false);
+                };
+
+                customConfirmModalConfirmBtn.addEventListener('click', handleConfirm);
+                customConfirmModalCancelBtn.addEventListener('click', handleCancel);
             });
         }
-        
+
+        function getTranslateValues(element) {
+            const style = window.getComputedStyle(element);
+            const matrix = style.transform;
+
+            if (matrix === 'none') {
+                return { x: 0, y: 0 };
+            }
+
+            const matrixValues = matrix.match(/matrix.*\((.+)\)/)[1].split(', ');
+            return {
+                x: parseFloat(matrixValues[4]),
+                y: parseFloat(matrixValues[5])
+            };
+        }
+
+        function applyIframeTransform() {
+            examIframe.style.transform = `translate(${currentTranslateX}px, ${currentTranslateY}px) scale(${currentZoom})`;
+            console.log(`Menerapkan transform: translate(${currentTranslateX}px, ${currentTranslateY}px) scale(${currentZoom})`);
+        }
+
         function resetIframePan() {
             currentTranslateX = 0;
             currentTranslateY = 0;
@@ -2455,190 +3244,867 @@
         function updateZoomButtonStates() {
             zoomInBtn.disabled = currentZoom >= MAX_ZOOM;
             zoomOutBtn.disabled = currentZoom <= MIN_ZOOM;
-            panLeftBtn.disabled = panRightBtn.disabled = currentZoom <= MIN_ZOOM;
+            
+            const isZoomedIn = currentZoom > MIN_ZOOM;
+            panLeftBtn.disabled = !isZoomedIn;
+            panRightBtn.disabled = !isZoomedIn;
+
+            refreshIframeBtn.disabled = false;
+        }
+
+        function resetAutoHideTimer() {
+            clearTimeout(autoHideTimer);
+            autoHideTimer = setTimeout(() => {
+                if (zoomControls.classList.contains('show-controls')) {
+                    zoomControls.classList.remove('show-controls');
+                }
+            }, 3000);
+        }
+
+        function toggleControlsPanel() {
+            zoomControls.classList.toggle('show-controls');
+            if (zoomControls.classList.contains('show-controls')) {
+                resetAutoHideTimer();
+            } else {
+                clearTimeout(autoHideTimer);
+            }
         }
         
-        function showSelectionScreen() {
-            appContainer.style.display = 'none';
-            selectionContainer.style.display = 'block';
-            document.body.className = '';
-            
-            selectedGrade = null;
-            currentDb = null;
-            currentAuth = null;
-            allStudentsData = [];
-            selectedStudentData = null;
-            hiddenSelectKelas.value = '';
-            customSelectKelasDisplay.textContent = '-- Pilih Kelas --';
-            customSelectKelasDisplay.classList.remove('selected');
-            hiddenSelectNamaSiswa.value = '';
-            customSelectNamaSiswaDisplay.textContent = '-- Pilih Nama Siswa --';
-            customSelectNamaSiswaDisplay.classList.remove('selected');
-            inputTokenPrefix.value = '';
-            displayStudentId.value = '';
-            updateLoginButtonStatus();
+        function startAutoPan() {
+            if (panIntervalId) clearInterval(panIntervalId);
+            panIntervalId = setInterval(() => {
+                if (currentZoom > MIN_ZOOM) {
+                    let newTranslateX = currentTranslateX + (panDirection * PAN_STEP);
+                    
+                    const unscaledIframeWidth = examIframe.offsetWidth;
+                    const scaledIframeWidth = unscaledIframeWidth * currentZoom;
+                    const containerWidth = examContentWrapper.offsetWidth;
+
+                    const maxNegativeX = -(Math.max(0, scaledIframeWidth - containerWidth));
+                    newTranslateX = Math.max(maxNegativeX, Math.min(0, newTranslateX));
+
+                    if (newTranslateX === currentTranslateX) {
+                        stopAutoPan();
+                        return;
+                    }
+
+                    currentTranslateX = newTranslateX;
+                    applyIframeTransform();
+                } else {
+                    stopAutoPan();
+                }
+            }, PAN_INTERVAL);
         }
 
-        async function selectGrade(grade, isRestoring = false) {
-            selectedGrade = grade;
-            document.body.className = `theme-${{7:'blue', 8:'orange', 9:'maroon'}[grade]}`;
-            document.querySelector('#appContainer .judul-ujian').textContent = `UJIAN KELAS ${grade}`;
-
-            if (!isRestoring) {
-                selectionContainer.style.display = 'none';
-                appContainer.style.display = 'block';
-
-                if (grade === 7) {
-                    await getFirebaseInstanceForClass('7A');
-                    await getFirebaseInstanceForClass('7D');
-                } else if (grade === 8) {
-                    await getFirebaseInstanceForClass('8A');
-                    await getFirebaseInstanceForClass('8D');
-                } else if (grade === 9) {
-                    await getFirebaseInstanceForClass('9A');
-                    await getFirebaseInstanceForClass('9D');
-                }
-
-                const instances = await getFirebaseInstanceForClass(`${grade}A`);
-                if (!instances) {
-                    message.textContent = "Gagal memuat pengaturan untuk jenjang ini.";
-                    message.style.color = 'red';
-                    return;
-                }
-                const db = instances.db;
-                try {
-                    const settings = (await get(ref(db, 'setlokasi'))).val() || {};
-                    isLocationEnabled = settings.isLocationEnabled ?? true;
-                    firebaseAllowedRadiusKm = settings.allowedRadiusKm ?? 0.075;
-                    const lockSettings = (await get(ref(db, 'lock_settings'))).val() || {};
-                    isLockEnabledGlobal = lockSettings.isLockEnabled ?? false;
-                    lockKeyGlobal = lockSettings.lockKey ?? "";
-                    toleranceLimitGlobal = lockSettings.toleranceLimit ?? 3;
-                } catch (error) { console.error("Gagal ambil pengaturan:", error); }
-                loadInitialClassDropdown();
-                getLocation();
-                updateLoginButtonStatus();
+        function stopAutoPan() {
+            if (panIntervalId) {
+                clearInterval(panIntervalId);
+                panIntervalId = null;
+                console.log("Pan otomatis dihentikan.");
             }
         }
 
+        async function selectGrade(grade) {
+            currentSelectedGrade = grade;
+            welcomeScreen.style.opacity = 0;
+            setTimeout(() => {
+                welcomeScreen.style.display = 'none';
+                loginContainer.style.display = 'block';
+                loginContainer.classList.add('show');
+                document.body.style.overflow = '';
+            }, 500);
+
+            // Set dynamic CSS variables based on selected grade's theme
+            const gradeConfig = allFirebaseConfigs[`kelas${grade}-group1`]; // Assuming first group has the theme info
+            if (gradeConfig && gradeConfig.theme) {
+                document.documentElement.style.setProperty('--primary-color', gradeConfig.theme.primary);
+                document.documentElement.style.setProperty('--accent-color', gradeConfig.theme.accent);
+                document.documentElement.style.setProperty('--warning-color', gradeConfig.theme.warning);
+
+                // Also update element specific styles
+                document.querySelector('.header-box').style.backgroundColor = gradeConfig.theme.primary;
+                document.querySelector('.judul-ujian').style.color = gradeConfig.theme.warning; // Judul ujian color
+                document.querySelector('#loginBtn').style.backgroundColor = gradeConfig.theme.accent;
+                document.querySelector('#loginBtn').onmouseover = () => document.querySelector('#loginBtn').style.backgroundColor = gradeConfig.theme.primary; // Hover color
+                document.querySelector('#loginBtn').onmouseout = () => document.querySelector('#loginBtn').style.backgroundColor = gradeConfig.theme.accent; // Restore on mouseout
+
+                document.querySelector('#countdownDisplay').style.backgroundColor = gradeConfig.theme.primary;
+                document.querySelector('#customMessageModalButton').style.backgroundColor = gradeConfig.theme.accent;
+                document.querySelector('#customConfirmModalConfirmBtn').style.backgroundColor = gradeConfig.theme.accent;
+                document.querySelector('#zoomControls button').style.backgroundColor = gradeConfig.theme.accent;
+                // Dynamically update hover for zoom controls
+                document.querySelector('#zoomControls button').onmouseover = (e) => e.target.style.backgroundColor = gradeConfig.theme.primary;
+                document.querySelector('#zoomControls button').onmouseout = (e) => e.target.style.backgroundColor = gradeConfig.theme.accent;
+
+                // Fullscreen overlay background
+                document.querySelector('#fullscreenOverlay .overlay-content').style.background = `linear-gradient(135deg, ${gradeConfig.theme.primary} 0%, ${gradeConfig.theme.primary} 100%)`;
+                
+                document.querySelector('.custom-modal-content h4').style.color = gradeConfig.theme.primary;
+                document.querySelector('#confirmModal .modal-content h4').style.color = gradeConfig.theme.primary;
+                document.querySelector('#answerSelectionModal h4').style.color = gradeConfig.theme.primary;
+                document.querySelector('#submitAnswersButton').style.backgroundColor = gradeConfig.theme.accent;
+                document.querySelector('#submitAnswersButton').onmouseover = () => document.querySelector('#submitAnswersButton').style.backgroundColor = gradeConfig.theme.primary;
+                document.querySelector('#submitAnswersButton').onmouseout = () => document.querySelector('#submitAnswersButton').style.backgroundColor = gradeConfig.theme.accent;
+
+                document.querySelector('.exit-warning-button').style.backgroundColor = gradeConfig.theme.accent;
+                document.querySelector('.exit-warning-button').onmouseover = () => document.querySelector('.exit-warning-button').style.backgroundColor = gradeConfig.theme.primary;
+                document.querySelector('.exit-warning-button').onmouseout = () => document.querySelector('.exit-warning-button').style.backgroundColor = gradeConfig.theme.accent;
+
+            }
+
+            loginJudulUjian.textContent = `UJIAN KELAS ${grade}`;
+            classModalTitle.textContent = `Pilih Kelas ${grade}`;
+
+            currentClassGroupKeys = getClassGroupKeysByGrade(grade);
+
+            if (currentClassGroupKeys.length > 0) {
+                await loadSettingsAndStudents(currentClassGroupKeys[0]);
+            } else {
+                console.error(`Tidak ada konfigurasi Firebase ditemukan untuk kelas ${grade}.`);
+                message.style.color = "red";
+                message.textContent = `Tidak ada konfigurasi Firebase ditemukan untuk kelas ${grade}. Hubungi administrator.`;
+            }
+
+            loadClassDropdownForGrade(grade);
+        }
 
         document.addEventListener('DOMContentLoaded', async () => {
-            document.getElementById('selectGrade7').addEventListener('click', () => selectGrade(7));
-            document.getElementById('selectGrade8').addEventListener('click', () => selectGrade(8));
-            document.getElementById('selectGrade9').addEventListener('click', () => selectGrade(9));
-            document.getElementById('backToSelectionBtn').addEventListener('click', showSelectionScreen);
-
-            await restoreExamState();
-            if (!sessionStorage.getItem('isInExamMode')) {
-                 showSelectionScreen();
-            }
-
             window.cekToken = async function() {
                 const tokenPrefix = inputTokenPrefix.value.trim().toUpperCase();
                 const studentId = displayStudentId.value.trim();
+                const fullInputToken = `${tokenPrefix}-${studentId}`;
+
                 const selectedClass = hiddenSelectKelas.value;
-                if (!selectedClass || !studentId || !tokenPrefix) {
+                const selectedStudentId = hiddenSelectNamaSiswa.value;
+
+                if (!selectedClass || !selectedStudentId || tokenPrefix === "" || studentId === "") {
                     message.style.color = "red";
-                    message.textContent = "Harap lengkapi semua isian.";
+                    message.textContent = "Harap lengkapi semua pilihan (Kelas, Nama Siswa, dan Token).";
+                    updateLoginButtonStatus();
                     return;
                 }
+
+                if (studentId !== padStudentId(selectedStudentId)) {
+                    message.style.color = "red";
+                    message.textContent = "ID Siswa tidak cocok dengan nama siswa yang dipilih.";
+                    updateLoginButtonStatus();
+                    return;
+                }
+                
+                const tokenInputGroup = inputTokenPrefix.closest('.token-input-group');
+                if (tokenInputGroup) {
+                    tokenInputGroup.classList.remove('is-valid', 'is-invalid');
+                }
+
                 loginBtn.disabled = true;
-                message.innerHTML = `Memproses... <span class="spinner"></span>`;
+                loginBtn.style.opacity = 0.6;
+                message.style.color = "black";
+                message.innerHTML = `Memproses data... <span class="spinner"></span>`;
+
+                if (!currentDb) {
+                    message.style.color = "red";
+                    message.textContent = "Database belum diinisialisasi. Pilih kelas terlebih dahulu.";
+                    updateLoginButtonStatus();
+                    return;
+                }
                 const dbRefs = getDbRefs();
                 if (!dbRefs) return;
+
+
                 try {
                     const tokensSnapshot = await get(dbRefs.tokensRef);
                     let foundToken = null;
+
                     tokensSnapshot.forEach(child => {
                         const data = child.val();
                         if (data.token.toUpperCase() === tokenPrefix) {
                             foundToken = { ...data, key: child.key };
+                            return true;
                         }
                     });
-                    if (!foundToken) { throw new Error("Token ujian tidak ditemukan."); }
+
+                    if (!foundToken) {
+                        message.style.color = "red";
+                        message.textContent = "Token ujian yang Anda masukkan tidak ditemukan. Mohon periksa kembali token Anda.";
+                        if (tokenInputGroup) tokenInputGroup.classList.add('is-invalid');
+                        updateLoginButtonStatus();
+                        return;
+                    }
+
                     foundTokenGlobal = foundToken;
-                    
-                    const submittedSnapshot = await get(child(dbRefs.submittedExamsRef, `${foundToken.key}/${studentId}`));
-                    if (submittedSnapshot.exists() && submittedSnapshot.val().isSubmitted) {
-                        throw new Error("Anda sudah menyelesaikan ujian ini.");
-                    }
-                    
-                    const now = new Date(), startTime = new Date(foundToken.startTime), endTime = new Date(foundToken.endTime);
-                    if (!foundToken.isForceActive && (!foundToken.isActive || now < startTime || now > endTime)) {
-                        throw new Error("Token tidak aktif atau sudah kadaluarsa.");
-                    }
-                    
-                    const studentGrade = selectedStudentData.class.match(/^\d+/)?.[0];
-                    if (String(studentGrade) !== String(foundToken.kelas)) {
-                        throw new Error(`Token ini bukan untuk kelas ${selectedStudentData.class}.`);
+
+                    const hasSubmittedSnapshot = await get(child(dbRefs.submittedExamsRef, `${foundTokenGlobal.key}/${studentId}`));
+                    if (hasSubmittedSnapshot.exists() && hasSubmittedSnapshot.val().isSubmitted === true) {
+                        message.style.color = "red";
+                        message.textContent = "Anda sudah menyelesaikan ujian ini dan tidak dapat login kembali.";
+                        updateLoginButtonStatus();
+                        sessionStorage.clear();
+                        return;
                     }
 
-                    const accessStatusSnapshot = await get(child(dbRefs.examAccessStatusRef, `${foundToken.key}/${studentId}`));
-                    if (accessStatusSnapshot.val()?.isLoggedIn) {
-                        throw new Error("Anda sudah Login di perangkat lain. Hubungi admin.");
+                    console.log("cekToken: foundToken.answerKey is:", foundToken.answerKey);
+
+                    const now = new Date();
+                    const startTime = new Date(foundToken.startTime);
+                    const endTime = new Date(foundToken.endTime);
+                    let tokenStatus = '';
+
+                    if (foundToken.isForceActive === true) {
+                        tokenStatus = 'valid';
+                    } else if (foundToken.isActive === true) {
+                        if (now >= startTime && now <= endTime) {
+                            tokenStatus = 'valid';
+                        } else {
+                            tokenStatus = 'expired';
+                        }
+                    } else {
+                        tokenStatus = 'inactive';
                     }
 
-                    const numQuestions = (foundToken.answerKey?.split(',').length) || 0;
+                    if (tokenStatus !== 'valid') {
+                        message.style.color = "red";
+                        if (tokenStatus === 'expired') {
+                            message.textContent = "Token belum aktif atau sudah kadaluarsa.";
+                        } else {
+                            message.textContent = "Token saat ini tidak aktif.";
+                        }
+                        if (tokenInputGroup) tokenInputGroup.classList.add('is-invalid');
+                        updateLoginButtonStatus();
+                        return;
+                    }
+                    
+                    if (tokenInputGroup) tokenInputGroup.classList.add('is-valid');
+
+                    const studentClassNumericMatch = selectedStudentData.class.match(/^\d+/);
+                    const studentClassNumeric = studentClassNumericMatch ? studentClassNumericMatch[0] : null;
+
+                    if (!studentClassNumeric || String(studentClassNumeric) !== String(foundToken.kelas)) {
+                        message.style.color = "red";
+                        message.textContent = `Siswa dari kelas ${selectedStudentData.class} tidak dapat mengakses token untuk kelas ${foundToken.kelas}.`;
+                        updateLoginButtonStatus();
+                        return;
+                    }
+
+                    let examDurationMinutes = foundToken.durationMinutes;
+                    if (typeof examDurationMinutes !== 'number' || isNaN(examDurationMinutes) || examDurationMinutes <= 0) {
+                        message.style.color = "red";
+                        message.textContent = "Durasi ujian tidak valid. Harap hubungi administrator.";
+                        updateLoginButtonStatus();
+                        return;
+                    }
+                    
+                    const answerKeyArray = foundToken.answerKey ? foundToken.answerKey.split(',') : [];
+                    const numQuestions = answerKeyArray.length;
+                    console.log("cekToken: Jumlah pertanyaan yang dihitung:", numQuestions);
+
+                    const accessStatusRef = child(dbRefs.examAccessStatusRef, `${foundTokenGlobal.key}/${studentId}`);
+                    const accessStatusSnapshot = await get(accessStatusRef);
                     let loadedAnswers = Array(numQuestions).fill('');
-                    const answersSnapshot = await get(child(dbRefs.studentAnswersRef, `${foundToken.key}/${studentId}`));
-                    if (answersSnapshot.exists()) loadedAnswers = answersSnapshot.val().answers?.split(',') || loadedAnswers;
+                    let examAccessData = accessStatusSnapshot.val();
+                    
+                    if (examAccessData && examAccessData.isLoggedIn === true) {
+                        message.style.color = "red";
+                        message.textContent = "Anda sudah Login di perangkat lain. Mohon hubungi admin untuk mereset akun Anda.";
+                        updateLoginButtonStatus();
+                        return;
+                    }
+                    else {
+                        message.innerHTML = `Memuat jawaban siswa... <span class="spinner"></span>`;
+                        const studentAnswersPath = child(dbRefs.studentAnswersRef, `${foundTokenGlobal.key}/${selectedStudentData.id}`);
+                        const answersSnapshot = await get(studentAnswersPath);
+                        if (answersSnapshot.exists()) {
+                            const savedAnswersData = answersSnapshot.val();
+                            loadedAnswers = savedAnswersData.answers ? savedAnswersData.answers.split(',') : Array(numQuestions).fill('');
+                            console.log("Jawaban siswa dimuat dari Firebase (login pertama):", loadedAnswers);
+                        } else {
+                            console.warn("Tidak ada jawaban yang disimpan di Firebase pada jalur ini, dimulai dengan array kosong.");
+                        }
 
-                    document.getElementById("modalIdSiswa").textContent = selectedStudentData.id;
-                    document.getElementById("modalNamaLengkap").textContent = selectedStudentData.name;
-                    document.getElementById("modalKelas").textContent = selectedClass;
-                    document.getElementById("modalMapel").textContent = foundToken.subject;
-                    modalExamDuration.textContent = `${foundToken.durationMinutes} Menit`;
-                    confirmModal.classList.add('show');
-                    message.textContent = "";
-                    document.getElementById("btnLanjut").onclick = () => handleLanjutClick(foundToken.durationMinutes, numQuestions, loadedAnswers);
+                        document.getElementById("modalIdSiswa").textContent = selectedStudentData.id || "-";
+                        document.getElementById("modalNamaLengkap").textContent = selectedStudentData.name || "-";
+                        document.getElementById("modalKelas").textContent = selectedClass || "-";
+                        document.getElementById("modalMapel").textContent = foundToken.subject || "-";
+                        modalExamDuration.textContent = `${examDurationMinutes} Menit`;
+
+                        confirmCheckbox.checked = false;
+                        modalMessage.style.display = 'none';
+                        modalMessage.textContent = '';
+
+                        confirmModal.classList.add('show');
+                        isAnyModalOpen = true;
+                        message.textContent = "";
+
+                        document.getElementById("btnLanjut").onclick = () => handleLanjutClick(fullInputToken, examDurationMinutes, numQuestions, loadedAnswers);
+                    }
 
                 } catch (err) {
+                    console.error("Error di cekToken:", err);
                     message.style.color = "red";
-                    message.textContent = err.message;
-                    loginBtn.disabled = false;
+                    message.textContent = "Terjadi kesalahan saat memverifikasi token. Silakan coba lagi atau hubungi administrator.";
+                    if (tokenInputGroup) tokenInputGroup.classList.add('is-invalid');
+                    updateLoginButtonStatus();
                 }
             };
-            
-            customSelectKelasDisplay.addEventListener('click', openClassModal);
-            customSelectNamaSiswaDisplay.addEventListener('click', openStudentModal);
-            classModal.addEventListener('click', e => { if (e.target === classModal) closeClassModal(); });
-            studentModal.addEventListener('click', e => { if (e.target === studentModal) closeStudentModal(); });
-            inputTokenPrefix.addEventListener('input', () => window.formatTokenPrefix(inputTokenPrefix));
-            loginBtn.addEventListener('click', window.cekToken);
-            overlayUnderstandBtn.addEventListener('click', hideOverlay);
-            backToLoginFromSubmissionBtn.addEventListener('click', showSelectionScreen);
-            window.onpopstate = e => { if (isInExamMode) history.pushState(null, '', location.href); };
-            ['fullscreenchange', 'mozfullscreenchange', 'webkitfullscreenchange', 'msfullscreenchange'].forEach(evt => 
-                document.addEventListener(evt, handleFullscreenChange, false)
-            );
-            reEnterFullscreenBtn.addEventListener('click', attemptFullscreen);
-            lockKeySubmitBtn.addEventListener('click', async () => {
-                if (lockKeyInput.value === lockKeyGlobal) {
-                    currentAttemptsLeft = toleranceLimitGlobal;
-                    sessionStorage.setItem('attemptsLeft', currentAttemptsLeft);
-                    const dbRefs = getDbRefs();
-                    if (dbRefs) {
-                        const studentId = padStudentId(selectedStudentData.id);
-                        const accessStatusRef = child(dbRefs.examAccessStatusRef, `${foundTokenGlobal.key}/${studentId}`);
-                        await update(accessStatusRef, { attemptsLeft: currentAttemptsLeft, studentId: studentId });
-                    }
-                    lockKeySection.style.display = 'none';
-                    reEnterFullscreenBtn.style.display = 'block';
-                    attemptFullscreen();
-                } else {
-                    lockKeyMessage.textContent = 'Kunci salah.';
+
+            document.addEventListener('contextmenu', function (e) {
+                if (isInExamMode) {
+                    e.preventDefault();
                 }
             });
+
+            document.getElementById('btnKelas7').addEventListener('click', () => selectGrade(7));
+            document.getElementById('btnKelas8').addEventListener('click', () => selectGrade(8));
+            document.getElementById('btnKelas9').addEventListener('click', () => selectGrade(9));
+
+            customSelectKelasDisplay.addEventListener('click', openClassModal);
+            customSelectNamaSiswaDisplay.addEventListener('click', openStudentModal);
+
+            classModal.addEventListener('click', (event) => {
+                if (event.target === classModal) {
+                    closeClassModal();
+                }
+            });
+            studentModal.addEventListener('click', (event) => {
+                if (event.target === studentModal) {
+                    closeStudentModal();
+                }
+            });
+
+            inputTokenPrefix.addEventListener('input', () => window.formatTokenPrefix(inputTokenPrefix));
+            inputTokenPrefix.addEventListener('input', updateLoginButtonStatus);
+
+            inputTokenPrefix.addEventListener('keydown', (event) => {
+                if (event.key === 'Enter' && !loginBtn.disabled) {
+                    event.preventDefault();
+                    window.cekToken();
+                }
+            });
+
+            loginBtn.addEventListener('click', window.cekToken);
+
+            overlayUnderstandBtn.addEventListener('click', hideOverlay);
+            
+            backToLoginFromSubmissionBtn.addEventListener('click', async () => {
+                submissionConfirmationOverlay.style.opacity = 0;
+                setTimeout(async () => {
+                    submissionConfirmationOverlay.style.display = 'none';
+                    welcomeScreen.style.display = 'flex';
+                    welcomeScreen.style.opacity = 1;
+                    loginContainer.style.display = 'none';
+                    loginContainer.style.opacity = 0;
+                    document.body.style.overflow = '';
+                    if (document.fullscreenElement) {
+                        document.exitFullscreen();
+                    }
+                    isInExamMode = false;
+                    toggleExamSecurityFeatures(false);
+                    message.textContent = '';
+
+                    const tokenFirebaseKey = foundTokenGlobal?.key;
+                    const studentId = selectedStudentData?.id ? padStudentId(selectedStudentData.id) : null;
+                    const studentFirebaseKey = selectedStudentData?.key;
+                    const dbRefs = getDbRefs();
+
+                    if (dbRefs && tokenFirebaseKey && studentId && studentFirebaseKey) {
+                        const accessStatusRef = child(dbRefs.examAccessStatusRef, `${tokenFirebaseKey}/${studentId}`);
+                        await update(accessStatusRef, {
+                            isLoggedIn: false,
+                            studentId: studentId,
+                            attemptsLeft: toleranceLimitGlobal
+                        });
+                        console.log(`Status exam_access_status siswa ${studentId} diperbarui (isLoggedIn: false, attemptsLeft direset) saat kembali ke login.`);
+
+                        const studentIsLoggedInRef = child(dbRefs.studentsRef, `${studentFirebaseKey}/isLoggedIn`);
+                        await set(studentIsLoggedInRef, false);
+                        console.log(`Status isLoggedIn siswa ${selectedStudentData.id} di node siswa diatur ke false saat kembali ke login.`);
+                    }
+
+                    // Reset theme colors to default (e.g., for Kelas 7)
+                    document.documentElement.style.setProperty('--primary-color', '#0066cc');
+                    document.documentElement.style.setProperty('--accent-color', '#007bff');
+                    document.documentElement.style.setProperty('--warning-color', '#0066cc');
+
+                    document.querySelector('.header-box').style.backgroundColor = '#0066cc';
+                    document.querySelector('.judul-ujian').style.color = '#0066cc'; // Reset to default theme primary color
+                    document.querySelector('#loginBtn').style.backgroundColor = '#007bff';
+                    document.querySelector('#loginBtn').onmouseover = null; // Remove dynamic hover
+                    document.querySelector('#loginBtn').onmouseout = null; // Remove dynamic mouseout
+
+                    document.querySelector('#countdownDisplay').style.backgroundColor = '#0066cc';
+                    document.querySelector('#customMessageModalButton').style.backgroundColor = '#007bff';
+                    document.querySelector('#customConfirmModalConfirmBtn').style.backgroundColor = '#007bff';
+                    document.querySelector('#zoomControls button').style.backgroundColor = '#007bff';
+                    document.querySelector('#zoomControls button').onmouseover = null;
+                    document.querySelector('#zoomControls button').onmouseout = null;
+                    document.querySelector('#fullscreenOverlay .overlay-content').style.background = `linear-gradient(135deg, #007bff 0%, #0056b3 100%)`; // Reset to default
+
+                    document.querySelector('.custom-modal-content h4').style.color = '#0066cc';
+                    document.querySelector('#confirmModal .modal-content h4').style.color = '#0066cc';
+                    document.querySelector('#answerSelectionModal h4').style.color = '#0066cc';
+                    document.querySelector('#submitAnswersButton').style.backgroundColor = '#007bff';
+                    document.querySelector('#submitAnswersButton').onmouseover = null;
+                    document.querySelector('#submitAnswersButton').onmouseout = null;
+
+                    document.querySelector('.exit-warning-button').style.backgroundColor = '#007bff';
+                    document.querySelector('.exit-warning-button').onmouseover = null;
+                    document.querySelector('.exit-warning-button').onmouseout = null;
+
+
+                    hiddenSelectKelas.value = '';
+                    customSelectKelasDisplay.textContent = customSelectKelasDisplay.dataset.placeholder;
+                    customSelectKelasDisplay.classList.remove('selected');
+                    customSelectKelasDisplay.classList.remove('disabled');
+
+                    hiddenSelectNamaSiswa.value = '';
+                    customSelectNamaSiswaDisplay.textContent = customSelectNamaSiswaDisplay.dataset.placeholder;
+                    customSelectNamaSiswaDisplay.classList.remove('selected');
+                    customSelectNamaSiswaDisplay.classList.add('disabled');
+                    selectedStudentData = null;
+
+                    inputTokenPrefix.value = '';
+                    inputTokenPrefix.disabled = true;
+                    const tokenInputGroup = inputTokenPrefix.closest('.token-input-group');
+                    if (tokenInputGroup) {
+                        tokenInputGroup.classList.remove('is-valid', 'is-invalid');
+                    }
+
+                    displayStudentId.value = '';
+
+                    locationBlockedDiv.style.display = 'none';
+                    locationStatus.style.display = 'block';
+                    locationStatus.textContent = 'Memuat status lokasi...';
+                    isLocationValid = false;
+
+                    getLocation();
+
+                    updateLoginButtonStatus();
+                    sessionStorage.clear();
+                    isAnyModalOpen = false;
+                    currentDb = null;
+                    currentAuth = null;
+                    currentSelectedGrade = null;
+                    currentClassGroupKeys = [];
+
+                }, 300);
+            });
+
+            window.onpopstate = function(event) {
+                if (isInExamMode) {
+                    history.pushState(null, '', location.href);
+                    console.log("Navigasi kembali dicegah selama ujian.");
+                }
+            };
+
+            document.addEventListener('fullscreenchange', handleFullscreenChange);
+            document.addEventListener('mozfullscreenchange', handleFullscreenChange);
+            document.addEventListener('webkitfullscreenchange', handleFullscreenChange);
+            document.addEventListener('msfullscreenchange', handleFullscreenChange);
+
+            reEnterFullscreenBtn.addEventListener('click', attemptFullscreen);
+
+            lockKeySubmitBtn.addEventListener('click', async () => {
+                const enteredKey = lockKeyInput.value;
+                lockKeyMessage.textContent = '';
+
+                if (enteredKey === lockKeyGlobal) {
+                    currentAttemptsLeft = toleranceLimitGlobal;
+                    sessionStorage.setItem('attemptsLeft', currentAttemptsLeft);
+                    
+                    const dbRefs = getDbRefs();
+                    if (dbRefs && foundTokenGlobal && selectedStudentData) {
+                        const studentId = padStudentId(selectedStudentData.id);
+                        const accessStatusRef = child(dbRefs.examAccessStatusRef, `${foundTokenGlobal.key}/${studentId}`);
+                        try {
+                            await update(accessStatusRef, { attemptsLeft: currentAttemptsLeft, studentId: studentId });
+                            console.log("attemptsLeft direset di Firebase setelah entri kunci yang berhasil.");
+                        } catch (error) {
+                            console.error("Gagal mereset attemptsLeft di Firebase:", error);
+                        }
+                    }
+
+                    lockKeySection.style.display = 'none';
+                    attemptsLeftInfo.style.display = 'none';
+                    reEnterFullscreenBtn.style.display = 'block';
+                    lockKeyInput.value = '';
+                    lockKeyMessage.textContent = '';
+
+                    attemptFullscreen();
+                } else {
+                    lockKeyMessage.style.color = 'red';
+                    lockKeyMessage.textContent = 'Kunci salah. Silakan coba lagi.';
+                    lockKeyInput.value = '';
+                    lockKeyInput.focus();
+                }
+            });
+            lockKeyInput.addEventListener('keydown', (event) => {
+                if (event.key === 'Enter') {
+                    event.preventDefault();
+                    lockKeySubmitBtn.click();
+                }
+            });
+
             sidebarToggle.addEventListener('click', toggleSidebar);
             closeSidebarButton.addEventListener('click', toggleSidebar);
             document.addEventListener('click', closeSidebarOnClickOutside);
-            answerSelectionModal.addEventListener('click', e => { if(e.target === answerSelectionModal) closeAnswerSelectionModal(); });
-            answerOptionsContainer.querySelectorAll('button').forEach(b => b.addEventListener('click', () => selectAnswer(b.dataset.answer)));
+
+            answerSelectionModal.addEventListener('click', (event) => {
+                if (event.target === answerSelectionModal) {
+                    closeAnswerSelectionModal();
+                }
+            });
+
+            answerOptionsContainer.addEventListener('click', (event) => {
+                event.stopPropagation();
+            });
+
+            answerOptionsContainer.querySelectorAll('button').forEach(button => {
+                button.addEventListener('click', () => selectAnswer(button.dataset.answer));
+            });
             clearAnswerButton.addEventListener('click', clearAnswer);
             submitAnswersButton.addEventListener('click', () => submitAnswers(false));
+
+            examIframe.addEventListener('wheel', (event) => {
+                if (event.ctrlKey) {
+                    event.preventDefault();
+                    resetAutoHideTimer();
+                    
+                    if (event.deltaY < 0) {
+                        currentZoom += ZOOM_STEP;
+                    } else {
+                        currentZoom -= ZOOM_STEP;
+                    }
+
+                    currentZoom = Math.max(MIN_ZOOM, Math.min(MAX_ZOOM, currentZoom));
+
+                    if (currentZoom <= MIN_ZOOM) {
+                        currentZoom = MIN_ZOOM;
+                        currentTranslateX = 0;
+                        currentTranslateY = 0;
+                    }
+                    applyIframeTransform();
+                    updateZoomButtonStates();
+                }
+            }, { passive: false });
+
+            zoomInBtn.addEventListener('click', () => {
+                resetAutoHideTimer();
+                currentZoom += ZOOM_STEP;
+                currentZoom = Math.min(MAX_ZOOM, currentZoom);
+                currentTranslateX = 0;
+                currentTranslateY = 0;
+                applyIframeTransform();
+                updateZoomButtonStates();
+            });
+
+            zoomOutBtn.addEventListener('click', () => {
+                resetAutoHideTimer();
+                currentZoom -= ZOOM_STEP;
+                currentZoom = Math.max(MIN_ZOOM, currentZoom);
+                if (currentZoom <= MIN_ZOOM) {
+                    currentZoom = MIN_ZOOM;
+                    currentTranslateX = 0;
+                    currentTranslateY = 0;
+                }
+                applyIframeTransform();
+                updateZoomButtonStates();
+            });
+
+            panLeftBtn.addEventListener('mousedown', (e) => {
+                if (e.button === 0) {
+                    resetAutoHideTimer();
+                    if (currentZoom > MIN_ZOOM) {
+                        if (panPressTimer) clearTimeout(panPressTimer);
+                        panPressTimer = setTimeout(() => {
+                            panDirection = PAN_STEP;
+                            startAutoPan();
+                        }, PAN_START_DELAY);
+                    }
+                }
+            });
+            panLeftBtn.addEventListener('click', () => {
+                if (currentZoom > MIN_ZOOM && panIntervalId === null) {
+                    currentTranslateX += PAN_STEP;
+                    const unscaledIframeWidth = examIframe.offsetWidth;
+                    const scaledIframeWidth = unscaledIframeWidth * currentZoom;
+                    const containerWidth = examContentWrapper.offsetWidth;
+                    const maxNegativeX = -(Math.max(0, scaledIframeWidth - containerWidth));
+                    currentTranslateX = Math.max(maxNegativeX, Math.min(0, currentTranslateX));
+                    applyIframeTransform();
+                    resetAutoHideTimer();
+                }
+            });
+            panLeftBtn.addEventListener('mouseup', () => {
+                stopAutoPan();
+                if (panPressTimer) clearTimeout(panPressTimer);
+            });
+            panLeftBtn.addEventListener('mouseleave', () => {
+                stopAutoPan();
+                if (panPressTimer) clearTimeout(panPressTimer);
+            });
+            panLeftBtn.addEventListener('touchstart', (e) => {
+                resetAutoHideTimer();
+                if (currentZoom > MIN_ZOOM && e.touches.length === 1) {
+                    if (panPressTimer) clearTimeout(panPressTimer);
+                    panPressTimer = setTimeout(() => {
+                        panDirection = PAN_STEP;
+                        startAutoPan();
+                    }, PAN_START_DELAY);
+                }
+            }, { passive: true });
+            panLeftBtn.addEventListener('touchend', () => {
+                stopAutoPan();
+                if (panPressTimer) clearTimeout(panPressTimer);
+            });
+
+            panRightBtn.addEventListener('mousedown', (e) => {
+                if (e.button === 0) {
+                    resetAutoHideTimer();
+                    if (currentZoom > MIN_ZOOM) {
+                        if (panPressTimer) clearTimeout(panPressTimer);
+                        panPressTimer = setTimeout(() => {
+                            panDirection = -PAN_STEP;
+                            startAutoPan();
+                        }, PAN_START_DELAY);
+                    }
+                }
+            });
+            panRightBtn.addEventListener('click', () => {
+                if (currentZoom > MIN_ZOOM && panIntervalId === null) {
+                    currentTranslateX -= PAN_STEP;
+                    const unscaledIframeWidth = examIframe.offsetWidth;
+                    const scaledIframeWidth = unscaledIframeWidth * currentZoom;
+                    const containerWidth = examContentWrapper.offsetWidth;
+                    const maxNegativeX = -(Math.max(0, scaledIframeWidth - containerWidth));
+                    currentTranslateX = Math.max(maxNegativeX, Math.min(0, currentTranslateX));
+                    applyIframeTransform();
+                    resetAutoHideTimer();
+                }
+            });
+            panRightBtn.addEventListener('mouseup', () => {
+                stopAutoPan();
+                if (panPressTimer) clearTimeout(panPressTimer);
+            });
+            panRightBtn.addEventListener('mouseleave', () => {
+                stopAutoPan();
+                if (panPressTimer) clearTimeout(panPressTimer);
+            });
+            panRightBtn.addEventListener('touchstart', (e) => {
+                resetAutoHideTimer();
+                if (currentZoom > MIN_ZOOM && e.touches.length === 1) {
+                    if (panPressTimer) clearTimeout(panPressTimer);
+                    panPressTimer = setTimeout(() => {
+                        panDirection = -PAN_STEP;
+                        startAutoPan();
+                    }, PAN_START_DELAY);
+                }
+            }, { passive: true });
+            panRightBtn.addEventListener('touchend', () => {
+                stopAutoPan();
+                if (panPressTimer) clearTimeout(panPressTimer);
+            });
+
+            refreshIframeBtn.addEventListener('click', () => {
+                resetAutoHideTimer();
+                const currentIframeSrc = examIframe.src;
+                console.log("Tombol refresh diklik. Src iframe saat ini:", examIframe.src);
+                console.log("globalExamUrl yang tersimpan:", globalExamUrl);
+                examIframe.src = '';
+                setTimeout(() => {
+                    examIframe.src = currentIframeSrc;
+                    console.log("Iframe di-refresh dengan mereset src.");
+                }, 50);
+            });
+
+            examIframe.addEventListener('mousedown', (e) => {
+                e.stopPropagation();
+                resetAutoHideTimer();
+                if (currentZoom > MIN_ZOOM) {
+                    isDragging = true;
+                    startX = e.clientX;
+                    startY = e.clientY;
+                    const translate = getTranslateValues(examIframe);
+                    currentTranslateX = translate.x;
+                    currentTranslateY = translate.y;
+                    examIframe.classList.add('dragging');
+                    console.log(`Pan Mulai (Mouse): translateX awal=${currentTranslateX}, translateY awal=${currentTranslateY}`);
+                }
+            });
+
+            document.addEventListener('mousemove', (e) => {
+                if (!isDragging) return;
+                e.preventDefault();
+
+                const dx = e.clientX - startX;
+                const dy = e.clientY - startY;
+
+                let newTranslateX = currentTranslateX + dx;
+                let newTranslateY = currentTranslateY + dy;
+
+                const unscaledIframeWidth = examIframe.offsetWidth;
+                const unscaledIframeHeight = examIframe.offsetHeight;
+
+                const scaledIframeWidth = unscaledIframeWidth * currentZoom;
+                const scaledIframeHeight = unscaledIframeHeight * currentZoom;
+
+                const containerWidth = examContentWrapper.offsetWidth;
+                const containerHeight = examContentWrapper.offsetHeight;
+
+                const maxNegativeX = -(Math.max(0, scaledIframeWidth - containerWidth));
+                const maxNegativeY = -(Math.max(0, scaledIframeHeight - containerHeight));
+
+                newTranslateX = Math.max(maxNegativeX, Math.min(0, newTranslateX));
+                newTranslateY = Math.max(maxNegativeY, Math.min(0, newTranslateY));
+
+                examIframe.style.transform = `translate(${newTranslateX}px, ${newTranslateY}px) scale(${currentZoom})`;
+            });
+
+            document.addEventListener('mouseup', () => {
+                if (isDragging) {
+                    isDragging = false;
+                    const translate = getTranslateValues(examIframe);
+                    currentTranslateX = translate.x;
+                    currentTranslateY = translate.y;
+                    examIframe.classList.remove('dragging');
+                    console.log(`Pan Selesai (Mouse): translateX akhir=${currentTranslateX}, translateY akhir=${currentTranslateY}`);
+                }
+            });
+
+            examIframe.addEventListener('touchstart', (e) => {
+                e.stopPropagation();
+                resetAutoHideTimer();
+                if (currentZoom > MIN_ZOOM && e.touches.length === 1) {
+                    isDragging = true;
+                    startX = e.touches[0].clientX;
+                    startY = e.touches[0].clientY;
+                    const translate = getTranslateValues(examIframe);
+                    currentTranslateX = translate.x;
+                    currentTranslateY = translate.y;
+                    examIframe.classList.add('dragging');
+                    console.log(`Pan Mulai (Sentuh): translateX awal=${currentTranslateX}, translateY awal=${currentTranslateY}`);
+                }
+            });
+
+            document.addEventListener('touchmove', (e) => {
+                if (!isDragging || e.touches.length !== 1) return;
+                e.preventDefault();
+
+                const dx = e.touches[0].clientX - startX;
+                const dy = e.touches[0].clientY - startY;
+
+                let newTranslateX = currentTranslateX + dx;
+                let newTranslateY = currentTranslateY + dy;
+
+                const unscaledIframeWidth = examIframe.offsetWidth;
+                const unscaledIframeHeight = examIframe.offsetHeight;
+
+                const scaledIframeWidth = unscaledIframeWidth * currentZoom;
+                const scaledIframeHeight = unscaledIframeHeight * currentZoom;
+
+                const containerWidth = examContentWrapper.offsetWidth;
+                const containerHeight = examContentWrapper.offsetHeight;
+
+                const maxNegativeX = -(Math.max(0, scaledIframeWidth - containerWidth));
+                const maxNegativeY = -(Math.max(0, scaledIframeHeight - containerHeight));
+
+                newTranslateX = Math.max(maxNegativeX, Math.min(0, newTranslateX));
+                newTranslateY = Math.max(maxNegativeY, Math.min(0, newTranslateY));
+
+                examIframe.style.transform = `translate(${newTranslateX}px, ${newTranslateY}px) scale(${currentZoom})`;
+            });
+
+            document.addEventListener('touchend', () => {
+                if (isDragging) {
+                    isDragging = false;
+                    const translate = getTranslateValues(examIframe);
+                    currentTranslateX = translate.x;
+                    currentTranslateY = translate.y;
+                    examIframe.classList.remove('dragging');
+                    console.log(`Pan Selesai (Sentuh): translateX akhir=${currentTranslateX}, translateY akhir=${currentTranslateY}`);
+                }
+            });
+
+            zoomControls.addEventListener('mousemove', resetAutoHideTimer);
+            zoomControls.addEventListener('touchstart', resetAutoHideTimer);
+            zoomControls.addEventListener('click', resetAutoHideTimer);
+
+            applyIframeTransform();
+            updateZoomButtonStates();
+            resetAutoHideTimer();
+
+            toggleControlsBtn.addEventListener('click', toggleControlsPanel);
+
             updateDateTime();
             setInterval(updateDateTime, 1000);
+
+            loginContainer.style.display = 'none';
+            welcomeScreen.style.display = 'flex';
+            welcomeScreen.style.opacity = 1;
+            document.body.style.overflow = '';
+
+            const topIframeBlocker = document.getElementById('topIframeBlocker');
+            if (topIframeBlocker) {
+                topIframeBlocker.addEventListener('click', (e) => {
+                    console.log('Click captured by topIframeBlocker!');
+                    e.preventDefault();
+                    e.stopPropagation();
+                });
+                topIframeBlocker.addEventListener('touchstart', (e) => {
+                    console.log('Touchstart captured by topIframeBlocker!');
+                    e.preventDefault();
+                    e.stopPropagation();
+                });
+                topIframeBlocker.addEventListener('touchend', (e) => {
+                    console.log('Touchend captured by topIframeBlocker!');
+                    e.preventDefault();
+                    e.stopPropagation();
+                });
+            }
+            await restoreExamState();
         });
+
+        async function loadSettingsAndStudents(initialGroupKey) {
+            locationStatus.style.display = 'block';
+            locationStatus.textContent = 'Memuat status lokasi dan data siswa...';
+
+            const initialDbInstance = await getFirebaseInstanceForClass(allFirebaseConfigs[initialGroupKey].allowedClasses[0]);
+            if (!initialDbInstance || !initialDbInstance.db) {
+                console.error("Gagal menginisialisasi database awal untuk pengaturan lokasi.");
+                locationStatus.style.color = "red";
+                locationStatus.textContent = "Gagal menginisialisasi database awal.";
+                return;
+            }
+            const db = initialDbInstance.db;
+
+            try {
+                const settingsSnapshot = await get(ref(db, 'setlokasi'));
+                if (settingsSnapshot.exists()) {
+                    const settings = settingsSnapshot.val();
+                    isLocationEnabled = settings.isLocationEnabled !== undefined ? settings.isLocationEnabled : true;
+                    firebaseAllowedRadiusKm = settings.allowedRadiusKm !== undefined ? settings.allowedRadiusKm : 0.075;
+                    console.log("Status Lokasi dari Firebase:", isLocationEnabled);
+                    console.log("Radius dari Firebase:", firebaseAllowedRadiusKm);
+                } else {
+                    console.log("Tidak dapat mengambil pengaturan lokasi dari Firebase, menggunakan default.");
+                }
+
+                const lockSettingsSnapshot = await get(ref(db, 'lock_settings'));
+                if (lockSettingsSnapshot.exists()) {
+                    const lockSettings = lockSettingsSnapshot.val();
+                    isLockEnabledGlobal = lockSettings.isLockEnabled !== undefined ? lockSettings.isLockEnabled : false;
+                    lockKeyGlobal = lockSettings.lockKey !== undefined ? lockSettings.lockKey : "";
+                    toleranceLimitGlobal = lockSettings.toleranceLimit !== undefined ? lockSettings.toleranceLimit : 3;
+                    console.log("Pengaturan Kunci dari Firebase:", { isLockEnabledGlobal, lockKeyGlobal, toleranceLimitGlobal });
+                } else {
+                    console.log("Tidak dapat mengambil pengaturan kunci dari Firebase, menggunakan default.");
+                }
+
+            } catch (error) {
+                console.error("Gagal mengambil pengaturan lokasi atau kunci dari Firebase:", error);
+            }
+            locationStatus.textContent = '';
+            updateLoginButtonStatus();
+            getLocation();
+        }
     </script>
 </body>
 </html>
