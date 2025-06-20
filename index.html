@@ -34,6 +34,72 @@
             overflow: hidden;
         }
 
+        /* Gaya untuk layar login baru */
+        .initial-login-screen {
+            max-width: 380px;
+            width: 90%;
+            margin: 20px auto;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            overflow: hidden;
+            padding: 30px 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            opacity: 1;
+            transition: opacity 0.5s ease-in-out;
+        }
+
+        .initial-login-screen h2 {
+            font-size: 2em;
+            font-weight: bold;
+            color: var(--primary-color);
+            margin-bottom: 10px;
+        }
+
+        .initial-login-screen p {
+            font-size: 1em;
+            color: #666;
+            margin-bottom: 20px;
+        }
+
+        .initial-login-screen input[type="email"],
+        .initial-login-screen input[type="password"] {
+            padding: 12px 15px;
+            font-size: 1.1em;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            width: 100%;
+            box-sizing: border-box;
+            margin-bottom: 10px;
+        }
+
+        .initial-login-screen button {
+            padding: 15px 25px;
+            font-size: 1.2em;
+            font-weight: bold;
+            color: white;
+            background-color: var(--accent-color);
+            border: none;
+            border-radius: 9999px;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+            width: 100%;
+        }
+
+        .initial-login-screen button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.3);
+            background-color: var(--primary-color);
+        }
+
+        .initial-login-screen button:active {
+            transform: translateY(0);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+
         .welcome-screen {
             max-width: 400px;
             width: 90%;
@@ -1273,6 +1339,28 @@
         }
 
         @media (max-width: 600px) {
+            .initial-login-screen {
+                margin-top: 40px;
+                margin-bottom: 40px;
+                border-radius: 0;
+                box-shadow: none;
+                width: 100%;
+            }
+            .initial-login-screen h2 {
+                font-size: 1.8em;
+            }
+            .initial-login-screen p {
+                font-size: 0.9em;
+            }
+            .initial-login-screen input {
+                font-size: 1em;
+                padding: 10px;
+            }
+            .initial-login-screen button {
+                font-size: 1.1em;
+                padding: 12px 20px;
+            }
+
             .welcome-screen {
                 margin-top: 40px;
                 margin-bottom: 40px;
@@ -1484,7 +1572,17 @@
     </style>
 </head>
 <body>
-    <div id="welcomeScreen" class="welcome-screen">
+    <!-- Halaman Login Baru (Email/Password) -->
+    <div id="initialLoginScreen" class="initial-login-screen">
+        <h2>LOGIN SISWA</h2>
+        <p>Masukkan email dan password Anda untuk melanjutkan.</p>
+        <input type="email" id="loginEmail" placeholder="Email" />
+        <input type="password" id="loginPassword" placeholder="Password" />
+        <p class="message" id="loginMessage"></p>
+        <button id="loginButton">Login</button>
+    </div>
+
+    <div id="welcomeScreen" class="welcome-screen" style="display: none;">
         <h2 id="welcomeTitle">SELAMAT DATANG</h2>
         <p id="welcomeMessage">Memuat pilihan ujian...</p>
         <div id="welcomeButtonsContainer" style="display: flex; flex-direction: column; gap: 15px;">
@@ -1492,7 +1590,7 @@
         </div>
     </div>
 
-    <div id="loginContainer" class="container">
+    <div id="loginContainer" class="container" style="display: none;">
         <div class="header-box">
             <img src="https://raw.githubusercontent.com/smp2pajangan/gambar/refs/heads/main/logosmpn2pjg.png" alt="Logo" class="logo" />
             <div class="title">SMPN 2 PAJANGAN</div>
@@ -1719,14 +1817,30 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.8.1/firebase-app.js";
         import { getDatabase, ref, get, child, runTransaction, set, onValue, off, update, remove } from "https://www.gstatic.com/firebasejs/11.8.1/firebase-database.js";
-        import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/11.8.1/firebase-auth.js";
+        // Import tambahan untuk email/password authentication
+        import { getAuth, signInAnonymously, signInWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/11.8.1/firebase-auth.js";
 
-        // Import untuk konfigurasi tombol kustom (Firebase terpisah)
-        import { initializeApp as initializeAppButtonConfig } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-app.js";
-        import { getDatabase as getDatabaseButtonConfig, ref as refButtonConfig, get as getButtonConfig } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-database.js";
-        // Import getAuth dan signInAnonymously untuk konfigurasi tombol agar sesuai versi app config
-        import { getAuth as getAuthButtonConfigAuth, signInAnonymously as signInAnonymouslyButtonConfigAuth } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-auth.js";
+        // Import untuk konfigurasi tombol kustom (Firebase terpisah) - tetap gunakan 11.9.1 jika itu yang asli di versi ini
+        // Jika versi Firebase di 11.9.1 dan 11.8.1 tidak kompatibel untuk `getAuth`/`signInAnonymously`,
+        // maka disarankan untuk menggunakan versi yang sama untuk semua import Firebase.
+        // Untuk menjaga konsistensi dan menghindari potensi masalah, saya akan samakan ke 11.8.1.
+        import { initializeApp as initializeAppButtonConfig } from "https://www.gstatic.com/firebasejs/11.8.1/firebase-app.js";
+        import { getDatabase as getDatabaseButtonConfig, ref as refButtonConfig, get as getButtonConfig } from "https://www.gstatic.com/firebasejs/11.8.1/firebase-database.js";
+        import { getAuth as getAuthButtonConfig, signInAnonymously as signInAnonymouslyButtonConfig, signOut as signOutButtonConfig } from "https://www.gstatic.com/firebasejs/11.8.1/firebase-auth.js";
 
+
+        // Konfigurasi Firebase untuk login awal (email/password)
+        const initialLoginFirebaseConfig = {
+            apiKey: "AIzaSyAOBCX8x60pYqxtXmXMz2xc5dwC3HJH5EE",
+            authDomain: "ujian-online-berbasis-android.firebaseapp.com",
+            databaseURL: "https://ujian-online-berbasis-android-default-rtdb.firebaseio.com",
+            projectId: "ujian-online-berbasis-android",
+            storageBucket: "ujian-online-berbasis-android.firebasestorage.app",
+            messagingSenderId: "923446282537",
+            appId: "1:923446282537:web:60d374dde8aca61f6a0f38"
+        };
+        const initialLoginApp = initializeApp(initialLoginFirebaseConfig, "initialLoginApp");
+        const initialLoginAuth = getAuth(initialLoginApp);
 
         // Konfigurasi Firebase untuk Tombol Kustom (publicSettings)
         const buttonConfigFirebaseConfig = {
@@ -1748,15 +1862,16 @@
                 const app = initializeAppButtonConfig(buttonConfigFirebaseConfig, "buttonConfigApp");
                 buttonConfigDb = getDatabaseButtonConfig(app);
                 // Menggunakan getAuth dan signInAnonymously yang diimpor khusus untuk buttonConfig
-                buttonConfigAuth = getAuthButtonConfigAuth(app);
-                await signInAnonymouslyButtonConfigAuth(buttonConfigAuth);
+                buttonConfigAuth = getAuthButtonConfig(app);
+                await signInAnonymouslyButtonConfig(buttonConfigAuth);
                 console.log("Firebase untuk konfigurasi tombol berhasil diinisialisasi dan login anonim.");
             } catch (error) {
-                console.error("Gagal menginisialisasi Firebase untuk konfigurasi tombol:", error);
-                // Pesan error lebih informatif untuk auth/admin-restricted-operation
+                // Log sebagai peringatan untuk admin-restricted-operation karena ini adalah masalah konfigurasi, bukan bug kode
                 if (error.code === 'auth/admin-restricted-operation') {
-                    document.getElementById('welcomeMessage').textContent = 'Gagal memuat konfigurasi. Pastikan "Anonymous" Authentication diaktifkan di Firebase Console untuk proyek ini.';
+                    console.warn("Firebase untuk konfigurasi tombol (Peringatan): Otentikasi Anonim tidak diaktifkan di konsol Firebase. Tombol kustom mungkin tidak dimuat. Detail: " + error.message);
+                    document.getElementById('welcomeMessage').textContent = 'Gagal memuat konfigurasi tombol. Pastikan "Anonymous" Authentication diaktifkan di Firebase Console untuk proyek ini. (Error: ' + error.message + ')';
                 } else {
+                    console.error("Gagal menginisialisasi Firebase untuk konfigurasi tombol:", error);
                     document.getElementById('welcomeMessage').textContent = 'Gagal memuat konfigurasi. Silakan refresh halaman. (Error: ' + error.message + ')';
                 }
             }
@@ -1897,6 +2012,8 @@
                 console.log(`Aplikasi Firebase diinisialisasi untuk grup kelas: ${classGroupKey}`);
 
                 try {
+                    // Masih menggunakan signin anonim untuk database spesifik per kelas
+                    // karena akun utama mungkin tidak memiliki akses ke semua proyek.
                     await signInAnonymously(firebaseAuths[classGroupKey]);
                     console.log(`Berhasil login anonim untuk aplikasi Firebase: ${classGroupKey}`);
                 } catch (error) {
@@ -1934,6 +2051,12 @@
 
         const allowedLatitude = -7.8589546;
         const allowedLongitude = 110.2655596;
+
+        const initialLoginScreen = document.getElementById('initialLoginScreen');
+        const loginEmailInput = document.getElementById('loginEmail');
+        const loginPasswordInput = document.getElementById('loginPassword');
+        const loginMessage = document.getElementById('loginMessage');
+        const loginButton = document.getElementById('loginButton');
 
         const welcomeScreen = document.getElementById('welcomeScreen');
         const welcomeTitle = document.getElementById('welcomeTitle');
@@ -2164,6 +2287,7 @@
             confirmCheckbox.checked = false;
             updateLoginButtonStatus();
 
+            // Clear session storage if modal is cancelled to prevent restoring half-way
             sessionStorage.clear();
         };
 
@@ -2870,6 +2994,7 @@
                             if (accessData.isLoggedIn === true) {
                                 message.style.color = "red";
                                 message.textContent = "Anda sudah Login di perangkat lain. Mohon hubungi admin untuk mereset akun Anda.";
+                                initialLoginScreen.style.display = 'none';
                                 welcomeScreen.style.display = 'none';
                                 loginContainer.style.display = 'flex';
                                 loginContainer.style.opacity = 1;
@@ -2890,6 +3015,7 @@
                     remainingTime = totalDurationSeconds - elapsedSeconds;
 
                     if (remainingTime > 0) {
+                        initialLoginScreen.style.display = 'none';
                         welcomeScreen.style.display = 'none';
                         loginContainer.style.opacity = 0;
                         setTimeout(() => {
@@ -2905,6 +3031,7 @@
                         }, 500);
                     } else {
                         sessionStorage.clear();
+                        initialLoginScreen.style.display = 'none';
                         welcomeScreen.style.display = 'none';
                         loginContainer.style.display = 'none';
                         examContainer.style.display = 'flex';
@@ -3669,190 +3796,52 @@
         }
 
         document.addEventListener('DOMContentLoaded', async () => {
-            // Inisialisasi Firebase untuk konfigurasi tombol kustom dan muat tombol
-            await initializeButtonConfigFirebase();
-            await loadAndRenderWelcomeButtons();
+            // Sembunyikan semua kecuali layar login awal saat DOMContentLoaded
+            welcomeScreen.style.display = 'none';
+            loginContainer.style.display = 'none';
+            examContainer.style.display = 'none';
+            initialLoginScreen.style.display = 'flex';
+            initialLoginScreen.style.opacity = 1;
 
-            window.cekToken = async function() {
-                const tokenPrefix = inputTokenPrefix.value.trim().toUpperCase();
-                const studentId = displayStudentId.value.trim();
-                const fullInputToken = `${tokenPrefix}-${studentId}`;
+            // Mengisi email dan password secara otomatis dan mengklik tombol login
+            loginEmailInput.value = "siswa@gmail.com";
+            loginPasswordInput.value = "12345678";
+            loginButton.click(); // Memicu event klik
 
-                const selectedClass = hiddenSelectKelas.value;
-                const selectedStudentId = hiddenSelectNamaSiswa.value;
-
-                if (!selectedClass || !selectedStudentId || tokenPrefix === "" || studentId === "") {
-                    message.style.color = "red";
-                    message.textContent = "Harap lengkapi semua pilihan (Kelas, Nama Siswa, dan Token).";
-                    updateLoginButtonStatus();
-                    return;
-                }
-
-                if (studentId !== padStudentId(selectedStudentId)) {
-                    message.style.color = "red";
-                    message.textContent = "ID Siswa tidak cocok dengan nama siswa yang dipilih.";
-                    updateLoginButtonStatus();
-                    return;
-                }
-                
-                const tokenInputGroup = inputTokenPrefix.closest('.token-input-group');
-                if (tokenInputGroup) {
-                    tokenInputGroup.classList.remove('is-valid', 'is-invalid');
-                }
-
-                loginBtn.disabled = true;
-                loginBtn.style.opacity = 0.6;
-                message.style.color = "black";
-                message.innerHTML = `Memproses data... <span class="spinner"></span>`;
-
-                if (!currentDb) {
-                    message.style.color = "red";
-                    message.textContent = "Database belum diinisialisasi. Pilih kelas terlebih dahulu.";
-                    updateLoginButtonStatus();
-                    return;
-                }
-                const dbRefs = getDbRefs();
-                if (!dbRefs) return;
-
+            loginButton.addEventListener('click', async () => {
+                const email = loginEmailInput.value;
+                const password = loginPasswordInput.value;
+                loginMessage.textContent = '';
+                loginButton.disabled = true;
+                loginButton.textContent = 'Logging in...';
 
                 try {
-                    const tokensSnapshot = await get(dbRefs.tokensRef);
-                    let foundToken = null;
-
-                    tokensSnapshot.forEach(child => {
-                        const data = child.val();
-                        if (data.token.toUpperCase() === tokenPrefix) {
-                            foundToken = { ...data, key: child.key };
-                            return true;
-                        }
-                    });
-
-                    if (!foundToken) {
-                        message.style.color = "red";
-                        message.textContent = "Token ujian yang Anda masukkan tidak ditemukan. Mohon periksa kembali token Anda.";
-                        if (tokenInputGroup) tokenInputGroup.classList.add('is-invalid');
-                        updateLoginButtonStatus();
-                        return;
-                    }
-
-                    foundTokenGlobal = foundToken;
-
-                    const hasSubmittedSnapshot = await get(child(dbRefs.submittedExamsRef, `${foundTokenGlobal.key}/${studentId}`));
-                    if (hasSubmittedSnapshot.exists() && hasSubmittedSnapshot.val().isSubmitted === true) {
-                        message.style.color = "red";
-                        message.textContent = "Anda sudah menyelesaikan ujian ini dan tidak dapat login kembali.";
-                        updateLoginButtonStatus();
-                        sessionStorage.clear();
-                        return;
-                    }
-
-                    console.log("cekToken: foundToken.answerKey is:", foundToken.answerKey);
-
-                    const now = new Date();
-                    const startTime = new Date(foundToken.startTime);
-                    const endTime = new Date(foundToken.endTime);
-                    let tokenStatus = '';
-
-                    if (foundToken.isForceActive === true) {
-                        tokenStatus = 'valid';
-                    } else if (foundToken.isActive === true) {
-                        if (now >= startTime && now <= endTime) {
-                            tokenStatus = 'valid';
-                        } else {
-                            tokenStatus = 'expired';
-                        }
+                    await signInWithEmailAndPassword(initialLoginAuth, email, password);
+                    console.log('Login email/password berhasil!');
+                    initialLoginScreen.style.opacity = 0;
+                    setTimeout(async () => {
+                        initialLoginScreen.style.display = 'none';
+                        // Inisialisasi Firebase untuk konfigurasi tombol kustom dan muat tombol setelah login berhasil
+                        await initializeButtonConfigFirebase();
+                        await loadAndRenderWelcomeButtons();
+                        welcomeScreen.style.display = 'flex';
+                        welcomeScreen.style.opacity = 1;
+                        document.body.style.overflow = '';
+                    }, 500);
+                } catch (error) {
+                    console.error("Login gagal:", error.message);
+                    let errorMessage = "Login gagal. Periksa kembali email dan password Anda.";
+                    if (error.code === 'auth/user-not-found' || error.code === 'auth/wrong-password') {
+                        errorMessage = "Email atau password salah.";
+                    } else if (error.code === 'auth/invalid-email') {
+                        errorMessage = "Format email tidak valid.";
                     } else {
-                        tokenStatus = 'inactive';
+                        errorMessage = `Terjadi kesalahan: ${error.message}`;
                     }
-
-                    if (tokenStatus !== 'valid') {
-                        message.style.color = "red";
-                        if (tokenStatus === 'expired') {
-                            message.textContent = "Token belum aktif atau sudah kadaluarsa.";
-                        } else {
-                            message.textContent = "Token saat ini tidak aktif.";
-                        }
-                        if (tokenInputGroup) tokenInputGroup.classList.add('is-invalid');
-                        updateLoginButtonStatus();
-                        return;
-                    }
-                    
-                    if (tokenInputGroup) tokenInputGroup.classList.add('is-valid');
-
-                    const studentClassNumericMatch = selectedStudentData.class.match(/^\d+/);
-                    const studentClassNumeric = studentClassNumericMatch ? studentClassNumericMatch[0] : null;
-
-                    if (!studentClassNumeric || String(studentClassNumeric) !== String(foundToken.kelas)) {
-                        message.style.color = "red";
-                        message.textContent = `Siswa dari kelas ${selectedStudentData.class} tidak dapat mengakses token untuk kelas ${foundToken.kelas}.`;
-                        updateLoginButtonStatus();
-                        return;
-                    }
-
-                    let examDurationMinutes = foundToken.durationMinutes;
-                    if (typeof examDurationMinutes !== 'number' || isNaN(examDurationMinutes) || examDurationMinutes <= 0) {
-                        message.style.color = "red";
-                        message.textContent = "Durasi ujian tidak valid. Harap hubungi administrator.";
-                        updateLoginButtonStatus();
-                        return;
-                    }
-                    
-                    const answerKeyArray = foundToken.answerKey ? foundToken.answerKey.split(',') : [];
-                    const numQuestions = answerKeyArray.length;
-                    console.log("cekToken: Jumlah pertanyaan yang dihitung:", numQuestions);
-
-                    const accessStatusRef = child(dbRefs.examAccessStatusRef, `${foundTokenGlobal.key}/${studentId}`);
-                    const accessStatusSnapshot = await get(accessStatusRef);
-                    let loadedAnswers = Array(numQuestions).fill('');
-                    let examAccessData = accessStatusSnapshot.val();
-                    
-                    if (examAccessData && examAccessData.isLoggedIn === true) {
-                        message.style.color = "red";
-                        message.textContent = "Anda sudah Login di perangkat lain. Mohon hubungi admin untuk mereset akun Anda.";
-                        updateLoginButtonStatus();
-                        return;
-                    }
-                    else {
-                        message.innerHTML = `Memuat jawaban siswa... <span class="spinner"></span>`;
-                        const studentAnswersPath = child(dbRefs.studentAnswersRef, `${foundTokenGlobal.key}/${selectedStudentData.id}`);
-                        const answersSnapshot = await get(studentAnswersPath);
-                        if (answersSnapshot.exists()) {
-                            const savedAnswersData = answersSnapshot.val();
-                            loadedAnswers = savedAnswersData.answers ? savedAnswersData.answers.split(',') : Array(numQuestions).fill('');
-                            console.log("Jawaban siswa dimuat dari Firebase (login pertama):", loadedAnswers);
-                        } else {
-                            console.warn("Tidak ada jawaban yang disimpan di Firebase pada jalur ini, dimulai dengan array kosong.");
-                        }
-
-                        document.getElementById("modalIdSiswa").textContent = selectedStudentData.id || "-";
-                        document.getElementById("modalNamaLengkap").textContent = selectedStudentData.name || "-";
-                        document.getElementById("modalKelas").textContent = selectedClass || "-";
-                        document.getElementById("modalMapel").textContent = foundToken.subject || "-";
-                        modalExamDuration.textContent = `${examDurationMinutes} Menit`;
-
-                        confirmCheckbox.checked = false;
-                        modalMessage.style.display = 'none';
-                        modalMessage.textContent = '';
-
-                        confirmModal.classList.add('show');
-                        isAnyModalOpen = true;
-                        message.textContent = "";
-
-                        document.getElementById("btnLanjut").onclick = () => handleLanjutClick(fullInputToken, examDurationMinutes, numQuestions, loadedAnswers);
-                    }
-
-                } catch (err) {
-                    console.error("Error di cekToken:", err);
-                    message.style.color = "red";
-                    message.textContent = "Terjadi kesalahan saat memverifikasi token. Silakan coba lagi atau hubungi administrator.";
-                    if (tokenInputGroup) tokenInputGroup.classList.add('is-invalid');
-                    updateLoginButtonStatus();
-                }
-            };
-
-            document.addEventListener('contextmenu', function (e) {
-                if (isInExamMode) {
-                    e.preventDefault();
+                    loginMessage.style.color = 'red';
+                    loginMessage.textContent = errorMessage;
+                    loginButton.disabled = false;
+                    loginButton.textContent = 'Login';
                 }
             });
 
@@ -3893,10 +3882,12 @@
                 submissionConfirmationOverlay.style.opacity = 0;
                 setTimeout(async () => {
                     submissionConfirmationOverlay.style.display = 'none';
-                    welcomeScreen.style.display = 'flex';
-                    welcomeScreen.style.opacity = 1;
+                    // Kembali ke layar login email/password
+                    initialLoginScreen.style.display = 'flex';
+                    initialLoginScreen.style.opacity = 1;
+                    welcomeScreen.style.display = 'none';
                     loginContainer.style.display = 'none';
-                    loginContainer.style.opacity = 0;
+                    examContainer.style.display = 'none';
                     document.body.style.overflow = '';
                     if (document.fullscreenElement) {
                         document.exitFullscreen();
@@ -3904,6 +3895,21 @@
                     isInExamMode = false;
                     toggleExamSecurityFeatures(false);
                     message.textContent = '';
+
+                    // Logout dari semua sesi Firebase jika diperlukan
+                    if (initialLoginAuth.currentUser) {
+                        await signOut(initialLoginAuth);
+                        console.log("Logged out from initial email/password auth.");
+                    }
+                    if (buttonConfigAuth.currentUser) {
+                         await signOutButtonConfig(buttonConfigAuth);
+                         console.log("Logged out from button config auth.");
+                    }
+                    // CurrentDb auth (per class)
+                    if (currentAuth && currentAuth.currentUser) {
+                        await signOut(currentAuth);
+                        console.log("Logged out from current class auth.");
+                    }
 
                     const tokenFirebaseKey = foundTokenGlobal?.key;
                     const studentId = selectedStudentData?.id ? padStudentId(selectedStudentData.id) : null;
@@ -4350,30 +4356,7 @@
             updateDateTime();
             setInterval(updateDateTime, 1000);
 
-            // Awalnya sembunyikan loginContainer dan tampilkan welcomeScreen
-            loginContainer.style.display = 'none';
-            welcomeScreen.style.display = 'flex';
-            welcomeScreen.style.opacity = 1;
-            document.body.style.overflow = '';
-
-            const topIframeBlocker = document.getElementById('topIframeBlocker');
-            if (topIframeBlocker) {
-                topIframeBlocker.addEventListener('click', (e) => {
-                    console.log('Click captured by topIframeBlocker!');
-                    e.preventDefault();
-                    e.stopPropagation();
-                });
-                topIframeBlocker.addEventListener('touchstart', (e) => {
-                    console.log('Touchstart captured by topIframeBlocker!');
-                    e.preventDefault();
-                    e.stopPropagation();
-                });
-                topIframeBlocker.addEventListener('touchend', (e) => {
-                    console.log('Touchend captured by topIframeBlocker!');
-                    e.preventDefault();
-                    e.stopPropagation();
-                });
-            }
+            // Coba pulihkan sesi ujian jika ada
             await restoreExamState();
         });
 
@@ -4420,6 +4403,183 @@
             updateLoginButtonStatus();
             getLocation();
         }
+
+        window.cekToken = async function() {
+            const tokenPrefix = inputTokenPrefix.value.trim().toUpperCase();
+            const studentId = displayStudentId.value.trim();
+            const fullInputToken = `${tokenPrefix}-${studentId}`;
+
+            const selectedClass = hiddenSelectKelas.value;
+            const selectedStudentId = hiddenSelectNamaSiswa.value;
+
+            if (!selectedClass || !selectedStudentId || tokenPrefix === "" || studentId === "") {
+                message.style.color = "red";
+                message.textContent = "Harap lengkapi semua pilihan (Kelas, Nama Siswa, dan Token).";
+                updateLoginButtonStatus();
+                return;
+            }
+
+            if (studentId !== padStudentId(selectedStudentId)) {
+                message.style.color = "red";
+                message.textContent = "ID Siswa tidak cocok dengan nama siswa yang dipilih.";
+                updateLoginButtonStatus();
+                return;
+            }
+            
+            const tokenInputGroup = inputTokenPrefix.closest('.token-input-group');
+            if (tokenInputGroup) {
+                tokenInputGroup.classList.remove('is-valid', 'is-invalid');
+            }
+
+            loginBtn.disabled = true;
+            loginBtn.style.opacity = 0.6;
+            message.style.color = "black";
+            message.innerHTML = `Memproses data... <span class="spinner"></span>`;
+
+            if (!currentDb) {
+                message.style.color = "red";
+                message.textContent = "Database belum diinisialisasi. Pilih kelas terlebih dahulu.";
+                updateLoginButtonStatus();
+                return;
+            }
+            const dbRefs = getDbRefs();
+            if (!dbRefs) return;
+
+
+            try {
+                const tokensSnapshot = await get(dbRefs.tokensRef);
+                let foundToken = null;
+
+                tokensSnapshot.forEach(child => {
+                    const data = child.val();
+                    if (data.token.toUpperCase() === tokenPrefix) {
+                        foundToken = { ...data, key: child.key };
+                        return true;
+                    }
+                });
+
+                if (!foundToken) {
+                    message.style.color = "red";
+                    message.textContent = "Token ujian yang Anda masukkan tidak ditemukan. Mohon periksa kembali token Anda.";
+                    if (tokenInputGroup) tokenInputGroup.classList.add('is-invalid');
+                    updateLoginButtonStatus();
+                    return;
+                }
+
+                foundTokenGlobal = foundToken;
+
+                const hasSubmittedSnapshot = await get(child(dbRefs.submittedExamsRef, `${foundTokenGlobal.key}/${studentId}`));
+                if (hasSubmittedSnapshot.exists() && hasSubmittedSnapshot.val().isSubmitted === true) {
+                    message.style.color = "red";
+                    message.textContent = "Anda sudah menyelesaikan ujian ini dan tidak dapat login kembali.";
+                    updateLoginButtonStatus();
+                    sessionStorage.clear();
+                    return;
+                }
+
+                console.log("cekToken: foundToken.answerKey is:", foundToken.answerKey);
+
+                const now = new Date();
+                const startTime = new Date(foundToken.startTime);
+                const endTime = new Date(foundToken.endTime);
+                let tokenStatus = '';
+
+                if (foundToken.isForceActive === true) {
+                    tokenStatus = 'valid';
+                } else if (foundToken.isActive === true) {
+                    if (now >= startTime && now <= endTime) {
+                        tokenStatus = 'valid';
+                    } else {
+                        tokenStatus = 'expired';
+                    }
+                } else {
+                    tokenStatus = 'inactive';
+                }
+
+                if (tokenStatus !== 'valid') {
+                    message.style.color = "red";
+                    if (tokenStatus === 'expired') {
+                        message.textContent = "Token belum aktif atau sudah kadaluarsa.";
+                    } else {
+                        message.textContent = "Token saat ini tidak aktif.";
+                    }
+                    if (tokenInputGroup) tokenInputGroup.classList.add('is-invalid');
+                    updateLoginButtonStatus();
+                    return;
+                }
+                
+                if (tokenInputGroup) tokenInputGroup.classList.add('is-valid');
+
+                const studentClassNumericMatch = selectedStudentData.class.match(/^\d+/);
+                const studentClassNumeric = studentClassNumericMatch ? studentClassNumericMatch[0] : null;
+
+                if (!studentClassNumeric || String(studentClassNumeric) !== String(foundToken.kelas)) {
+                    message.style.color = "red";
+                    message.textContent = `Siswa dari kelas ${selectedStudentData.class} tidak dapat mengakses token untuk kelas ${foundToken.kelas}.`;
+                    updateLoginButtonStatus();
+                    return;
+                }
+
+                let examDurationMinutes = foundToken.durationMinutes;
+                if (typeof examDurationMinutes !== 'number' || isNaN(examDurationMinutes) || examDurationMinutes <= 0) {
+                    message.style.color = "red";
+                    message.textContent = "Durasi ujian tidak valid. Harap hubungi administrator.";
+                    updateLoginButtonStatus();
+                    return;
+                }
+                
+                const answerKeyArray = foundToken.answerKey ? foundToken.answerKey.split(',') : [];
+                const numQuestions = answerKeyArray.length;
+                console.log("cekToken: Jumlah pertanyaan yang dihitung:", numQuestions);
+
+                const accessStatusRef = child(dbRefs.examAccessStatusRef, `${foundTokenGlobal.key}/${studentId}`);
+                const accessStatusSnapshot = await get(accessStatusRef);
+                let loadedAnswers = Array(numQuestions).fill('');
+                let examAccessData = accessStatusSnapshot.val();
+                
+                if (examAccessData && examAccessData.isLoggedIn === true) {
+                    message.style.color = "red";
+                    message.textContent = "Anda sudah Login di perangkat lain. Mohon hubungi admin untuk mereset akun Anda.";
+                    updateLoginButtonStatus();
+                    return;
+                }
+                else {
+                    message.innerHTML = `Memuat jawaban siswa... <span class="spinner"></span>`;
+                    const studentAnswersPath = child(dbRefs.studentAnswersRef, `${foundTokenGlobal.key}/${selectedStudentData.id}`);
+                    const answersSnapshot = await get(studentAnswersPath);
+                    if (answersSnapshot.exists()) {
+                        const savedAnswersData = answersSnapshot.val();
+                        loadedAnswers = savedAnswersData.answers ? savedAnswersData.answers.split(',') : Array(numQuestions).fill('');
+                        console.log("Jawaban siswa dimuat dari Firebase (login pertama):", loadedAnswers);
+                    } else {
+                        console.warn("Tidak ada jawaban yang disimpan di Firebase pada jalur ini, dimulai dengan array kosong.");
+                    }
+
+                    document.getElementById("modalIdSiswa").textContent = selectedStudentData.id || "-";
+                    document.getElementById("modalNamaLengkap").textContent = selectedStudentData.name || "-";
+                    document.getElementById("modalKelas").textContent = selectedClass || "-";
+                    document.getElementById("modalMapel").textContent = foundToken.subject || "-";
+                    modalExamDuration.textContent = `${examDurationMinutes} Menit`;
+
+                    confirmCheckbox.checked = false;
+                    modalMessage.style.display = 'none';
+                    modalMessage.textContent = '';
+
+                    confirmModal.classList.add('show');
+                    isAnyModalOpen = true;
+                    message.textContent = "";
+
+                    document.getElementById("btnLanjut").onclick = () => handleLanjutClick(fullInputToken, examDurationMinutes, numQuestions, loadedAnswers);
+                }
+
+            } catch (err) {
+                console.error("Error di cekToken:", err);
+                message.style.color = "red";
+                message.textContent = "Terjadi kesalahan saat memverifikasi token. Silakan coba lagi atau hubungi administrator.";
+                if (tokenInputGroup) tokenInputGroup.classList.add('is-invalid');
+                updateLoginButtonStatus();
+            }
+        };
     </script>
 </body>
 </html>
