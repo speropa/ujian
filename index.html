@@ -10,10 +10,10 @@
             width: 100%;
             margin: 0;
             padding: 0;
-            /* Default primary color, will be overridden by JS */
-            --primary-color: #0066cc; /* Default for Kelas 7 */
-            --accent-color: #007bff; /* Default button color */
-            --warning-color: #ea4b16; /* Default for Judul Ujian */
+            /* Warna primer default, akan ditimpa oleh JS */
+            --primary-color: #0066cc; /* Default untuk Kelas 7 */
+            --accent-color: #007bff; /* Warna tombol default */
+            --warning-color: #ea4b16; /* Default untuk Judul Ujian */
         }
 
         body {
@@ -69,7 +69,7 @@
             font-weight: bold;
             color: white;
             border: none;
-            border-radius: 9999px; /* More oval */
+            border-radius: 9999px; /* Lebih oval */
             cursor: pointer;
             transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
             box-shadow: 0 4px 8px rgba(0,0,0,0.2);
@@ -104,6 +104,14 @@
         }
         .btn-kelas9:hover {
             background-color: #5a0000;
+        }
+
+        /* Gaya untuk tombol susulan */
+        .btn-susulan {
+            background-color: #28a745; /* Hijau */
+        }
+        .btn-susulan:hover {
+            background-color: #218838;
         }
 
         .container {
@@ -147,7 +155,7 @@
         }
 
         .judul-ujian {
-            color: var(--warning-color); /* Dynamic color */
+            color: var(--warning-color); /* Warna dinamis */
             font-size: 22px;
             font-weight: bold;
             margin: 10px 0;
@@ -269,7 +277,7 @@
             padding: 10px 20px;
             font-size: 16px;
             width: 100%;
-            background-color: var(--accent-color); /* Dynamic color */
+            background-color: var(--accent-color); /* Warna dinamis */
             color: white;
             border: none;
             border-radius: 5px;
@@ -280,7 +288,7 @@
         }
 
         button:hover {
-            background-color: var(--primary-color); /* Slightly darker shade of primary for hover */
+            background-color: var(--primary-color); /* Warna sedikit lebih gelap dari primary untuk hover */
         }
 
         button:active {
@@ -360,7 +368,7 @@
         .custom-modal-content h4 {
             font-size: 1.5em;
             font-weight: bold;
-            color: var(--primary-color); /* Dynamic color */
+            color: var(--primary-color); /* Warna dinamis */
             margin-bottom: 15px;
             text-align: center;
             flex-shrink: 0;
@@ -397,6 +405,32 @@
             background-color: #e0e0e0;
         }
 
+        /* Gaya untuk modal daftar ujian susulan */
+        #susulanListModal .custom-modal-content {
+            max-width: 450px; /* Lebarkan sedikit */
+        }
+
+        #susulanListModal .custom-modal-list li {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            padding: 15px 20px; /* Lebih banyak padding */
+            gap: 5px;
+        }
+
+        #susulanListModal .custom-modal-list li .item-name {
+            font-weight: bold;
+            font-size: 1.1em;
+            color: #333;
+        }
+
+        #susulanListModal .custom-modal-list li .item-url {
+            font-size: 0.85em;
+            color: #666;
+            word-break: break-all; /* Memastikan URL tidak melebar */
+        }
+
+
         #confirmModal {
             display: none;
             position: fixed;
@@ -427,7 +461,7 @@
         #confirmModal .modal-content h4 {
             font-size: 1.8em;
             font-weight: bold;
-            color: var(--primary-color); /* Dynamic color */
+            color: var(--primary-color); /* Warna dinamis */
             margin-bottom: 15px;
             text-align: center;
         }
@@ -513,7 +547,7 @@
         }
 
         #countdownDisplay {
-            background-color: var(--primary-color); /* Dynamic color */
+            background-color: var(--primary-color); /* Warna dinamis */
             color: white;
             padding: 10px;
             font-size: 1.5em;
@@ -758,7 +792,7 @@
         }
 
         #submitAnswersButton {
-            background-color: var(--accent-color); /* Dynamic color */
+            background-color: var(--accent-color); /* Warna dinamis */
             color: white;
             padding: 12px;
             margin-top: 0px;
@@ -775,7 +809,7 @@
         }
 
         #submitAnswersButton:hover {
-            background-color: var(--primary-color); /* Dynamic color */
+            background-color: var(--primary-color); /* Warna dinamis */
         }
 
         .custom-modal {
@@ -821,7 +855,7 @@
 
         #answerSelectionModal h4 {
             font-size: 1.5em;
-            color: var(--primary-color); /* Dynamic color */
+            color: var(--primary-color); /* Warna dinamis */
             margin-bottom: 20px;
         }
 
@@ -1039,7 +1073,7 @@
         .exit-warning-button {
             padding: 12px 25px;
             font-size: 1.2em;
-            background-color: var(--accent-color); /* Dynamic color */
+            background-color: var(--accent-color); /* Warna dinamis */
             color: white;
             border: none;
             border-radius: 8px;
@@ -1048,7 +1082,7 @@
             box-shadow: 0 4px 8px rgba(0,0,0,0.2);
         }
         .exit-warning-button:hover {
-            background-color: var(--primary-color); /* Dynamic color */
+            background-color: var(--primary-color); /* Warna dinamis */
         }
 
         .no-select {
@@ -1082,7 +1116,7 @@
             pointer-events: auto;
         }
         #fullscreenOverlay .overlay-content {
-            background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-color) 100%); /* Dynamic color */
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-color) 100%); /* Warna dinamis */
             color: white;
             padding: 40px;
             border-radius: 15px;
@@ -1174,7 +1208,7 @@
             font-size: 1.5em;
             font-weight: bold;
             color: white;
-            background-color: var(--accent-color); /* Dynamic color */
+            background-color: var(--accent-color); /* Warna dinamis */
             border: none;
             border-radius: 5px;
             cursor: pointer;
@@ -1187,7 +1221,7 @@
         }
 
         #zoomControls button:hover {
-            background-color: var(--primary-color); /* Dynamic color */
+            background-color: var(--primary-color); /* Warna dinamis */
             transform: scale(1.05);
             opacity: 1;
         }
@@ -1451,11 +1485,11 @@
 </head>
 <body>
     <div id="welcomeScreen" class="welcome-screen">
-        <h2>SELAMAT DATANG</h2>
-        <p>Silakan pilih jenjang kelas Anda untuk melanjutkan ke halaman ujian.</p>
-        <button id="btnKelas7" class="welcome-button btn-kelas7">KELAS 7</button>
-        <button id="btnKelas8" class="welcome-button btn-kelas8">KELAS 8</button>
-        <button id="btnKelas9" class="welcome-button btn-kelas9">KELAS 9</button>
+        <h2 id="welcomeTitle">SELAMAT DATANG</h2>
+        <p id="welcomeMessage">Memuat pilihan ujian...</p>
+        <div id="welcomeButtonsContainer" style="display: flex; flex-direction: column; gap: 15px;">
+            <!-- Tombol akan dimuat di sini oleh JavaScript -->
+        </div>
     </div>
 
     <div id="loginContainer" class="container">
@@ -1672,11 +1706,62 @@
             </ul>
         </div>
     </div>
+    <!-- Modal baru untuk daftar ujian susulan -->
+    <div id="susulanListModal" class="custom-modal">
+        <div class="custom-modal-content">
+            <h4 id="susulanModalTitle">Pilih Ujian Susulan</h4>
+            <ul id="susulanModalList" class="custom-modal-list">
+            </ul>
+            <button id="closeSusulanModalButton" onclick="window.closeSusulanListModal()">TUTUP</button>
+        </div>
+    </div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.8.1/firebase-app.js";
         import { getDatabase, ref, get, child, runTransaction, set, onValue, off, update, remove } from "https://www.gstatic.com/firebasejs/11.8.1/firebase-database.js";
         import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/11.8.1/firebase-auth.js";
+
+        // Import untuk konfigurasi tombol kustom (Firebase terpisah)
+        import { initializeApp as initializeAppButtonConfig } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-app.js";
+        import { getDatabase as getDatabaseButtonConfig, ref as refButtonConfig, get as getButtonConfig } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-database.js";
+        // Import getAuth dan signInAnonymously untuk konfigurasi tombol agar sesuai versi app config
+        import { getAuth as getAuthButtonConfigAuth, signInAnonymously as signInAnonymouslyButtonConfigAuth } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-auth.js";
+
+
+        // Konfigurasi Firebase untuk Tombol Kustom (publicSettings)
+        const buttonConfigFirebaseConfig = {
+            apiKey: "AIzaSyAOBCX8x60pYqxtXmXMz2xc5dwC3HJH5EE",
+            authDomain: "ujian-online-berbasis-android.firebaseapp.com",
+            databaseURL: "https://ujian-online-berbasis-android-default-rtdb.firebaseio.com",
+            projectId: "ujian-online-berbasis-android",
+            storageBucket: "ujian-online-berbasis-android.firebasestorage.app",
+            messagingSenderId: "923446282537",
+            appId: "1:923446282537:web:60d374dde8aca61f6a0f38"
+        };
+        let buttonConfigDb = null;
+        let publicSettings = null; // Untuk menyimpan konfigurasi publicSettings dari Firebase
+        let buttonConfigAuth = null;
+
+        // Fungsi untuk menginisialisasi Firebase untuk konfigurasi tombol dan login anonim
+        async function initializeButtonConfigFirebase() {
+            try {
+                const app = initializeAppButtonConfig(buttonConfigFirebaseConfig, "buttonConfigApp");
+                buttonConfigDb = getDatabaseButtonConfig(app);
+                // Menggunakan getAuth dan signInAnonymously yang diimpor khusus untuk buttonConfig
+                buttonConfigAuth = getAuthButtonConfigAuth(app);
+                await signInAnonymouslyButtonConfigAuth(buttonConfigAuth);
+                console.log("Firebase untuk konfigurasi tombol berhasil diinisialisasi dan login anonim.");
+            } catch (error) {
+                console.error("Gagal menginisialisasi Firebase untuk konfigurasi tombol:", error);
+                // Pesan error lebih informatif untuk auth/admin-restricted-operation
+                if (error.code === 'auth/admin-restricted-operation') {
+                    document.getElementById('welcomeMessage').textContent = 'Gagal memuat konfigurasi. Pastikan "Anonymous" Authentication diaktifkan di Firebase Console untuk proyek ini.';
+                } else {
+                    document.getElementById('welcomeMessage').textContent = 'Gagal memuat konfigurasi. Silakan refresh halaman. (Error: ' + error.message + ')';
+                }
+            }
+        }
+
 
         const allFirebaseConfigs = {
             'kelas7-group1': {
@@ -1851,6 +1936,9 @@
         const allowedLongitude = 110.2655596;
 
         const welcomeScreen = document.getElementById('welcomeScreen');
+        const welcomeTitle = document.getElementById('welcomeTitle');
+        const welcomeMessageElement = document.getElementById('welcomeMessage');
+        const welcomeButtonsContainer = document.getElementById('welcomeButtonsContainer');
         const loginContainer = document.getElementById('loginContainer');
         const examContainer = document.getElementById('examContainer');
         const countdownDisplay = document.getElementById('countdownDisplay');
@@ -1900,6 +1988,10 @@
         const classModalList = document.getElementById('classModalList');
         const studentModal = document.getElementById('studentModal');
         const studentModalList = document.getElementById('studentModalList');
+
+        const susulanListModal = document.getElementById('susulanListModal');
+        const susulanModalList = document.getElementById('susulanModalList');
+
 
         const answerSidebar = document.getElementById('answerSidebar');
         const sidebarToggle = document.getElementById('sidebarToggle');
@@ -2581,8 +2673,6 @@
                 submissionListenerRef = null;
             }
 
-            submissionListenerRef = studentSubmissionRef;
-
             onValue(studentSubmissionRef, (snapshot) => {
                 if (snapshot.exists() && snapshot.val().isSubmitted === true) {
                     if (examContainer.style.display === 'flex') {
@@ -2695,32 +2785,46 @@
                     totalQuestions = storedTotalQuestions;
                     currentSelectedGrade = storedSelectedGrade;
 
-                    // Apply theme colors first
-                    const gradeConfig = allFirebaseConfigs[`kelas${currentSelectedGrade}-group1`]; // Assuming first group has theme
+                    // Terapkan warna tema terlebih dahulu
+                    const gradeConfig = allFirebaseConfigs[`kelas${currentSelectedGrade}-group1`]; // Asumsikan grup pertama memiliki tema
                     if (gradeConfig && gradeConfig.theme) {
                         document.documentElement.style.setProperty('--primary-color', gradeConfig.theme.primary);
                         document.documentElement.style.setProperty('--accent-color', gradeConfig.theme.accent);
                         document.documentElement.style.setProperty('--warning-color', gradeConfig.theme.warning);
 
-                        // Also update element specific styles
+                        // Juga perbarui gaya elemen tertentu
                         document.querySelector('.header-box').style.backgroundColor = gradeConfig.theme.primary;
                         document.querySelector('.judul-ujian').style.color = gradeConfig.theme.warning;
                         document.querySelector('#loginBtn').style.backgroundColor = gradeConfig.theme.accent;
-                        document.querySelector('#loginBtn:hover').style.backgroundColor = gradeConfig.theme.primary;
+                        document.querySelector('#loginBtn').onmouseover = () => document.querySelector('#loginBtn').style.backgroundColor = gradeConfig.theme.primary;
+                        document.querySelector('#loginBtn').onmouseout = () => document.querySelector('#loginBtn').style.backgroundColor = gradeConfig.theme.accent;
+
                         document.querySelector('#countdownDisplay').style.backgroundColor = gradeConfig.theme.primary;
                         document.querySelector('#customMessageModalButton').style.backgroundColor = gradeConfig.theme.accent;
                         document.querySelector('#customConfirmModalConfirmBtn').style.backgroundColor = gradeConfig.theme.accent;
-                        document.querySelector('#zoomControls button').style.backgroundColor = gradeConfig.theme.accent;
-                        document.querySelector('#zoomControls button:hover').style.backgroundColor = gradeConfig.theme.primary;
+                        
+                        // Perbarui event listener untuk tombol zoom controls secara dinamis
+                        const zoomButtons = document.querySelectorAll('#zoomControls button');
+                        zoomButtons.forEach(btn => {
+                            btn.style.backgroundColor = gradeConfig.theme.accent;
+                            btn.onmouseover = (e) => e.target.style.backgroundColor = gradeConfig.theme.primary;
+                            btn.onmouseout = (e) => e.target.style.backgroundColor = gradeConfig.theme.accent;
+                        });
+
                         document.querySelector('#fullscreenOverlay .overlay-content').style.background = `linear-gradient(135deg, ${gradeConfig.theme.primary} 0%, ${gradeConfig.theme.primary} 100%)`;
                         document.querySelector('.custom-modal-content h4').style.color = gradeConfig.theme.primary;
                         document.querySelector('#confirmModal .modal-content h4').style.color = gradeConfig.theme.primary;
                         document.querySelector('#answerSelectionModal h4').style.color = gradeConfig.theme.primary;
                         document.querySelector('#submitAnswersButton').style.backgroundColor = gradeConfig.theme.accent;
-                        document.querySelector('#submitAnswersButton:hover').style.backgroundColor = gradeConfig.theme.primary;
-                        document.querySelector('.exit-warning-button').style.backgroundColor = gradeConfig.theme.accent;
-                        document.querySelector('.exit-warning-button:hover').style.backgroundColor = gradeConfig.theme.primary;
-
+                        document.querySelector('#submitAnswersButton').onmouseover = () => document.querySelector('#submitAnswersButton').style.backgroundColor = gradeConfig.theme.primary;
+                        document.querySelector('#submitAnswersButton').onmouseout = () => document.querySelector('#submitAnswersButton').style.backgroundColor = gradeConfig.theme.accent;
+                        
+                        const exitWarningButtons = document.querySelectorAll('.exit-warning-button');
+                        exitWarningButtons.forEach(btn => {
+                            btn.style.backgroundColor = gradeConfig.theme.accent;
+                            btn.onmouseover = () => btn.style.backgroundColor = gradeConfig.theme.primary;
+                            btn.onmouseout = () => btn.style.backgroundColor = gradeConfig.theme.accent;
+                        });
                     }
                     loginJudulUjian.textContent = `UJIAN KELAS ${currentSelectedGrade}`;
 
@@ -2865,7 +2969,7 @@
                             attemptsLeft: toleranceLimitGlobal
                         };
                         if (updatedAccess.logoutTimestamp) {
-                            delete updatedAccess.logoutTimestamp;
+                            delete updatedAccess.logoutUserTimestamp;
                         }
                     } else {
                         updatedAccess.accessCount = (currentAccess.accessCount || 0) + 1;
@@ -3304,6 +3408,196 @@
             }
         }
 
+        // Fungsi untuk memuat dan menampilkan tombol berdasarkan konfigurasi Firebase (publicSettings)
+        async function loadAndRenderWelcomeButtons() {
+            welcomeButtonsContainer.innerHTML = ''; // Bersihkan tombol yang ada
+            welcomeMessageElement.textContent = 'Memuat pilihan ujian...'; // Perbarui pesan pemuatan
+
+            if (!buttonConfigDb) {
+                console.error("Database konfigurasi tombol belum diinisialisasi.");
+                welcomeMessageElement.textContent = 'Gagal memuat konfigurasi. Silakan refresh halaman.';
+                return;
+            }
+
+            try {
+                const publicSettingsRef = refButtonConfig(buttonConfigDb, 'publicSettings');
+                const snapshot = await getButtonConfig(publicSettingsRef);
+
+                if (snapshot.exists()) {
+                    publicSettings = snapshot.val();
+                    console.log("Konfigurasi publicSettings dari Firebase:", publicSettings);
+
+                    const activeButtons = [];
+
+                    // Cek Kelas 7, 8, 9
+                    ['kelas7', 'kelas8', 'kelas9'].forEach(kelas => {
+                        if (publicSettings[kelas] && publicSettings[kelas].enabled) {
+                            activeButtons.push({
+                                id: `btn-${kelas}`,
+                                text: `PILIH ${kelas.toUpperCase().replace('KELAS', 'KELAS ')}`,
+                                class: `welcome-button btn-${kelas}`,
+                                action: () => handleCustomButtonClassClick(kelas, publicSettings[kelas].url)
+                            });
+                        }
+                    });
+
+                    // Cek Susulan
+                    if (publicSettings.susulan && publicSettings.susulan.enabled && publicSettings.susulan.list && Object.keys(publicSettings.susulan.list).length > 0) {
+                        activeButtons.push({
+                            id: `btn-susulan`,
+                            text: `UJIAN SUSULAN`,
+                            class: `welcome-button btn-susulan`,
+                            action: showSusulanListModal
+                        });
+                    }
+
+                    if (activeButtons.length > 0) {
+                        activeButtons.forEach(buttonInfo => {
+                            const button = document.createElement('button');
+                            button.id = buttonInfo.id;
+                            button.className = buttonInfo.class;
+                            button.textContent = buttonInfo.text;
+                            button.addEventListener('click', buttonInfo.action);
+                            welcomeButtonsContainer.appendChild(button);
+                        });
+                        welcomeTitle.textContent = 'SELAMAT DATANG';
+                        welcomeMessageElement.textContent = 'Silakan pilih jenjang kelas Anda untuk melanjutkan ke halaman ujian:';
+                    } else {
+                        // Tidak ada tombol kustom yang aktif, tampilkan tombol default
+                        welcomeTitle.textContent = 'SELAMAT DATANG';
+                        welcomeMessageElement.textContent = 'Silakan pilih jenjang kelas Anda untuk melanjutkan ke halaman ujian:';
+                        
+                        const btnKelas7 = document.createElement('button');
+                        btnKelas7.id = 'btnKelas7';
+                        btnKelas7.className = 'welcome-button btn-kelas7';
+                        btnKelas7.textContent = 'KELAS 7';
+                        btnKelas7.addEventListener('click', () => selectGrade(7));
+                        welcomeButtonsContainer.appendChild(btnKelas7);
+
+                        const btnKelas8 = document.createElement('button');
+                        btnKelas8.id = 'btnKelas8';
+                        btnKelas8.className = 'welcome-button btn-kelas8';
+                        btnKelas8.textContent = 'KELAS 8';
+                        btnKelas8.addEventListener('click', () => selectGrade(8));
+                        welcomeButtonsContainer.appendChild(btnKelas8);
+
+                        const btnKelas9 = document.createElement('button');
+                        btnKelas9.id = 'btnKelas9';
+                        btnKelas9.className = 'welcome-button btn-kelas9';
+                        btnKelas9.textContent = 'KELAS 9';
+                        btnKelas9.addEventListener('click', () => selectGrade(9));
+                        welcomeButtonsContainer.appendChild(btnKelas9);
+                    }
+                } else {
+                    console.warn("Node publicSettings tidak ditemukan di Firebase. Menampilkan tombol default.");
+                    // Tampilkan tombol default jika publicSettings tidak ada
+                    welcomeTitle.textContent = 'SELAMAT DATANG';
+                    welcomeMessageElement.textContent = 'Silakan pilih jenjang kelas Anda untuk melanjutkan ke halaman ujian:';
+                    
+                    const btnKelas7 = document.createElement('button');
+                    btnKelas7.id = 'btnKelas7';
+                    btnKelas7.className = 'welcome-button btn-kelas7';
+                    btnKelas7.textContent = 'KELAS 7';
+                    btnKelas7.addEventListener('click', () => selectGrade(7));
+                    welcomeButtonsContainer.appendChild(btnKelas7);
+
+                    const btnKelas8 = document.createElement('button');
+                    btnKelas8.id = 'btnKelas8';
+                    btnKelas8.className = 'welcome-button btn-kelas8';
+                    btnKelas8.textContent = 'KELAS 8';
+                    btnKelas8.addEventListener('click', () => selectGrade(8));
+                    welcomeButtonsContainer.appendChild(btnKelas8);
+
+                    const btnKelas9 = document.createElement('button');
+                    btnKelas9.id = 'btnKelas9';
+                    btnKelas9.className = 'welcome-button btn-kelas9';
+                    btnKelas9.textContent = 'KELAS 9';
+                    btnKelas9.addEventListener('click', () => selectGrade(9));
+                    welcomeButtonsContainer.appendChild(btnKelas9);
+                }
+            } catch (error) {
+                console.error("Gagal memuat konfigurasi tombol dari Firebase:", error);
+                welcomeMessageElement.textContent = 'Gagal memuat konfigurasi. Silakan refresh halaman.';
+                // Tampilkan tombol default sebagai fallback jika terjadi error
+                welcomeTitle.textContent = 'SELAMAT DATANG';
+                welcomeMessageElement.textContent = 'Silakan pilih jenjang kelas Anda untuk melanjutkan ke halaman ujian:';
+                
+                const btnKelas7 = document.createElement('button');
+                btnKelas7.id = 'btnKelas7';
+                btnKelas7.className = 'welcome-button btn-kelas7';
+                btnKelas7.textContent = 'KELAS 7';
+                btnKelas7.addEventListener('click', () => selectGrade(7));
+                welcomeButtonsContainer.appendChild(btnKelas7);
+
+                const btnKelas8 = document.createElement('button');
+                btnKelas8.id = 'btnKelas8';
+                btnKelas8.className = 'welcome-button btn-kelas8';
+                btnKelas8.textContent = 'KELAS 8';
+                btnKelas8.addEventListener('click', () => selectGrade(8));
+                welcomeButtonsContainer.appendChild(btnKelas8);
+
+                const btnKelas9 = document.createElement('button');
+                btnKelas9.id = 'btnKelas9';
+                btnKelas9.className = 'welcome-button btn-kelas9';
+                btnKelas9.textContent = 'KELAS 9';
+                btnKelas9.addEventListener('click', () => selectGrade(9));
+                welcomeButtonsContainer.appendChild(btnKelas9);
+            }
+        }
+
+        // Fungsi handler untuk tombol Kelas 7, 8, 9 yang kustom
+        function handleCustomButtonClassClick(kelas, url) {
+            console.log(`Mengklik tombol kustom untuk ${kelas}, URL: ${url}`);
+            if (url) {
+                // Arahkan langsung ke URL ujian (misal Google Form)
+                // Ini akan keluar dari aplikasi ujian ini.
+                window.location.href = url;
+            } else {
+                window.showCustomMessageModal("URL Tidak Ditemukan", `URL untuk ${kelas.toUpperCase()} tidak ditemukan. Harap hubungi administrator.`, 'error');
+            }
+        }
+
+        // Fungsi untuk menampilkan modal ujian susulan
+        function showSusulanListModal() {
+            const susulanModalList = document.getElementById('susulanModalList');
+            susulanModalList.innerHTML = ''; // Bersihkan daftar yang ada
+
+            if (publicSettings && publicSettings.susulan && publicSettings.susulan.list) {
+                const susulanItems = Object.values(publicSettings.susulan.list);
+                // Urutkan berdasarkan nama ujian
+                susulanItems.sort((a, b) => a.name.localeCompare(b.name)); 
+
+                susulanItems.forEach(item => {
+                    const listItem = document.createElement('li');
+                    // Hanya menyertakan nama ujian, bukan URL
+                    listItem.innerHTML = `<span class="item-name">${item.name}</span>`;
+                    listItem.addEventListener('click', () => {
+                        if (item.url) {
+                            window.open(item.url, '_blank'); // Buka di tab baru
+                            window.closeSusulanListModal();
+                        } else {
+                            window.showCustomMessageModal("URL Tidak Ditemukan", `URL untuk ${item.name} tidak ditemukan.`, 'error');
+                        }
+                    });
+                    susulanModalList.appendChild(listItem);
+                });
+            } else {
+                const listItem = document.createElement('li');
+                listItem.textContent = 'Tidak ada ujian susulan yang tersedia saat ini.';
+                susulanModalList.appendChild(listItem);
+            }
+
+            susulanListModal.classList.add('show');
+            isAnyModalOpen = true; // Tandai bahwa modal terbuka
+        }
+
+        // Fungsi untuk menutup modal ujian susulan
+        window.closeSusulanListModal = function() { // Buat ini global agar bisa diakses dari onclick
+            susulanListModal.classList.remove('show');
+            isAnyModalOpen = false;
+        }
+
+
         async function selectGrade(grade) {
             currentSelectedGrade = grade;
             welcomeScreen.style.opacity = 0;
@@ -3314,29 +3608,33 @@
                 document.body.style.overflow = '';
             }, 500);
 
-            // Set dynamic CSS variables based on selected grade's theme
-            const gradeConfig = allFirebaseConfigs[`kelas${grade}-group1`]; // Assuming first group has the theme info
+            // Setel variabel CSS dinamis berdasarkan tema kelas yang dipilih
+            const gradeConfig = allFirebaseConfigs[`kelas${grade}-group1`]; // Asumsikan grup pertama memiliki informasi tema
             if (gradeConfig && gradeConfig.theme) {
                 document.documentElement.style.setProperty('--primary-color', gradeConfig.theme.primary);
                 document.documentElement.style.setProperty('--accent-color', gradeConfig.theme.accent);
                 document.documentElement.style.setProperty('--warning-color', gradeConfig.theme.warning);
 
-                // Also update element specific styles
+                // Juga perbarui gaya elemen tertentu
                 document.querySelector('.header-box').style.backgroundColor = gradeConfig.theme.primary;
-                document.querySelector('.judul-ujian').style.color = gradeConfig.theme.warning; // Judul ujian color
+                document.querySelector('.judul-ujian').style.color = gradeConfig.theme.warning; // Warna Judul ujian
                 document.querySelector('#loginBtn').style.backgroundColor = gradeConfig.theme.accent;
-                document.querySelector('#loginBtn').onmouseover = () => document.querySelector('#loginBtn').style.backgroundColor = gradeConfig.theme.primary; // Hover color
-                document.querySelector('#loginBtn').onmouseout = () => document.querySelector('#loginBtn').style.backgroundColor = gradeConfig.theme.accent; // Restore on mouseout
+                document.querySelector('#loginBtn').onmouseover = () => document.querySelector('#loginBtn').style.backgroundColor = gradeConfig.theme.primary; // Warna hover
+                document.querySelector('#loginBtn').onmouseout = () => document.querySelector('#loginBtn').style.backgroundColor = gradeConfig.theme.accent; // Pulihkan saat mouseout
 
                 document.querySelector('#countdownDisplay').style.backgroundColor = gradeConfig.theme.primary;
                 document.querySelector('#customMessageModalButton').style.backgroundColor = gradeConfig.theme.accent;
                 document.querySelector('#customConfirmModalConfirmBtn').style.backgroundColor = gradeConfig.theme.accent;
-                document.querySelector('#zoomControls button').style.backgroundColor = gradeConfig.theme.accent;
-                // Dynamically update hover for zoom controls
-                document.querySelector('#zoomControls button').onmouseover = (e) => e.target.style.backgroundColor = gradeConfig.theme.primary;
-                document.querySelector('#zoomControls button').onmouseout = (e) => e.target.style.backgroundColor = gradeConfig.theme.accent;
+                
+                // Perbarui event listener untuk tombol zoom controls secara dinamis
+                const zoomButtons = document.querySelectorAll('#zoomControls button');
+                zoomButtons.forEach(btn => {
+                    btn.style.backgroundColor = gradeConfig.theme.accent;
+                    btn.onmouseover = (e) => e.target.style.backgroundColor = gradeConfig.theme.primary;
+                    btn.onmouseout = (e) => e.target.style.backgroundColor = gradeConfig.theme.accent;
+                });
 
-                // Fullscreen overlay background
+                // Latar belakang overlay layar penuh
                 document.querySelector('#fullscreenOverlay .overlay-content').style.background = `linear-gradient(135deg, ${gradeConfig.theme.primary} 0%, ${gradeConfig.theme.primary} 100%)`;
                 
                 document.querySelector('.custom-modal-content h4').style.color = gradeConfig.theme.primary;
@@ -3346,10 +3644,12 @@
                 document.querySelector('#submitAnswersButton').onmouseover = () => document.querySelector('#submitAnswersButton').style.backgroundColor = gradeConfig.theme.primary;
                 document.querySelector('#submitAnswersButton').onmouseout = () => document.querySelector('#submitAnswersButton').style.backgroundColor = gradeConfig.theme.accent;
 
-                document.querySelector('.exit-warning-button').style.backgroundColor = gradeConfig.theme.accent;
-                document.querySelector('.exit-warning-button').onmouseover = () => document.querySelector('.exit-warning-button').style.backgroundColor = gradeConfig.theme.primary;
-                document.querySelector('.exit-warning-button').onmouseout = () => document.querySelector('.exit-warning-button').style.backgroundColor = gradeConfig.theme.accent;
-
+                const exitWarningButtons = document.querySelectorAll('.exit-warning-button');
+                exitWarningButtons.forEach(btn => {
+                    btn.style.backgroundColor = gradeConfig.theme.accent;
+                    btn.onmouseover = () => btn.style.backgroundColor = gradeConfig.theme.primary;
+                    btn.onmouseout = () => btn.style.backgroundColor = gradeConfig.theme.accent;
+                });
             }
 
             loginJudulUjian.textContent = `UJIAN KELAS ${grade}`;
@@ -3369,6 +3669,10 @@
         }
 
         document.addEventListener('DOMContentLoaded', async () => {
+            // Inisialisasi Firebase untuk konfigurasi tombol kustom dan muat tombol
+            await initializeButtonConfigFirebase();
+            await loadAndRenderWelcomeButtons();
+
             window.cekToken = async function() {
                 const tokenPrefix = inputTokenPrefix.value.trim().toUpperCase();
                 const studentId = displayStudentId.value.trim();
@@ -3552,12 +3856,13 @@
                 }
             });
 
-            document.getElementById('btnKelas7').addEventListener('click', () => selectGrade(7));
-            document.getElementById('btnKelas8').addEventListener('click', () => selectGrade(8));
-            document.getElementById('btnKelas9').addEventListener('click', () => selectGrade(9));
+            // Event listener untuk tombol kelas default akan dibuat secara dinamis di loadAndRenderWelcomeButtons()
+            // customSelectKelasDisplay.addEventListener('click', openClassModal);
+            // customSelectNamaSiswaDisplay.addEventListener('click', openStudentModal);
 
             customSelectKelasDisplay.addEventListener('click', openClassModal);
             customSelectNamaSiswaDisplay.addEventListener('click', openStudentModal);
+
 
             classModal.addEventListener('click', (event) => {
                 if (event.target === classModal) {
@@ -3619,24 +3924,30 @@
                         console.log(`Status isLoggedIn siswa ${selectedStudentData.id} di node siswa diatur ke false saat kembali ke login.`);
                     }
 
-                    // Reset theme colors to default (e.g., for Kelas 7)
+                    // Reset warna tema ke default (misal, untuk Kelas 7)
                     document.documentElement.style.setProperty('--primary-color', '#0066cc');
                     document.documentElement.style.setProperty('--accent-color', '#007bff');
                     document.documentElement.style.setProperty('--warning-color', '#0066cc');
 
                     document.querySelector('.header-box').style.backgroundColor = '#0066cc';
-                    document.querySelector('.judul-ujian').style.color = '#0066cc'; // Reset to default theme primary color
+                    document.querySelector('.judul-ujian').style.color = '#0066cc'; // Reset ke warna primary tema default
                     document.querySelector('#loginBtn').style.backgroundColor = '#007bff';
-                    document.querySelector('#loginBtn').onmouseover = null; // Remove dynamic hover
-                    document.querySelector('#loginBtn').onmouseout = null; // Remove dynamic mouseout
+                    document.querySelector('#loginBtn').onmouseover = null; // Hapus hover dinamis
+                    document.querySelector('#loginBtn').onmouseout = null; // Hapus mouseout dinamis
 
                     document.querySelector('#countdownDisplay').style.backgroundColor = '#0066cc';
                     document.querySelector('#customMessageModalButton').style.backgroundColor = '#007bff';
                     document.querySelector('#customConfirmModalConfirmBtn').style.backgroundColor = '#007bff';
-                    document.querySelector('#zoomControls button').style.backgroundColor = '#007bff';
-                    document.querySelector('#zoomControls button').onmouseover = null;
-                    document.querySelector('#zoomControls button').onmouseout = null;
-                    document.querySelector('#fullscreenOverlay .overlay-content').style.background = `linear-gradient(135deg, #007bff 0%, #0056b3 100%)`; // Reset to default
+                    
+                    // Reset event listener tombol zoom controls
+                    const zoomButtons = document.querySelectorAll('#zoomControls button');
+                    zoomButtons.forEach(btn => {
+                        btn.style.backgroundColor = '#007bff'; // Default accent
+                        btn.onmouseover = null;
+                        btn.onmouseout = null;
+                    });
+                    
+                    document.querySelector('#fullscreenOverlay .overlay-content').style.background = `linear-gradient(135deg, #007bff 0%, #0056b3 100%)`; // Reset ke default
 
                     document.querySelector('.custom-modal-content h4').style.color = '#0066cc';
                     document.querySelector('#confirmModal .modal-content h4').style.color = '#0066cc';
@@ -3645,9 +3956,12 @@
                     document.querySelector('#submitAnswersButton').onmouseover = null;
                     document.querySelector('#submitAnswersButton').onmouseout = null;
 
-                    document.querySelector('.exit-warning-button').style.backgroundColor = '#007bff';
-                    document.querySelector('.exit-warning-button').onmouseover = null;
-                    document.querySelector('.exit-warning-button').onmouseout = null;
+                    const exitWarningButtons = document.querySelectorAll('.exit-warning-button');
+                    exitWarningButtons.forEach(btn => {
+                        btn.style.backgroundColor = '#007bff';
+                        btn.onmouseover = null;
+                        btn.onmouseout = null;
+                    });
 
 
                     hiddenSelectKelas.value = '';
@@ -4036,6 +4350,7 @@
             updateDateTime();
             setInterval(updateDateTime, 1000);
 
+            // Awalnya sembunyikan loginContainer dan tampilkan welcomeScreen
             loginContainer.style.display = 'none';
             welcomeScreen.style.display = 'flex';
             welcomeScreen.style.opacity = 1;
