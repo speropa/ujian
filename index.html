@@ -44,7 +44,7 @@
             box-shadow: 0 4px 8px rgba(0,0,0,0.1);
             overflow: hidden;
             padding: 30px 20px;
-            display: flex;
+            display: none; /* Awalnya tersembunyi, diganti spinner */
             flex-direction: column;
             gap: 15px;
             opacity: 1;
@@ -166,7 +166,7 @@
         }
 
         .btn-kelas9 {
-            background-color: #800000; /* Maroon */
+            background-color: #800000; /* Merah Marun */
         }
         .btn-kelas9:hover {
             background-color: #5a0000;
@@ -354,7 +354,7 @@
         }
 
         button:hover {
-            background-color: var(--primary-color); /* Warna sedikit lebih gelap dari primary untuk hover */
+            background-color: var(--primary-color); /* Warna sedikit lebih gelap dari primer untuk hover */
         }
 
         button:active {
@@ -473,7 +473,7 @@
 
         /* Gaya untuk modal daftar ujian susulan */
         #susulanListModal .custom-modal-content {
-            max-width: 450px; /* Lebarkan sedikit */
+            max-width: 450px; /* Sedikit lebih lebar */
         }
 
         #susulanListModal .custom-modal-list li {
@@ -1338,6 +1338,39 @@
             }
         }
 
+        /* Gaya Spinner */
+        #loadingSpinner {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            width: 100vw;
+            position: fixed;
+            top: 0;
+            left: 0;
+            background-color: #e0e0e0; /* Sesuaikan dengan latar belakang body */
+            z-index: 10000; /* Pastikan di atas */
+            transition: opacity 0.3s ease-in-out;
+        }
+
+        #loadingSpinner .spinner-border {
+            width: 50px;
+            height: 50px;
+            border: 5px solid rgba(0, 0, 0, 0.1);
+            border-top-color: var(--primary-color);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            margin-bottom: 20px;
+        }
+
+        #loadingSpinner p {
+            font-size: 1.2em;
+            color: #555;
+            font-weight: bold;
+        }
+
+        /* Penyesuaian responsif */
         @media (max-width: 600px) {
             .initial-login-screen {
                 margin-top: 40px;
@@ -1572,7 +1605,13 @@
     </style>
 </head>
 <body>
-    <!-- Halaman Login Baru (Email/Password) -->
+    <!-- Loading Spinner -->
+    <div id="loadingSpinner">
+        <div class="spinner-border"></div>
+        <p>Memuat aplikasi...</p>
+    </div>
+
+    <!-- Initial Login Screen (hidden by default) -->
     <div id="initialLoginScreen" class="initial-login-screen">
         <h2>LOGIN SISWA</h2>
         <p>Masukkan email dan password Anda untuk melanjutkan.</p>
@@ -1817,13 +1856,10 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.8.1/firebase-app.js";
         import { getDatabase, ref, get, child, runTransaction, set, onValue, off, update, remove } from "https://www.gstatic.com/firebasejs/11.8.1/firebase-database.js";
-        // Import tambahan untuk email/password authentication
+        // Import tambahan untuk otentikasi email/password
         import { getAuth, signInAnonymously, signInWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/11.8.1/firebase-auth.js";
 
-        // Import untuk konfigurasi tombol kustom (Firebase terpisah) - tetap gunakan 11.9.1 jika itu yang asli di versi ini
-        // Jika versi Firebase di 11.9.1 dan 11.8.1 tidak kompatibel untuk `getAuth`/`signInAnonymously`,
-        // maka disarankan untuk menggunakan versi yang sama untuk semua import Firebase.
-        // Untuk menjaga konsistensi dan menghindari potensi masalah, saya akan samakan ke 11.8.1.
+        // Import untuk konfigurasi tombol kustom (Firebase terpisah)
         import { initializeApp as initializeAppButtonConfig } from "https://www.gstatic.com/firebasejs/11.8.1/firebase-app.js";
         import { getDatabase as getDatabaseButtonConfig, ref as refButtonConfig, get as getButtonConfig } from "https://www.gstatic.com/firebasejs/11.8.1/firebase-database.js";
         import { getAuth as getAuthButtonConfig, signInAnonymously as signInAnonymouslyButtonConfig, signOut as signOutButtonConfig } from "https://www.gstatic.com/firebasejs/11.8.1/firebase-auth.js";
@@ -1888,9 +1924,9 @@
                 messagingSenderId: "1035978389542",
                 appId: "1:1035978389542:web:413eb32b04c0d09bc48ee7",
                 theme: {
-                    primary: '#0066cc', // Darker blue for header, countdown, etc.
-                    accent: '#007bff',  // Lighter blue for buttons
-                    warning: '#0066cc' // Judul Ujian same as primary
+                    primary: '#0066cc', // Biru lebih gelap untuk header, hitung mundur, dll.
+                    accent: '#007bff',  // Biru lebih terang untuk tombol
+                    warning: '#0066cc' // Judul Ujian sama dengan primer
                 },
                 allowedClasses: ['7A', '7B', '7C']
             },
@@ -1918,9 +1954,9 @@
                 messagingSenderId: "408487358048",
                 appId: "1:408487358048:web:10cc8796510f4b8ab99d05",
                 theme: {
-                    primary: '#cc7a00', // Darker orange
-                    accent: '#ff9900',  // Lighter orange
-                    warning: '#ff9900' // Judul Ujian same as accent
+                    primary: '#cc7a00', // Oranye lebih gelap
+                    accent: '#ff9900',  // Oranye lebih terang
+                    warning: '#ff9900' // Judul Ujian sama dengan aksen
                 },
                 allowedClasses: ['8A', '8B', '8C']
             },
@@ -1948,9 +1984,9 @@
                 messagingSenderId: "939178637981",
                 appId: "1:939178637981:web:b9a15dfa72180d15d77274",
                 theme: {
-                    primary: '#5a0000', // Darker maroon
-                    accent: '#800000',  // Lighter maroon
-                    warning: '#800000' // Judul Ujian same as accent
+                    primary: '#5a0000', // Merah marun lebih gelap
+                    accent: '#800000',  // Merah marun lebih terang
+                    warning: '#800000' // Judul Ujian sama dengan aksen
                 },
                 allowedClasses: ['9A', '9B', '9C']
             },
@@ -2052,6 +2088,7 @@
         const allowedLatitude = -7.8589546;
         const allowedLongitude = 110.2655596;
 
+        const loadingSpinner = document.getElementById('loadingSpinner');
         const initialLoginScreen = document.getElementById('initialLoginScreen');
         const loginEmailInput = document.getElementById('loginEmail');
         const loginPasswordInput = document.getElementById('loginPassword');
@@ -2287,7 +2324,7 @@
             confirmCheckbox.checked = false;
             updateLoginButtonStatus();
 
-            // Clear session storage if modal is cancelled to prevent restoring half-way
+            // Hapus sesi penyimpanan jika modal dibatalkan agar tidak dipulihkan setengah jalan
             sessionStorage.clear();
         };
 
@@ -2910,7 +2947,7 @@
                     currentSelectedGrade = storedSelectedGrade;
 
                     // Terapkan warna tema terlebih dahulu
-                    const gradeConfig = allFirebaseConfigs[`kelas${currentSelectedGrade}-group1`]; // Asumsikan grup pertama memiliki tema
+                    const gradeConfig = allFirebaseConfigs[`kelas${currentSelectedGrade}-group1`]; // Asumsikan grup pertama memiliki info tema
                     if (gradeConfig && gradeConfig.theme) {
                         document.documentElement.style.setProperty('--primary-color', gradeConfig.theme.primary);
                         document.documentElement.style.setProperty('--accent-color', gradeConfig.theme.accent);
@@ -2927,7 +2964,7 @@
                         document.querySelector('#customMessageModalButton').style.backgroundColor = gradeConfig.theme.accent;
                         document.querySelector('#customConfirmModalConfirmBtn').style.backgroundColor = gradeConfig.theme.accent;
                         
-                        // Perbarui event listener untuk tombol zoom controls secara dinamis
+                        // Perbarui event listener untuk tombol kontrol zoom secara dinamis
                         const zoomButtons = document.querySelectorAll('#zoomControls button');
                         zoomButtons.forEach(btn => {
                             btn.style.backgroundColor = gradeConfig.theme.accent;
@@ -3753,7 +3790,7 @@
                 document.querySelector('#customMessageModalButton').style.backgroundColor = gradeConfig.theme.accent;
                 document.querySelector('#customConfirmModalConfirmBtn').style.backgroundColor = gradeConfig.theme.accent;
                 
-                // Perbarui event listener untuk tombol zoom controls secara dinamis
+                // Perbarui event listener untuk tombol kontrol zoom secara dinamis
                 const zoomButtons = document.querySelectorAll('#zoomControls button');
                 zoomButtons.forEach(btn => {
                     btn.style.backgroundColor = gradeConfig.theme.accent;
@@ -3796,31 +3833,36 @@
         }
 
         document.addEventListener('DOMContentLoaded', async () => {
-            // Sembunyikan semua kecuali layar login awal saat DOMContentLoaded
+            // Sembunyikan semua kecuali spinner loading segera
             welcomeScreen.style.display = 'none';
             loginContainer.style.display = 'none';
             examContainer.style.display = 'none';
-            initialLoginScreen.style.display = 'flex';
-            initialLoginScreen.style.opacity = 1;
+            initialLoginScreen.style.display = 'none'; /* Pastikan login awal tersembunyi */
+            loadingSpinner.style.display = 'flex'; /* Tampilkan spinner */
+            loadingSpinner.style.opacity = 1;
 
-            // Mengisi email dan password secara otomatis dan mengklik tombol login
-            loginEmailInput.value = "siswa@gmail.com";
-            loginPasswordInput.value = "12345678";
-            loginButton.click(); // Memicu event klik
-
-            loginButton.addEventListener('click', async () => {
+            // Fungsi untuk melakukan login otomatis
+            const performAutomaticLogin = async () => {
                 const email = loginEmailInput.value;
                 const password = loginPasswordInput.value;
-                loginMessage.textContent = '';
+                
                 loginButton.disabled = true;
-                loginButton.textContent = 'Logging in...';
+                loginButton.textContent = 'Memuat...'; // Teks tombol saat proses login
 
                 try {
+                    // Pastikan initialLoginAuth sudah siap
+                    if (!initialLoginAuth) {
+                        console.error("initialLoginAuth belum diinisialisasi.");
+                        throw new Error('Firebase Auth belum siap.');
+                    }
+
                     await signInWithEmailAndPassword(initialLoginAuth, email, password);
                     console.log('Login email/password berhasil!');
-                    initialLoginScreen.style.opacity = 0;
+                    
+                    // Sembunyikan spinner setelah login berhasil
+                    loadingSpinner.style.opacity = 0;
                     setTimeout(async () => {
-                        initialLoginScreen.style.display = 'none';
+                        loadingSpinner.style.display = 'none';
                         // Inisialisasi Firebase untuk konfigurasi tombol kustom dan muat tombol setelah login berhasil
                         await initializeButtonConfigFirebase();
                         await loadAndRenderWelcomeButtons();
@@ -3828,6 +3870,7 @@
                         welcomeScreen.style.opacity = 1;
                         document.body.style.overflow = '';
                     }, 500);
+
                 } catch (error) {
                     console.error("Login gagal:", error.message);
                     let errorMessage = "Login gagal. Periksa kembali email dan password Anda.";
@@ -3838,16 +3881,32 @@
                     } else {
                         errorMessage = `Terjadi kesalahan: ${error.message}`;
                     }
-                    loginMessage.style.color = 'red';
-                    loginMessage.textContent = errorMessage;
-                    loginButton.disabled = false;
-                    loginButton.textContent = 'Login';
+                    
+                    // Jika login gagal, sembunyikan spinner dan tampilkan layar login awal dengan pesan error
+                    loadingSpinner.style.opacity = 0;
+                    setTimeout(() => {
+                        loadingSpinner.style.display = 'none';
+                        initialLoginScreen.style.display = 'flex';
+                        initialLoginScreen.style.opacity = 1;
+                        loginMessage.style.color = 'red';
+                        loginMessage.textContent = errorMessage;
+                        loginButton.disabled = false;
+                        loginButton.textContent = 'Login';
+                    }, 500);
                 }
-            });
+            };
 
-            // Event listener untuk tombol kelas default akan dibuat secara dinamis di loadAndRenderWelcomeButtons()
-            // customSelectKelasDisplay.addEventListener('click', openClassModal);
-            // customSelectNamaSiswaDisplay.addEventListener('click', openStudentModal);
+            // Set nilai input (meskipun layar tersembunyi)
+            loginEmailInput.value = "siswa@gmail.com";
+            loginPasswordInput.value = "12345678";
+
+            // Tambahkan event listener ke tombol login (jika pengguna mengklik secara manual)
+            loginButton.addEventListener('click', performAutomaticLogin);
+
+            // Panggil fungsi login otomatis secara langsung
+            // Menggunakan setTimeout 0 untuk memastikan event loop memproses pendaftaran event listener terlebih dahulu
+            setTimeout(performAutomaticLogin, 0);
+
 
             customSelectKelasDisplay.addEventListener('click', openClassModal);
             customSelectNamaSiswaDisplay.addEventListener('click', openStudentModal);
@@ -3899,16 +3958,16 @@
                     // Logout dari semua sesi Firebase jika diperlukan
                     if (initialLoginAuth.currentUser) {
                         await signOut(initialLoginAuth);
-                        console.log("Logged out from initial email/password auth.");
+                        console.log("Logout dari otentikasi email/password awal berhasil.");
                     }
                     if (buttonConfigAuth.currentUser) {
                          await signOutButtonConfig(buttonConfigAuth);
-                         console.log("Logged out from button config auth.");
+                         console.log("Logout dari otentikasi konfigurasi tombol berhasil.");
                     }
-                    // CurrentDb auth (per class)
+                    // Otentikasi CurrentDb (per kelas)
                     if (currentAuth && currentAuth.currentUser) {
                         await signOut(currentAuth);
-                        console.log("Logged out from current class auth.");
+                        console.log("Logout dari otentikasi kelas saat ini berhasil.");
                     }
 
                     const tokenFirebaseKey = foundTokenGlobal?.key;
@@ -3936,7 +3995,7 @@
                     document.documentElement.style.setProperty('--warning-color', '#0066cc');
 
                     document.querySelector('.header-box').style.backgroundColor = '#0066cc';
-                    document.querySelector('.judul-ujian').style.color = '#0066cc'; // Reset ke warna primary tema default
+                    document.querySelector('.judul-ujian').style.color = '#0066cc'; // Reset ke warna primer tema default
                     document.querySelector('#loginBtn').style.backgroundColor = '#007bff';
                     document.querySelector('#loginBtn').onmouseover = null; // Hapus hover dinamis
                     document.querySelector('#loginBtn').onmouseout = null; // Hapus mouseout dinamis
@@ -3945,10 +4004,10 @@
                     document.querySelector('#customMessageModalButton').style.backgroundColor = '#007bff';
                     document.querySelector('#customConfirmModalConfirmBtn').style.backgroundColor = '#007bff';
                     
-                    // Reset event listener tombol zoom controls
+                    // Reset event listener tombol kontrol zoom
                     const zoomButtons = document.querySelectorAll('#zoomControls button');
                     zoomButtons.forEach(btn => {
-                        btn.style.backgroundColor = '#007bff'; // Default accent
+                        btn.style.backgroundColor = '#007bff'; // Aksen default
                         btn.onmouseover = null;
                         btn.onmouseout = null;
                     });
