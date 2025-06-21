@@ -1859,12 +1859,6 @@
         // Import tambahan untuk otentikasi email/password
         import { getAuth, signInAnonymously, signInWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/11.8.1/firebase-auth.js";
 
-        // Import untuk konfigurasi tombol kustom (Firebase terpisah)
-        import { initializeApp as initializeAppButtonConfig } from "https://www.gstatic.com/firebasejs/11.8.1/firebase-app.js";
-        import { getDatabase as getDatabaseButtonConfig, ref as refButtonConfig, get as getButtonConfig } from "https://www.gstatic.com/firebasejs/11.8.1/firebase-database.js";
-        import { getAuth as getAuthButtonConfig, signInAnonymously as signInAnonymouslyButtonConfig, signOut as signOutButtonConfig } from "https://www.gstatic.com/firebasejs/11.8.1/firebase-auth.js";
-
-
         // Konfigurasi Firebase untuk login awal (email/password)
         const initialLoginFirebaseConfig = {
             apiKey: "AIzaSyAOBCX8x60pYqxtXmXMz2xc5dwC3HJH5EE",
@@ -1878,38 +1872,30 @@
         const initialLoginApp = initializeApp(initialLoginFirebaseConfig, "initialLoginApp");
         const initialLoginAuth = getAuth(initialLoginApp);
 
-        // Konfigurasi Firebase untuk Tombol Kustom (publicSettings)
-        const buttonConfigFirebaseConfig = {
-            apiKey: "AIzaSyAOBCX8x60pYqxtXmXMz2xc5dwC3HJH5EE",
-            authDomain: "ujian-online-berbasis-android.firebaseapp.com",
-            databaseURL: "https://ujian-online-berbasis-android-default-rtdb.firebaseio.com",
-            projectId: "ujian-online-berbasis-android",
-            storageBucket: "ujian-online-berbasis-android.firebasestorage.app",
-            messagingSenderId: "923446282537",
-            appId: "1:923446282537:web:60d374dde8aca61f6a0f38"
-        };
+        // Global variables for authenticated user credentials
+        let globalUserEmail = '';
+        let globalUserPassword = '';
+
+        // Firebase for Custom Buttons (now links to initialLoginApp)
         let buttonConfigDb = null;
         let publicSettings = null; // Untuk menyimpan konfigurasi publicSettings dari Firebase
-        let buttonConfigAuth = null;
+        let buttonConfigAuth = null; // Will be set to initialLoginAuth
 
-        // Fungsi untuk menginisialisasi Firebase untuk konfigurasi tombol dan login anonim
+        // Fungsi untuk menginisialisasi Firebase untuk konfigurasi tombol.
+        // Sekarang akan menggunakan instance aplikasi utama.
         async function initializeButtonConfigFirebase() {
             try {
-                const app = initializeAppButtonConfig(buttonConfigFirebaseConfig, "buttonConfigApp");
-                buttonConfigDb = getDatabaseButtonConfig(app);
-                // Menggunakan getAuth dan signInAnonymously yang diimpor khusus untuk buttonConfig
-                buttonConfigAuth = getAuthButtonConfig(app);
-                await signInAnonymouslyButtonConfig(buttonConfigAuth);
-                console.log("Firebase untuk konfigurasi tombol berhasil diinisialisasi dan login anonim.");
+                // Karena initialLoginFirebaseConfig dan buttonConfigFirebaseConfig (sebelumnya) identik,
+                // kita bisa langsung menggunakan instance database dan auth dari initialLoginApp.
+                buttonConfigDb = getDatabase(initialLoginApp);
+                buttonConfigAuth = initialLoginAuth; // Menggunakan kembali instance auth dari login awal
+
+                // Status autentikasi dikelola oleh login utama (initialLoginAuth).
+                // Tidak perlu signInAnonymously terpisah di sini.
+                // console.log("Firebase untuk konfigurasi tombol terhubung ke aplikasi login utama."); // Dihapus
             } catch (error) {
-                // Log sebagai peringatan untuk admin-restricted-operation karena ini adalah masalah konfigurasi, bukan bug kode
-                if (error.code === 'auth/admin-restricted-operation') {
-                    console.warn("Firebase untuk konfigurasi tombol (Peringatan): Otentikasi Anonim tidak diaktifkan di konsol Firebase. Tombol kustom mungkin tidak dimuat. Detail: " + error.message);
-                    document.getElementById('welcomeMessage').textContent = 'Gagal memuat konfigurasi tombol. Pastikan "Anonymous" Authentication diaktifkan di Firebase Console untuk proyek ini. (Error: ' + error.message + ')';
-                } else {
-                    console.error("Gagal menginisialisasi Firebase untuk konfigurasi tombol:", error);
-                    document.getElementById('welcomeMessage').textContent = 'Gagal memuat konfigurasi. Silakan refresh halaman. (Error: ' + error.message + ')';
-                }
+                console.error("Gagal menginisialisasi Firebase untuk konfigurasi tombol (saat menghubungkan ke aplikasi utama):", error);
+                document.getElementById('welcomeMessage').textContent = 'Gagal memuat konfigurasi. Silakan refresh halaman. (Error: ' + error.message + ')';
             }
         }
 
@@ -2041,20 +2027,42 @@
 
             if (!firebaseApps[classGroupKey]) {
                 const config = allFirebaseConfigs[classGroupKey];
-                const appInstance = initializeApp(config, classGroupKey);
+                const appInstance = initializeApp(config, classGroupKey); // Inisialisasi instance aplikasi baru untuk proyek yang berbeda
                 firebaseApps[classGroupKey] = appInstance;
                 firebaseDBs[classGroupKey] = getDatabase(appInstance);
                 firebaseAuths[classGroupKey] = getAuth(appInstance);
-                console.log(`Aplikasi Firebase diinisialisasi untuk grup kelas: ${classGroupKey}`);
+                // console.log(`Aplikasi Firebase diinisialisasi untuk grup kelas: ${classGroupKey}`); // Dihapus
 
                 try {
-                    // Masih menggunakan signin anonim untuk database spesifik per kelas
-                    // karena akun utama mungkin tidak memiliki akses ke semua proyek.
-                    await signInAnonymously(firebaseAuths[classGroupKey]);
-                    console.log(`Berhasil login anonim untuk aplikasi Firebase: ${classGroupKey}`);
+                    // Coba masuk dengan email/kata sandi yang sama dengan yang digunakan untuk login awal
+                    if (globalUserEmail && globalUserPassword) {
+                        await signInWithEmailAndPassword(firebaseAuths[classGroupKey], globalUserEmail, globalUserPassword);
+                        // console.log(`Berhasil login email/kata sandi untuk aplikasi Firebase: ${classGroupKey}`); // Dihapus
+                    } else {
+                        console.warn(`Peringatan: Kredensial pengguna tidak tersedia (mungkin belum login atau memulihkan sesi). Mencoba login anonim sebagai fallback untuk ${classGroupKey}.`);
+                        await signInAnonymously(firebaseAuths[classGroupKey]); // Fallback jika kredensial tidak diatur (misalnya, memulihkan sesi)
+                    }
                 } catch (error) {
-                    console.error(`Gagal login anonim untuk aplikasi Firebase ${classGroupKey}:`, error);
-                    return null;
+                    console.error(`Gagal login email/kata sandi untuk aplikasi Firebase ${classGroupKey}:`, error);
+                    // Tangani kesalahan autentikasi tertentu jika pengguna tidak ada di autentikasi proyek tertentu ini
+                    if (error.code === 'auth/user-not-found' || error.code === 'auth/wrong-password' || error.code === 'auth/invalid-email' || error.code === 'auth/invalid-credential') {
+                        console.warn(`Peringatan: Akun login email/kata sandi tidak ditemukan atau tidak valid di proyek Firebase untuk ${classGroupKey}. Ini mungkin karena setiap proyek memiliki basis data pengguna yang terpisah. Mencoba login anonim sebagai fallback.`);
+                        try {
+                            await signInAnonymously(firebaseAuths[classGroupKey]); // Fallback jika email/kata sandi gagal untuk proyek tertentu
+                            // console.log(`Berhasil login anonim ke Firebase ${classGroupKey} sebagai fallback.`); // Dihapus
+                        } catch (anonError) {
+                            console.error(`Gagal login anonim ke Firebase ${classGroupKey} sebagai fallback:`, anonError);
+                            window.showCustomMessageModal("Kesalahan Autentikasi", `Gagal mengautentikasi ke database untuk kelas ini (${classGroupKey}). Mohon hubungi administrator. (Error: ${anonError.message})`, 'error');
+                            return null;
+                        }
+                    } else if (error.code === 'auth/network-request-failed') {
+                        console.error(`Kesalahan Jaringan saat login ke Firebase ${classGroupKey}:`, error);
+                        window.showCustomMessageModal("Kesalahan Jaringan", `Gagal terhubung ke database untuk kelas ini (${classGroupKey}). Mohon periksa koneksi internet Anda.`, 'error');
+                        return null;
+                    } else {
+                        window.showCustomMessageModal("Kesalahan Autentikasi", `Gagal mengautentikasi ke database untuk kelas ini (${classGroupKey}). Mohon hubungi administrator. (Error: ${error.message})`, 'error');
+                        return null;
+                    }
                 }
             }
             return { db: firebaseDBs[classGroupKey], auth: firebaseAuths[classGroupKey] };
@@ -2521,6 +2529,7 @@
                 return;
             }
             currentDb = instances.db;
+            currentAuth = instances.auth; // Set currentAuth di sini
 
             await loadStudentsAndFilterByClass();
             updateLoginButtonStatus();
@@ -2594,7 +2603,7 @@
                     submitAnswersButton.style.cursor = 'not-allowed';
                 }
 
-                console.log("Waktu habis! Mengirim jawaban secara otomatis...");
+                // console.log("Waktu habis! Mengirim jawaban secara otomatis..."); // Dihapus
                 submitAnswers(true);
                 return;
             }
@@ -2671,10 +2680,10 @@
                     const studentIsLoggedInRef = child(dbRefs.studentsRef, `${studentFirebaseKey}/isLoggedIn`);
                     try {
                         await update(accessStatusRef, { isLoggedIn: false, studentId: studentId });
-                        console.log("isLoggedIn diatur ke false di exam_access_status saat pengiriman.");
+                        // console.log("isLoggedIn diatur ke false di exam_access_status saat pengiriman."); // Dihapus
 
                         await set(studentIsLoggedInRef, false);
-                        console.log(`Status isLoggedIn siswa ${selectedStudentData.id} di node siswa diatur ke false saat pengiriman.`);
+                        // console.log(`Status isLoggedIn siswa ${selectedStudentData.id} di node siswa diatur ke false saat pengiriman.`); // Dihapus
 
                     } catch (error) {
                         console.error("Gagal mengatur isLoggedIn ke false saat pengiriman:", error);
@@ -2721,7 +2730,7 @@
 
         function attemptFullscreen() {
             if (document.fullscreenElement || document.mozFullScreenElement || document.webkitFullscreenElement || document.msFullscreenElement) {
-                console.log("Sudah dalam mode layar penuh.");
+                // console.log("Sudah dalam mode layar penuh."); // Dihapus
                 return;
             }
 
@@ -2837,7 +2846,7 @@
             onValue(studentSubmissionRef, (snapshot) => {
                 if (snapshot.exists() && snapshot.val().isSubmitted === true) {
                     if (examContainer.style.display === 'flex') {
-                        console.log("Deteksi: Jawaban siswa direkam di Firebase secara real-time.");
+                        // console.log("Deteksi: Jawaban siswa direkam di Firebase secara real-time."); // Dihapus
                         showSubmissionConfirmationOverlay(true);
                         examIframe.src = '';
                     }
@@ -2845,11 +2854,11 @@
             }, (error) => {
                 console.error("Gagal mendengarkan status pengiriman:", error);
             });
-            console.log("Listener real-time untuk status pengiriman dimulai.");
+            // console.log("Listener real-time untuk status pengiriman dimulai."); // Dihapus
         }
 
         function startExamProcess(examUrl, examDurationMinutes, numQuestions, examStartTime, initialAnswers = null) {
-            console.log("startExamProcess dipanggil. Jawaban Awal:", initialAnswers);
+            // console.log("startExamProcess dipanggil. Jawaban Awal:", initialAnswers); // Dihapus
 
             sessionStorage.setItem('isInExamMode', 'true');
             sessionStorage.setItem('selectedStudentData', JSON.stringify(selectedStudentData));
@@ -2864,11 +2873,11 @@
             if (initialAnswers && initialAnswers.length > 0) {
                 studentAnswers = initialAnswers;
                 sessionStorage.setItem('studentAnswers', studentAnswers.join(','));
-                console.log("studentAnswers diatur dari initialAnswers:", studentAnswers);
+                // console.log("studentAnswers diatur dari initialAnswers:", studentAnswers); // Dihapus
             } else {
                 studentAnswers = Array(numQuestions).fill('');
                 sessionStorage.removeItem('studentAnswers');
-                console.log("studentAnswers diinisialisasi kosong.");
+                // console.log("studentAnswers diinisialisasi kosong."); // Dihapus
             }
 
             loginContainer.style.opacity = 0;
@@ -2889,10 +2898,9 @@
             const elapsedSeconds = Math.floor((Date.now() - examStartTime) / 1000);
             remainingTime = totalDurationSeconds - elapsedSeconds;
             
-            console.log(`DEBUG: startExamProcess - totalDurationSeconds: ${totalDurationSeconds}, elapsedSeconds: ${elapsedSeconds}, calculated remainingTime: ${remainingTime}`);
-
+            // console.log(`DEBUG: startExamProcess - totalDurationSeconds: ${totalDurationSeconds}, elapsedSeconds: ${elapsedSeconds}, calculated remainingTime: ${remainingTime}`); // Dihapus
             if (remainingTime < 0) remainingTime = 0;
-            console.log(`DEBUG: startExamProcess - final remainingTime (setelah clamping): ${remainingTime}`);
+            // console.log(`DEBUG: startExamProcess - final remainingTime (setelah clamping): ${remainingTime}`); // Dihapus
 
 
             timerInterval = setInterval(updateTimerDisplay, 1000);
@@ -2926,13 +2934,13 @@
                     storedExamStartTime = 0;
                 }
 
-                console.log("Restore State: selectedStudentData", storedSelectedStudentData);
-                console.log("Restore State: foundTokenGlobal", storedFoundTokenGlobal);
-                console.log("Restore State: storedExamStartTime (setelah parsing):", storedExamStartTime);
-                console.log("Restore State: storedExamDurationMinutes:", storedExamDurationMinutes);
-                console.log("Restore State: storedTotalQuestions (dari sessionStorage):", storedTotalQuestions);
-                console.log("Restore State: storedSelectedClass:", storedSelectedClass);
-                console.log("Restore State: storedSelectedGrade:", storedSelectedGrade);
+                // console.log("Restore State: selectedStudentData", storedSelectedStudentData); // Dihapus
+                // console.log("Restore State: foundTokenGlobal", storedFoundTokenGlobal); // Dihapus
+                // console.log("Restore State: storedExamStartTime (setelah parsing):", storedExamStartTime); // Dihapus
+                // console.log("Restore State: storedExamDurationMinutes:", storedExamDurationMinutes); // Dihapus
+                // console.log("Restore State: storedTotalQuestions (dari sessionStorage):", storedTotalQuestions); // Dihapus
+                // console.log("Restore State: storedSelectedClass:", storedSelectedClass); // Dihapus
+                // console.log("Restore State: storedSelectedGrade:", storedSelectedGrade); // Dihapus
 
                 if (storedSelectedStudentData && storedFoundTokenGlobal && storedExamIframeSrc &&
                     !isNaN(storedExamStartTime) && storedExamStartTime > 0 &&
@@ -2996,6 +3004,7 @@
                         return;
                     }
                     currentDb = instances.db;
+                    currentAuth = instances.auth; // Set currentAuth di sini
                     
                     const dbRefs = getDbRefs();
                     if (!dbRefs) {
@@ -3017,9 +3026,9 @@
                         if (answersSnapshot.exists()) {
                             const savedAnswersData = answersSnapshot.val();
                             loadedAnswers = savedAnswersData.answers ? savedAnswersData.answers.split(',') : Array(totalQuestions).fill('');
-                            console.log("Restore State: Jawaban siswa dimuat dari Firebase:", loadedAnswers);
+                            // console.log("Restore State: Jawaban siswa dimuat dari Firebase:", loadedAnswers); // Dihapus
                         } else {
-                            console.log("Restore State: Tidak ada jawaban yang disimpan di Firebase pada jalur ini, dimulai dengan array kosong.");
+                            console.warn("Restore State: Tidak ada jawaban yang disimpan di Firebase pada jalur ini, dimulai dengan array kosong.");
                         }
 
                         const accessStatusSnapshot = await get(accessStatusRef);
@@ -3149,12 +3158,12 @@
                 });
 
                 if (examAccessDataAfterTransaction.committed) {
-                    console.log(`Akses ke token ${foundTokenGlobal.key} oleh siswa ${selectedStudentData.id} berhasil diperbarui. accessCount baru: ${examAccessDataAfterTransaction.snapshot.val().accessCount}`);
+                    // console.log(`Akses ke token ${foundTokenGlobal.key} oleh siswa ${selectedStudentData.id} berhasil diperbarui. accessCount baru: ${examAccessDataAfterTransaction.snapshot.val().accessCount}`); // Dihapus
                     
                     if (studentFirebaseKey) {
                         const studentIsLoggedInRef = child(dbRefs.studentsRef, `${studentFirebaseKey}/isLoggedIn`);
                         await set(studentIsLoggedInRef, true);
-                        console.log(`Status isLoggedIn siswa ${selectedStudentData.id} di node siswa diatur ke true pada 'Lanjutkan'.`);
+                        // console.log(`Status isLoggedIn siswa ${selectedStudentData.id} di node siswa diatur ke true pada 'Lanjutkan'.`); // Dihapus
                     } else {
                         console.warn(`Tidak dapat menemukan kunci Firebase untuk siswa ${selectedStudentData.id} untuk memperbarui status isLoggedIn di node siswa.`);
                     }
@@ -3181,7 +3190,7 @@
                             globalExamUrl += hasQueryParams ? '&chrome=false' : '?chrome=false';
                         }
                     }
-                    console.log("Final Google Drive URL:", globalExamUrl);
+                    // console.log("Final Google Drive URL:", globalExamUrl); // Dihapus
 
                     globalExamDurationMinutes = examDurationMinutes;
                     globalNumQuestions = numQuestions;
@@ -3252,7 +3261,7 @@
 
         function renderAnswerBoxes() {
             const effectiveTotalQuestions = (totalQuestions > 0) ? totalQuestions : studentAnswers.length;
-            console.log(`Merender kotak jawaban. Total pertanyaan efektif: ${effectiveTotalQuestions}`);
+            // console.log(`Merender kotak jawaban. Total pertanyaan efektif: ${effectiveTotalQuestions}`); // Dihapus
             
             answerListContainer.innerHTML = '';
             for (let i = 0; i < effectiveTotalQuestions; i++) {
@@ -3274,7 +3283,7 @@
                 }
                 answerBox.addEventListener('click', () => openAnswerSelectionModal(i));
                 answerListContainer.appendChild(answerBox);
-                console.log(`Kotak jawaban dibuat dan ditambahkan untuk pertanyaan: ${questionNumber}, Jawaban: ${answer}`);
+                // console.log(`Kotak jawaban dibuat dan ditambahkan untuk pertanyaan: ${questionNumber}, Jawaban: ${answer}`); // Dihapus
             }
         }
 
@@ -3344,7 +3353,7 @@
                     subject: foundTokenGlobal.subject,
                     studentId: studentId
                 });
-                console.log("Jawaban siswa berhasil disimpan ke Firebase.");
+                // console.log("Jawaban siswa berhasil disimpan ke Firebase."); // Dihapus
             } catch (error) {
                 console.error("Gagal menyimpan jawaban siswa ke Firebase:", error);
             }
@@ -3393,7 +3402,7 @@
                     timestamp: Date.now(),
                     studentId: studentId
                 });
-                console.log("Status ujian berhasil diperbarui menjadi dikirim di submitted_exams.");
+                // console.log("Status ujian berhasil diperbarui menjadi dikirim di submitted_exams."); // Dihapus
 
                 const accessStatusRef = child(dbRefs.examAccessStatusRef, `${tokenFirebaseKey}/${studentId}`);
                 await update(accessStatusRef, {
@@ -3401,12 +3410,12 @@
                     studentId: studentId,
                     attemptsLeft: toleranceLimitGlobal
                 });
-                console.log("isLoggedIn diatur ke false dan attemptsLeft direset di exam_access_status saat pengiriman.");
+                // console.log("isLoggedIn diatur ke false dan attemptsLeft direset di exam_access_status saat pengiriman."); // Dihapus
 
                 if (studentFirebaseKey) {
                     const studentIsLoggedInRef = child(dbRefs.studentsRef, `${studentFirebaseKey}/isLoggedIn`);
                     await set(studentIsLoggedInRef, false);
-                    console.log(`Status isLoggedIn siswa ${selectedStudentData.id} di node siswa diatur ke false saat pengiriman.`);
+                    // console.log(`Status isLoggedIn siswa ${selectedStudentData.id} di node siswa diatur ke false saat pengiriman.`); // Dihapus
                 } else {
                     console.warn(`Tidak dapat menemukan kunci Firebase untuk siswa ${selectedStudentData.id} untuk memperbarui status isLoggedIn di node siswa.`);
                 }
@@ -3500,7 +3509,7 @@
 
         function applyIframeTransform() {
             examIframe.style.transform = `translate(${currentTranslateX}px, ${currentTranslateY}px) scale(${currentZoom})`;
-            console.log(`Menerapkan transform: translate(${currentTranslateX}px, ${currentTranslateY}px) scale(${currentZoom})`);
+            // console.log(`Menerapkan transform: translate(${currentTranslateX}px, ${currentTranslateY}px) scale(${currentZoom})`); // Dihapus
         }
 
         function resetIframePan() {
@@ -3568,7 +3577,7 @@
             if (panIntervalId) {
                 clearInterval(panIntervalId);
                 panIntervalId = null;
-                console.log("Pan otomatis dihentikan.");
+                // console.log("Pan otomatis dihentikan."); // Dihapus
             }
         }
 
@@ -3584,12 +3593,12 @@
             }
 
             try {
-                const publicSettingsRef = refButtonConfig(buttonConfigDb, 'publicSettings');
-                const snapshot = await getButtonConfig(publicSettingsRef);
+                const publicSettingsRef = ref(buttonConfigDb, 'publicSettings'); // Use ref from buttonConfigDb
+                const snapshot = await get(publicSettingsRef); // Use get from buttonConfigDb
 
                 if (snapshot.exists()) {
                     publicSettings = snapshot.val();
-                    console.log("Konfigurasi publicSettings dari Firebase:", publicSettings);
+                    // console.log("Konfigurasi publicSettings dari Firebase:", publicSettings); // Dihapus
 
                     const activeButtons = [];
 
@@ -3711,7 +3720,7 @@
 
         // Fungsi handler untuk tombol Kelas 7, 8, 9 yang kustom
         function handleCustomButtonClassClick(kelas, url) {
-            console.log(`Mengklik tombol kustom untuk ${kelas}, URL: ${url}`);
+            // console.log(`Mengklik tombol kustom untuk ${kelas}, URL: ${url}`); // Dihapus
             if (url) {
                 // Arahkan langsung ke URL ujian (misal Google Form)
                 // Ini akan keluar dari aplikasi ujian ini.
@@ -3857,8 +3866,12 @@
                     }
 
                     await signInWithEmailAndPassword(initialLoginAuth, email, password);
-                    console.log('Login email/password berhasil!');
+                    // console.log('Login email/password berhasil!'); // Dihapus
                     
+                    // Store the credentials globally after successful initial login
+                    globalUserEmail = email;
+                    globalUserPassword = password;
+
                     // Sembunyikan spinner setelah login berhasil
                     loadingSpinner.style.opacity = 0;
                     setTimeout(async () => {
@@ -3958,17 +3971,26 @@
                     // Logout dari semua sesi Firebase jika diperlukan
                     if (initialLoginAuth.currentUser) {
                         await signOut(initialLoginAuth);
-                        console.log("Logout dari otentikasi email/password awal berhasil.");
+                        // console.log("Logout dari otentikasi email/password awal berhasil."); // Dihapus
                     }
-                    if (buttonConfigAuth.currentUser) {
-                         await signOutButtonConfig(buttonConfigAuth);
-                         console.log("Logout dari otentikasi konfigurasi tombol berhasil.");
+                    // buttonConfigAuth sekarang merujuk ke initialLoginAuth, jadi tidak perlu logout terpisah di sini.
+
+                    // Logout dari semua instance Firebase spesifik kelas
+                    for (const key in firebaseAuths) {
+                        const authInstance = firebaseAuths[key];
+                        if (authInstance.currentUser) {
+                            try {
+                                await signOut(authInstance);
+                                // console.log(`Logout dari otentikasi kelas ${key} berhasil.`); // Dihapus
+                            } catch (e) {
+                                console.warn(`Gagal logout dari otentikasi kelas ${key}:`, e);
+                            }
+                        }
                     }
-                    // Otentikasi CurrentDb (per kelas)
-                    if (currentAuth && currentAuth.currentUser) {
-                        await signOut(currentAuth);
-                        console.log("Logout dari otentikasi kelas saat ini berhasil.");
-                    }
+
+                    // Clear global credentials
+                    globalUserEmail = '';
+                    globalUserPassword = '';
 
                     const tokenFirebaseKey = foundTokenGlobal?.key;
                     const studentId = selectedStudentData?.id ? padStudentId(selectedStudentData.id) : null;
@@ -3982,11 +4004,11 @@
                             studentId: studentId,
                             attemptsLeft: toleranceLimitGlobal
                         });
-                        console.log(`Status exam_access_status siswa ${studentId} diperbarui (isLoggedIn: false, attemptsLeft direset) saat kembali ke login.`);
+                        // console.log(`Status exam_access_status siswa ${studentId} diperbarui (isLoggedIn: false, attemptsLeft direset) saat kembali ke login.`); // Dihapus
 
                         const studentIsLoggedInRef = child(dbRefs.studentsRef, `${studentFirebaseKey}/isLoggedIn`);
                         await set(studentIsLoggedInRef, false);
-                        console.log(`Status isLoggedIn siswa ${selectedStudentData.id} di node siswa diatur ke false saat kembali ke login.`);
+                        // console.log(`Status isLoggedIn siswa ${selectedStudentData.id} di node siswa diatur ke false saat kembali ke login.`); // Dihapus
                     }
 
                     // Reset warna tema ke default (misal, untuk Kelas 7)
@@ -4060,7 +4082,7 @@
                     sessionStorage.clear();
                     isAnyModalOpen = false;
                     currentDb = null;
-                    currentAuth = null;
+                    currentAuth = null; // Reset currentAuth
                     currentSelectedGrade = null;
                     currentClassGroupKeys = [];
 
@@ -4070,7 +4092,7 @@
             window.onpopstate = function(event) {
                 if (isInExamMode) {
                     history.pushState(null, '', location.href);
-                    console.log("Navigasi kembali dicegah selama ujian.");
+                    // console.log("Navigasi kembali dicegah selama ujian."); // Dihapus
                 }
             };
 
@@ -4095,7 +4117,7 @@
                         const accessStatusRef = child(dbRefs.examAccessStatusRef, `${foundTokenGlobal.key}/${studentId}`);
                         try {
                             await update(accessStatusRef, { attemptsLeft: currentAttemptsLeft, studentId: studentId });
-                            console.log("attemptsLeft direset di Firebase setelah entri kunci yang berhasil.");
+                            // console.log("attemptsLeft direset di Firebase setelah entri kunci yang berhasil."); // Dihapus
                         } catch (error) {
                             console.error("Gagal mereset attemptsLeft di Firebase:", error);
                         }
@@ -4285,12 +4307,12 @@
             refreshIframeBtn.addEventListener('click', () => {
                 resetAutoHideTimer();
                 const currentIframeSrc = examIframe.src;
-                console.log("Tombol refresh diklik. Src iframe saat ini:", examIframe.src);
-                console.log("globalExamUrl yang tersimpan:", globalExamUrl);
+                // console.log("Tombol refresh diklik. Src iframe saat ini:", examIframe.src); // Dihapus
+                // console.log("globalExamUrl yang tersimpan:", globalExamUrl); // Dihapus
                 examIframe.src = '';
                 setTimeout(() => {
                     examIframe.src = currentIframeSrc;
-                    console.log("Iframe di-refresh dengan mereset src.");
+                    // console.log("Iframe di-refresh dengan mereset src."); // Dihapus
                 }, 50);
             });
 
@@ -4305,7 +4327,7 @@
                     currentTranslateX = translate.x;
                     currentTranslateY = translate.y;
                     examIframe.classList.add('dragging');
-                    console.log(`Pan Mulai (Mouse): translateX awal=${currentTranslateX}, translateY awal=${currentTranslateY}`);
+                    // console.log(`Pan Mulai (Mouse): translateX awal=${currentTranslateX}, translateY awal=${currentTranslateY}`); // Dihapus
                 }
             });
 
@@ -4344,7 +4366,7 @@
                     currentTranslateX = translate.x;
                     currentTranslateY = translate.y;
                     examIframe.classList.remove('dragging');
-                    console.log(`Pan Selesai (Mouse): translateX akhir=${currentTranslateX}, translateY akhir=${currentTranslateY}`);
+                    // console.log(`Pan Selesai (Mouse): translateX akhir=${currentTranslateX}, translateY akhir=${currentTranslateY}`); // Dihapus
                 }
             });
 
@@ -4359,7 +4381,7 @@
                     currentTranslateX = translate.x;
                     currentTranslateY = translate.y;
                     examIframe.classList.add('dragging');
-                    console.log(`Pan Mulai (Sentuh): translateX awal=${currentTranslateX}, translateY awal=${currentTranslateY}`);
+                    // console.log(`Pan Mulai (Sentuh): translateX awal=${currentTranslateX}, translateY awal=${currentTranslateY}`); // Dihapus
                 }
             });
 
@@ -4398,7 +4420,7 @@
                     currentTranslateX = translate.x;
                     currentTranslateY = translate.y;
                     examIframe.classList.remove('dragging');
-                    console.log(`Pan Selesai (Sentuh): translateX akhir=${currentTranslateX}, translateY akhir=${currentTranslateY}`);
+                    // console.log(`Pan Selesai (Sentuh): translateX akhir=${currentTranslateX}, translateY akhir=${currentTranslateY}`); // Dihapus
                 }
             });
 
@@ -4438,10 +4460,10 @@
                     const settings = settingsSnapshot.val();
                     isLocationEnabled = settings.isLocationEnabled !== undefined ? settings.isLocationEnabled : true;
                     firebaseAllowedRadiusKm = settings.allowedRadiusKm !== undefined ? settings.allowedRadiusKm : 0.075;
-                    console.log("Status Lokasi dari Firebase:", isLocationEnabled);
-                    console.log("Radius dari Firebase:", firebaseAllowedRadiusKm);
+                    // console.log("Status Lokasi dari Firebase:", isLocationEnabled); // Dihapus
+                    // console.log("Radius dari Firebase:", firebaseAllowedRadiusKm); // Dihapus
                 } else {
-                    console.log("Tidak dapat mengambil pengaturan lokasi dari Firebase, menggunakan default.");
+                    console.warn("Tidak dapat mengambil pengaturan lokasi dari Firebase, menggunakan default.");
                 }
 
                 const lockSettingsSnapshot = await get(ref(db, 'lock_settings'));
@@ -4450,9 +4472,9 @@
                     isLockEnabledGlobal = lockSettings.isLockEnabled !== undefined ? lockSettings.isLockEnabled : false;
                     lockKeyGlobal = lockSettings.lockKey !== undefined ? lockSettings.lockKey : "";
                     toleranceLimitGlobal = lockSettings.toleranceLimit !== undefined ? lockSettings.toleranceLimit : 3;
-                    console.log("Pengaturan Kunci dari Firebase:", { isLockEnabledGlobal, lockKeyGlobal, toleranceLimitGlobal });
+                    // console.log("Pengaturan Kunci dari Firebase:", { isLockEnabledGlobal, lockKeyGlobal, toleranceLimitGlobal }); // Dihapus
                 } else {
-                    console.log("Tidak dapat mengambil pengaturan kunci dari Firebase, menggunakan default.");
+                    console.warn("Tidak dapat mengambil pengaturan kunci dari Firebase, menggunakan default.");
                 }
 
             } catch (error) {
@@ -4536,7 +4558,7 @@
                     return;
                 }
 
-                console.log("cekToken: foundToken.answerKey is:", foundToken.answerKey);
+                // console.log("cekToken: foundToken.answerKey is:", foundToken.answerKey); // Dihapus
 
                 const now = new Date();
                 const startTime = new Date(foundToken.startTime);
@@ -4589,7 +4611,7 @@
                 
                 const answerKeyArray = foundToken.answerKey ? foundToken.answerKey.split(',') : [];
                 const numQuestions = answerKeyArray.length;
-                console.log("cekToken: Jumlah pertanyaan yang dihitung:", numQuestions);
+                // console.log("cekToken: Jumlah pertanyaan yang dihitung:", numQuestions); // Dihapus
 
                 const accessStatusRef = child(dbRefs.examAccessStatusRef, `${foundTokenGlobal.key}/${studentId}`);
                 const accessStatusSnapshot = await get(accessStatusRef);
@@ -4609,7 +4631,7 @@
                     if (answersSnapshot.exists()) {
                         const savedAnswersData = answersSnapshot.val();
                         loadedAnswers = savedAnswersData.answers ? savedAnswersData.answers.split(',') : Array(numQuestions).fill('');
-                        console.log("Jawaban siswa dimuat dari Firebase (login pertama):", loadedAnswers);
+                        // console.log("Jawaban siswa dimuat dari Firebase (login pertama):", loadedAnswers); // Dihapus
                     } else {
                         console.warn("Tidak ada jawaban yang disimpan di Firebase pada jalur ini, dimulai dengan array kosong.");
                     }
