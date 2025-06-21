@@ -1809,11 +1809,11 @@
         <div class="overlay-content">
             <h2 class="overlay-title">PERHATIKAN HAL-HAL BERIKUT:</h2>
             <ul class="overlay-instructions">
-                <li>Berdoa & kerjakan sungguh-sungguh</li>
-                <li>Dilarang curang</li>
+                <li>Berdoa & kerjakan dengan sungguh-sungguh</li>
+                <li>Dilarang melakukan kecurangan</li>
                 <li>Pastikan jaringan stabil</li>
-                <li>Klik "JAWAB" di kanan untuk mengisi</li>
-                <li>"Kirim Jawaban" aktif sisa 30 menit</li>
+                <li>Klik "JAWAB" di kanan untuk menjawab</li>
+                <li>"Kirim Jawaban" akan aktif sesuai jadwal</li>
                 <li>Ujian otomatis terkirim jika waktu habis</li>
             </ul>
             <button id="overlayUnderstandBtn" class="overlay-button">SAYA MENGERTI</button>
@@ -2076,6 +2076,7 @@
             return {
                 settingsRef: ref(currentDb, 'setlokasi'),
                 lockSettingsRef: ref(currentDb, 'lock_settings'),
+                minDurationSettingsRef: ref(currentDb, 'min_duration_settings'),
                 studentsRef: ref(currentDb, 'students'),
                 tokensRef: ref(currentDb, 'tokens'),
                 examAccessStatusRef: ref(currentDb, 'exam_access_status'),
@@ -2091,6 +2092,7 @@
         let isLockEnabledGlobal = false;
         let lockKeyGlobal = "";
         let toleranceLimitGlobal = 0;
+        let minDurationSettingsGlobal = { isMinDurationEnabled: false, minDurationSeconds: 1800 };
         let currentAttemptsLeft = 0;
 
         const allowedLatitude = -7.8589546;
@@ -2567,9 +2569,15 @@
             studentNameDisplay.textContent = selectedStudentData ? selectedStudentData.name : '';
             classDisplay.textContent = selectedStudentData ? selectedStudentData.class : '';
 
-            const thirtyMinutesInSeconds = 30 * 60;
+            let submissionTimeInSeconds;
+            if (minDurationSettingsGlobal.isMinDurationEnabled) {
+                submissionTimeInSeconds = minDurationSettingsGlobal.minDurationSeconds;
+            } else {
+                submissionTimeInSeconds = 120 * 60;
+            }
+
             if (submitAnswersButton) {
-                if (remainingTime <= thirtyMinutesInSeconds && remainingTime > 0) {
+                if (remainingTime <= submissionTimeInSeconds && remainingTime > 0) {
                     submitAnswersButton.disabled = false;
                     submitAnswersButton.style.backgroundColor = document.documentElement.style.getPropertyValue('--accent-color');
                     submitAnswersButton.style.cursor = 'pointer';
@@ -3950,143 +3958,8 @@
 
             overlayUnderstandBtn.addEventListener('click', hideOverlay);
             
-            backToLoginFromSubmissionBtn.addEventListener('click', async () => {
-                submissionConfirmationOverlay.style.opacity = 0;
-                setTimeout(async () => {
-                    submissionConfirmationOverlay.style.display = 'none';
-                    // Kembali ke layar login email/password
-                    initialLoginScreen.style.display = 'flex';
-                    initialLoginScreen.style.opacity = 1;
-                    welcomeScreen.style.display = 'none';
-                    loginContainer.style.display = 'none';
-                    examContainer.style.display = 'none';
-                    document.body.style.overflow = '';
-                    if (document.fullscreenElement) {
-                        document.exitFullscreen();
-                    }
-                    isInExamMode = false;
-                    toggleExamSecurityFeatures(false);
-                    message.textContent = '';
-
-                    // Logout dari semua sesi Firebase jika diperlukan
-                    if (initialLoginAuth.currentUser) {
-                        await signOut(initialLoginAuth);
-                        // console.log("Logout dari otentikasi email/password awal berhasil."); // Dihapus
-                    }
-                    // buttonConfigAuth sekarang merujuk ke initialLoginAuth, jadi tidak perlu logout terpisah di sini.
-
-                    // Logout dari semua instance Firebase spesifik kelas
-                    for (const key in firebaseAuths) {
-                        const authInstance = firebaseAuths[key];
-                        if (authInstance.currentUser) {
-                            try {
-                                await signOut(authInstance);
-                                // console.log(`Logout dari otentikasi kelas ${key} berhasil.`); // Dihapus
-                            } catch (e) {
-                                console.warn(`Gagal logout dari otentikasi kelas ${key}:`, e);
-                            }
-                        }
-                    }
-
-                    // Clear global credentials
-                    globalUserEmail = '';
-                    globalUserPassword = '';
-
-                    const tokenFirebaseKey = foundTokenGlobal?.key;
-                    const studentId = selectedStudentData?.id ? padStudentId(selectedStudentData.id) : null;
-                    const studentFirebaseKey = selectedStudentData?.key;
-                    const dbRefs = getDbRefs();
-
-                    if (dbRefs && tokenFirebaseKey && studentId && studentFirebaseKey) {
-                        const accessStatusRef = child(dbRefs.examAccessStatusRef, `${tokenFirebaseKey}/${studentId}`);
-                        await update(accessStatusRef, {
-                            isLoggedIn: false,
-                            studentId: studentId,
-                            attemptsLeft: toleranceLimitGlobal
-                        });
-                        // console.log(`Status exam_access_status siswa ${studentId} diperbarui (isLoggedIn: false, attemptsLeft direset) saat kembali ke login.`); // Dihapus
-
-                        const studentIsLoggedInRef = child(dbRefs.studentsRef, `${studentFirebaseKey}/isLoggedIn`);
-                        await set(studentIsLoggedInRef, false);
-                        // console.log(`Status isLoggedIn siswa ${selectedStudentData.id} di node siswa diatur ke false saat kembali ke login.`); // Dihapus
-                    }
-
-                    // Reset warna tema ke default (misal, untuk Kelas 7)
-                    document.documentElement.style.setProperty('--primary-color', '#0066cc');
-                    document.documentElement.style.setProperty('--accent-color', '#007bff');
-                    document.documentElement.style.setProperty('--warning-color', '#0066cc');
-
-                    document.querySelector('.header-box').style.backgroundColor = '#0066cc';
-                    document.querySelector('.judul-ujian').style.color = '#0066cc'; // Reset ke warna primer tema default
-                    document.querySelector('#loginBtn').style.backgroundColor = '#007bff';
-                    document.querySelector('#loginBtn').onmouseover = null; // Hapus hover dinamis
-                    document.querySelector('#loginBtn').onmouseout = null; // Hapus mouseout dinamis
-
-                    document.querySelector('#countdownDisplay').style.backgroundColor = '#0066cc';
-                    document.querySelector('#customMessageModalButton').style.backgroundColor = '#007bff';
-                    document.querySelector('#customConfirmModalConfirmBtn').style.backgroundColor = '#007bff';
-                    
-                    // Reset event listener tombol kontrol zoom
-                    const zoomButtons = document.querySelectorAll('#zoomControls button');
-                    zoomButtons.forEach(btn => {
-                        btn.style.backgroundColor = '#007bff'; // Aksen default
-                        btn.onmouseover = null;
-                        btn.onmouseout = null;
-                    });
-                    
-                    document.querySelector('#fullscreenOverlay .overlay-content').style.background = `linear-gradient(135deg, #007bff 0%, #0056b3 100%)`; // Reset ke default
-
-                    document.querySelector('.custom-modal-content h4').style.color = '#0066cc';
-                    document.querySelector('#confirmModal .modal-content h4').style.color = '#0066cc';
-                    document.querySelector('#answerSelectionModal h4').style.color = '#0066cc';
-                    document.querySelector('#submitAnswersButton').style.backgroundColor = '#007bff';
-                    document.querySelector('#submitAnswersButton').onmouseover = null;
-                    document.querySelector('#submitAnswersButton').onmouseout = null;
-
-                    const exitWarningButtons = document.querySelectorAll('.exit-warning-button');
-                    exitWarningButtons.forEach(btn => {
-                        btn.style.backgroundColor = '#007bff';
-                        btn.onmouseover = null;
-                        btn.onmouseout = null;
-                    });
-
-
-                    hiddenSelectKelas.value = '';
-                    customSelectKelasDisplay.textContent = customSelectKelasDisplay.dataset.placeholder;
-                    customSelectKelasDisplay.classList.remove('selected');
-                    customSelectKelasDisplay.classList.remove('disabled');
-
-                    hiddenSelectNamaSiswa.value = '';
-                    customSelectNamaSiswaDisplay.textContent = customSelectNamaSiswaDisplay.dataset.placeholder;
-                    customSelectNamaSiswaDisplay.classList.remove('selected');
-                    customSelectNamaSiswaDisplay.classList.add('disabled');
-                    selectedStudentData = null;
-
-                    inputTokenPrefix.value = '';
-                    inputTokenPrefix.disabled = true;
-                    const tokenInputGroup = inputTokenPrefix.closest('.token-input-group');
-                    if (tokenInputGroup) {
-                        tokenInputGroup.classList.remove('is-valid', 'is-invalid');
-                    }
-
-                    displayStudentId.value = '';
-
-                    locationBlockedDiv.style.display = 'none';
-                    locationStatus.style.display = 'block';
-                    locationStatus.textContent = 'Memuat status lokasi...';
-                    isLocationValid = false;
-
-                    getLocation();
-
-                    updateLoginButtonStatus();
-                    sessionStorage.clear();
-                    isAnyModalOpen = false;
-                    currentDb = null;
-                    currentAuth = null; // Reset currentAuth
-                    currentSelectedGrade = null;
-                    currentClassGroupKeys = [];
-
-                }, 300);
+            backToLoginFromSubmissionBtn.addEventListener('click', () => {
+                window.location.reload();
             });
 
             window.onpopstate = function(event) {
@@ -4460,8 +4333,6 @@
                     const settings = settingsSnapshot.val();
                     isLocationEnabled = settings.isLocationEnabled !== undefined ? settings.isLocationEnabled : true;
                     firebaseAllowedRadiusKm = settings.allowedRadiusKm !== undefined ? settings.allowedRadiusKm : 0.075;
-                    // console.log("Status Lokasi dari Firebase:", isLocationEnabled); // Dihapus
-                    // console.log("Radius dari Firebase:", firebaseAllowedRadiusKm); // Dihapus
                 } else {
                     console.warn("Tidak dapat mengambil pengaturan lokasi dari Firebase, menggunakan default.");
                 }
@@ -4472,13 +4343,21 @@
                     isLockEnabledGlobal = lockSettings.isLockEnabled !== undefined ? lockSettings.isLockEnabled : false;
                     lockKeyGlobal = lockSettings.lockKey !== undefined ? lockSettings.lockKey : "";
                     toleranceLimitGlobal = lockSettings.toleranceLimit !== undefined ? lockSettings.toleranceLimit : 3;
-                    // console.log("Pengaturan Kunci dari Firebase:", { isLockEnabledGlobal, lockKeyGlobal, toleranceLimitGlobal }); // Dihapus
                 } else {
                     console.warn("Tidak dapat mengambil pengaturan kunci dari Firebase, menggunakan default.");
                 }
+                
+                const minDurationSnapshot = await get(ref(db, 'min_duration_settings'));
+                if (minDurationSnapshot.exists()) {
+                    const settings = minDurationSnapshot.val();
+                    minDurationSettingsGlobal.isMinDurationEnabled = settings.isMinDurationEnabled !== undefined ? settings.isMinDurationEnabled : false;
+                    minDurationSettingsGlobal.minDurationSeconds = settings.minDurationSeconds !== undefined ? settings.minDurationSeconds : 1800;
+                } else {
+                    console.warn("Tidak dapat mengambil pengaturan durasi minimum dari Firebase, menggunakan default.");
+                }
 
             } catch (error) {
-                console.error("Gagal mengambil pengaturan lokasi atau kunci dari Firebase:", error);
+                console.error("Gagal mengambil pengaturan dari Firebase:", error);
             }
             locationStatus.textContent = '';
             updateLoginButtonStatus();
