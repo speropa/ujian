@@ -1370,6 +1370,85 @@
             font-weight: bold;
         }
 
+        /* Gaya untuk Overlay Blokir Akses */
+        #accessBlockedOverlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: #e0e0e0;
+            z-index: 9999;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            transition: opacity 0.3s ease-in-out;
+        }
+
+        .blocked-content {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            max-width: 400px;
+            width: 90%;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+            text-align: center;
+            box-sizing: border-box;
+        }
+
+        .blocked-content h1 {
+            font-size: 2em;
+            color: #dc3545; /* Merah */
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+
+        .blocked-content p {
+            font-size: 1.1em;
+            color: #333;
+            margin-bottom: 25px;
+            line-height: 1.5;
+        }
+
+        .password-input-container {
+            position: relative;
+            margin-bottom: 15px;
+        }
+
+        .password-input-container input {
+            padding-right: 45px; /* Ruang untuk ikon mata */
+        }
+        
+        .password-toggle-icon {
+            position: absolute;
+            top: 50%;
+            right: 15px;
+            transform: translateY(-50%);
+            cursor: pointer;
+            color: #888;
+            width: 24px;
+            height: 24px;
+        }
+        
+        .password-toggle-icon:hover {
+            color: #333;
+        }
+
+        #unlockAccessBtn {
+            padding: 12px 25px;
+            font-size: 1.1em;
+            border-radius: 8px;
+            width: 100%;
+        }
+
+        #unlockMessage {
+            color: red;
+            font-size: 0.9em;
+            margin-top: 10px;
+            min-height: 1.2em;
+        }
+
         /* Penyesuaian responsif */
         @media (max-width: 600px) {
             .initial-login-screen {
@@ -1610,6 +1689,24 @@
         <div class="spinner-border"></div>
         <p>Memuat aplikasi...</p>
     </div>
+
+    <!-- Access Blocked Overlay -->
+    <div id="accessBlockedOverlay">
+        <div class="blocked-content">
+            <h1>AKSES DIBLOKIR</h1>
+            <p>Ujian hanya bisa diakses melalui aplikasi yang sudah disosialisasikan. Silahkan hubungi Admin jika terdapat kendala.</p>
+            <div class="password-input-container">
+                <input type="password" id="unlockKeyInput" placeholder="Masukkan Kunci Akses">
+                <span class="password-toggle-icon" id="togglePasswordVisibility">
+                     <svg id="eye-open" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                     <svg id="eye-closed" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display: none;"><path d="M9.88 9.88a3 3 0 1 0 4.24 4.24"></path><path d="M10.73 5.08A10.43 10.43 0 0 1 12 5c7 0 10 7 10 7a13.16 13.16 0 0 1-1.67 2.68"></path><path d="M6.61 6.61A13.526 13.526 0 0 0 2 12s3 7 10 7a9.74 9.74 0 0 0 5.39-1.61"></path><line x1="2" x2="22" y1="2" y2="22"></line></svg>
+                </span>
+            </div>
+            <button id="unlockAccessBtn">BUKA AKSES</button>
+            <p id="unlockMessage"></p>
+        </div>
+    </div>
+
 
     <!-- Initial Login Screen (hidden by default) -->
     <div id="initialLoginScreen" class="initial-login-screen">
@@ -1892,7 +1989,6 @@
 
                 // Status autentikasi dikelola oleh login utama (initialLoginAuth).
                 // Tidak perlu signInAnonymously terpisah di sini.
-                // console.log("Firebase untuk konfigurasi tombol terhubung ke aplikasi login utama."); // Dihapus
             } catch (error) {
                 console.error("Gagal menginisialisasi Firebase untuk konfigurasi tombol (saat menghubungkan ke aplikasi utama):", error);
                 document.getElementById('welcomeMessage').textContent = 'Gagal memuat konfigurasi. Silakan refresh halaman. (Error: ' + error.message + ')';
@@ -2031,13 +2127,11 @@
                 firebaseApps[classGroupKey] = appInstance;
                 firebaseDBs[classGroupKey] = getDatabase(appInstance);
                 firebaseAuths[classGroupKey] = getAuth(appInstance);
-                // console.log(`Aplikasi Firebase diinisialisasi untuk grup kelas: ${classGroupKey}`); // Dihapus
 
                 try {
                     // Coba masuk dengan email/kata sandi yang sama dengan yang digunakan untuk login awal
                     if (globalUserEmail && globalUserPassword) {
                         await signInWithEmailAndPassword(firebaseAuths[classGroupKey], globalUserEmail, globalUserPassword);
-                        // console.log(`Berhasil login email/kata sandi untuk aplikasi Firebase: ${classGroupKey}`); // Dihapus
                     } else {
                         console.warn(`Peringatan: Kredensial pengguna tidak tersedia (mungkin belum login atau memulihkan sesi). Mencoba login anonim sebagai fallback untuk ${classGroupKey}.`);
                         await signInAnonymously(firebaseAuths[classGroupKey]); // Fallback jika kredensial tidak diatur (misalnya, memulihkan sesi)
@@ -2049,7 +2143,6 @@
                         console.warn(`Peringatan: Akun login email/kata sandi tidak ditemukan atau tidak valid di proyek Firebase untuk ${classGroupKey}. Ini mungkin karena setiap proyek memiliki basis data pengguna yang terpisah. Mencoba login anonim sebagai fallback.`);
                         try {
                             await signInAnonymously(firebaseAuths[classGroupKey]); // Fallback jika email/kata sandi gagal untuk proyek tertentu
-                            // console.log(`Berhasil login anonim ke Firebase ${classGroupKey} sebagai fallback.`); // Dihapus
                         } catch (anonError) {
                             console.error(`Gagal login anonim ke Firebase ${classGroupKey} sebagai fallback:`, anonError);
                             window.showCustomMessageModal("Kesalahan Autentikasi", `Gagal mengautentikasi ke database untuk kelas ini (${classGroupKey}). Mohon hubungi administrator. (Error: ${anonError.message})`, 'error');
@@ -2091,6 +2184,7 @@
 
         let isLockEnabledGlobal = false;
         let lockKeyGlobal = "";
+        let accessUnlockKey = ""; // Kunci untuk membuka akses yang diblokir
         let toleranceLimitGlobal = 0;
         let minDurationSettingsGlobal = { isMinDurationEnabled: false, minDurationSeconds: 1800 };
         let currentAttemptsLeft = 0;
@@ -2099,6 +2193,12 @@
         const allowedLongitude = 110.2655596;
 
         const loadingSpinner = document.getElementById('loadingSpinner');
+        const accessBlockedOverlay = document.getElementById('accessBlockedOverlay');
+        const unlockKeyInput = document.getElementById('unlockKeyInput');
+        const unlockAccessBtn = document.getElementById('unlockAccessBtn');
+        const unlockMessage = document.getElementById('unlockMessage');
+        const togglePasswordVisibility = document.getElementById('togglePasswordVisibility');
+
         const initialLoginScreen = document.getElementById('initialLoginScreen');
         const loginEmailInput = document.getElementById('loginEmail');
         const loginPasswordInput = document.getElementById('loginPassword');
@@ -2149,7 +2249,7 @@
         const exitWarningMessage = document.getElementById('exitWarningMessage');
         const attemptsLeftInfo = document.getElementById('attemptsLeftInfo');
         const lockKeySection = document.getElementById('lockKeySection');
-        const lockKeyInput = document.getElementById('lockKeyInput');
+        const lockKeyInputEl = document.getElementById('lockKeyInput');
         const lockKeyMessage = document.getElementById('lockKeyMessage');
         const lockKeySubmitBtn = document.getElementById('lockKeySubmitBtn');
         const reEnterFullscreenBtn = document.getElementById('reEnterFullscreenBtn');
@@ -2272,6 +2372,14 @@
             document.getElementById('datetime').textContent = now.toLocaleDateString('id-ID', options);
         }
 
+        function isAllowedEnvironment() {
+            const ua = navigator.userAgent.toLowerCase();
+            const isSEB = ua.includes('seb/');
+            const isAndroidWebView = ua.includes('wv') || (ua.includes('android') && !ua.includes('chrome') && !ua.includes('firefox'));
+            const isIOSWebView = (ua.includes('iphone') || ua.includes('ipad')) && !ua.includes('safari');
+            return isSEB || isAndroidWebView || isIOSWebView;
+        }
+
         window.formatTokenPrefix = function (inputElement) {
             if (!inputElement || typeof inputElement.value === 'undefined') {
                 console.error("Error: inputElement atau nilainya tidak terdefinisi dalam formatTokenPrefix.");
@@ -2334,7 +2442,6 @@
             confirmCheckbox.checked = false;
             updateLoginButtonStatus();
 
-            // Hapus sesi penyimpanan jika modal dibatalkan agar tidak dipulihkan setengah jalan
             sessionStorage.clear();
         };
 
@@ -2611,7 +2718,6 @@
                     submitAnswersButton.style.cursor = 'not-allowed';
                 }
 
-                // console.log("Waktu habis! Mengirim jawaban secara otomatis..."); // Dihapus
                 submitAnswers(true);
                 return;
             }
@@ -2688,10 +2794,7 @@
                     const studentIsLoggedInRef = child(dbRefs.studentsRef, `${studentFirebaseKey}/isLoggedIn`);
                     try {
                         await update(accessStatusRef, { isLoggedIn: false, studentId: studentId });
-                        // console.log("isLoggedIn diatur ke false di exam_access_status saat pengiriman."); // Dihapus
-
                         await set(studentIsLoggedInRef, false);
-                        // console.log(`Status isLoggedIn siswa ${selectedStudentData.id} di node siswa diatur ke false saat pengiriman.`); // Dihapus
 
                     } catch (error) {
                         console.error("Gagal mengatur isLoggedIn ke false saat pengiriman:", error);
@@ -2738,7 +2841,6 @@
 
         function attemptFullscreen() {
             if (document.fullscreenElement || document.mozFullScreenElement || document.webkitFullscreenElement || document.msFullscreenElement) {
-                // console.log("Sudah dalam mode layar penuh."); // Dihapus
                 return;
             }
 
@@ -2790,7 +2892,7 @@
 
                     attemptsLeftInfo.style.display = 'block';
                     lockKeySection.style.display = 'none';
-                    lockKeyInput.value = '';
+                    lockKeyInputEl.value = '';
                     lockKeyMessage.textContent = '';
 
                     if (currentAttemptsLeft > 0) {
@@ -2806,7 +2908,7 @@
                         attemptsLeftInfo.textContent = "Kesempatan keluar sudah habis.";
                         reEnterFullscreenBtn.style.display = 'none';
                         lockKeySection.style.display = 'block';
-                        lockKeyInput.focus();
+                        lockKeyInputEl.focus();
                     }
                 } else {
                     exitWarningMessage.textContent = "Anda telah keluar dari mode layar penuh. Mohon kembali ke mode layar penuh untuk melanjutkan ujian.";
@@ -2854,7 +2956,6 @@
             onValue(studentSubmissionRef, (snapshot) => {
                 if (snapshot.exists() && snapshot.val().isSubmitted === true) {
                     if (examContainer.style.display === 'flex') {
-                        // console.log("Deteksi: Jawaban siswa direkam di Firebase secara real-time."); // Dihapus
                         showSubmissionConfirmationOverlay(true);
                         examIframe.src = '';
                     }
@@ -2862,12 +2963,9 @@
             }, (error) => {
                 console.error("Gagal mendengarkan status pengiriman:", error);
             });
-            // console.log("Listener real-time untuk status pengiriman dimulai."); // Dihapus
         }
 
         function startExamProcess(examUrl, examDurationMinutes, numQuestions, examStartTime, initialAnswers = null) {
-            // console.log("startExamProcess dipanggil. Jawaban Awal:", initialAnswers); // Dihapus
-
             sessionStorage.setItem('isInExamMode', 'true');
             sessionStorage.setItem('selectedStudentData', JSON.stringify(selectedStudentData));
             sessionStorage.setItem('foundTokenGlobal', JSON.stringify(foundTokenGlobal));
@@ -2881,11 +2979,9 @@
             if (initialAnswers && initialAnswers.length > 0) {
                 studentAnswers = initialAnswers;
                 sessionStorage.setItem('studentAnswers', studentAnswers.join(','));
-                // console.log("studentAnswers diatur dari initialAnswers:", studentAnswers); // Dihapus
             } else {
                 studentAnswers = Array(numQuestions).fill('');
                 sessionStorage.removeItem('studentAnswers');
-                // console.log("studentAnswers diinisialisasi kosong."); // Dihapus
             }
 
             loginContainer.style.opacity = 0;
@@ -2906,10 +3002,7 @@
             const elapsedSeconds = Math.floor((Date.now() - examStartTime) / 1000);
             remainingTime = totalDurationSeconds - elapsedSeconds;
             
-            // console.log(`DEBUG: startExamProcess - totalDurationSeconds: ${totalDurationSeconds}, elapsedSeconds: ${elapsedSeconds}, calculated remainingTime: ${remainingTime}`); // Dihapus
             if (remainingTime < 0) remainingTime = 0;
-            // console.log(`DEBUG: startExamProcess - final remainingTime (setelah clamping): ${remainingTime}`); // Dihapus
-
 
             timerInterval = setInterval(updateTimerDisplay, 1000);
             countdownDisplay.style.display = 'flex';
@@ -2941,14 +3034,6 @@
                     console.error("Restore State: Gagal mengambil examStartTime yang valid dari sessionStorage. Menggunakan 0. Raw:", storedExamStartTimeRaw);
                     storedExamStartTime = 0;
                 }
-
-                // console.log("Restore State: selectedStudentData", storedSelectedStudentData); // Dihapus
-                // console.log("Restore State: foundTokenGlobal", storedFoundTokenGlobal); // Dihapus
-                // console.log("Restore State: storedExamStartTime (setelah parsing):", storedExamStartTime); // Dihapus
-                // console.log("Restore State: storedExamDurationMinutes:", storedExamDurationMinutes); // Dihapus
-                // console.log("Restore State: storedTotalQuestions (dari sessionStorage):", storedTotalQuestions); // Dihapus
-                // console.log("Restore State: storedSelectedClass:", storedSelectedClass); // Dihapus
-                // console.log("Restore State: storedSelectedGrade:", storedSelectedGrade); // Dihapus
 
                 if (storedSelectedStudentData && storedFoundTokenGlobal && storedExamIframeSrc &&
                     !isNaN(storedExamStartTime) && storedExamStartTime > 0 &&
@@ -3034,7 +3119,6 @@
                         if (answersSnapshot.exists()) {
                             const savedAnswersData = answersSnapshot.val();
                             loadedAnswers = savedAnswersData.answers ? savedAnswersData.answers.split(',') : Array(totalQuestions).fill('');
-                            // console.log("Restore State: Jawaban siswa dimuat dari Firebase:", loadedAnswers); // Dihapus
                         } else {
                             console.warn("Restore State: Tidak ada jawaban yang disimpan di Firebase pada jalur ini, dimulai dengan array kosong.");
                         }
@@ -3166,12 +3250,9 @@
                 });
 
                 if (examAccessDataAfterTransaction.committed) {
-                    // console.log(`Akses ke token ${foundTokenGlobal.key} oleh siswa ${selectedStudentData.id} berhasil diperbarui. accessCount baru: ${examAccessDataAfterTransaction.snapshot.val().accessCount}`); // Dihapus
-                    
                     if (studentFirebaseKey) {
                         const studentIsLoggedInRef = child(dbRefs.studentsRef, `${studentFirebaseKey}/isLoggedIn`);
                         await set(studentIsLoggedInRef, true);
-                        // console.log(`Status isLoggedIn siswa ${selectedStudentData.id} di node siswa diatur ke true pada 'Lanjutkan'.`); // Dihapus
                     } else {
                         console.warn(`Tidak dapat menemukan kunci Firebase untuk siswa ${selectedStudentData.id} untuk memperbarui status isLoggedIn di node siswa.`);
                     }
@@ -3198,7 +3279,6 @@
                             globalExamUrl += hasQueryParams ? '&chrome=false' : '?chrome=false';
                         }
                     }
-                    // console.log("Final Google Drive URL:", globalExamUrl); // Dihapus
 
                     globalExamDurationMinutes = examDurationMinutes;
                     globalNumQuestions = numQuestions;
@@ -3269,7 +3349,6 @@
 
         function renderAnswerBoxes() {
             const effectiveTotalQuestions = (totalQuestions > 0) ? totalQuestions : studentAnswers.length;
-            // console.log(`Merender kotak jawaban. Total pertanyaan efektif: ${effectiveTotalQuestions}`); // Dihapus
             
             answerListContainer.innerHTML = '';
             for (let i = 0; i < effectiveTotalQuestions; i++) {
@@ -3291,7 +3370,6 @@
                 }
                 answerBox.addEventListener('click', () => openAnswerSelectionModal(i));
                 answerListContainer.appendChild(answerBox);
-                // console.log(`Kotak jawaban dibuat dan ditambahkan untuk pertanyaan: ${questionNumber}, Jawaban: ${answer}`); // Dihapus
             }
         }
 
@@ -3361,7 +3439,6 @@
                     subject: foundTokenGlobal.subject,
                     studentId: studentId
                 });
-                // console.log("Jawaban siswa berhasil disimpan ke Firebase."); // Dihapus
             } catch (error) {
                 console.error("Gagal menyimpan jawaban siswa ke Firebase:", error);
             }
@@ -3410,7 +3487,6 @@
                     timestamp: Date.now(),
                     studentId: studentId
                 });
-                // console.log("Status ujian berhasil diperbarui menjadi dikirim di submitted_exams."); // Dihapus
 
                 const accessStatusRef = child(dbRefs.examAccessStatusRef, `${tokenFirebaseKey}/${studentId}`);
                 await update(accessStatusRef, {
@@ -3418,12 +3494,10 @@
                     studentId: studentId,
                     attemptsLeft: toleranceLimitGlobal
                 });
-                // console.log("isLoggedIn diatur ke false dan attemptsLeft direset di exam_access_status saat pengiriman."); // Dihapus
 
                 if (studentFirebaseKey) {
                     const studentIsLoggedInRef = child(dbRefs.studentsRef, `${studentFirebaseKey}/isLoggedIn`);
                     await set(studentIsLoggedInRef, false);
-                    // console.log(`Status isLoggedIn siswa ${selectedStudentData.id} di node siswa diatur ke false saat pengiriman.`); // Dihapus
                 } else {
                     console.warn(`Tidak dapat menemukan kunci Firebase untuk siswa ${selectedStudentData.id} untuk memperbarui status isLoggedIn di node siswa.`);
                 }
@@ -3517,7 +3591,6 @@
 
         function applyIframeTransform() {
             examIframe.style.transform = `translate(${currentTranslateX}px, ${currentTranslateY}px) scale(${currentZoom})`;
-            // console.log(`Menerapkan transform: translate(${currentTranslateX}px, ${currentTranslateY}px) scale(${currentZoom})`); // Dihapus
         }
 
         function resetIframePan() {
@@ -3585,7 +3658,6 @@
             if (panIntervalId) {
                 clearInterval(panIntervalId);
                 panIntervalId = null;
-                // console.log("Pan otomatis dihentikan."); // Dihapus
             }
         }
 
@@ -3606,7 +3678,6 @@
 
                 if (snapshot.exists()) {
                     publicSettings = snapshot.val();
-                    // console.log("Konfigurasi publicSettings dari Firebase:", publicSettings); // Dihapus
 
                     const activeButtons = [];
 
@@ -3728,7 +3799,6 @@
 
         // Fungsi handler untuk tombol Kelas 7, 8, 9 yang kustom
         function handleCustomButtonClassClick(kelas, url) {
-            // console.log(`Mengklik tombol kustom untuk ${kelas}, URL: ${url}`); // Dihapus
             if (url) {
                 // Arahkan langsung ke URL ujian (misal Google Form)
                 // Ini akan keluar dari aplikasi ujian ini.
@@ -3849,48 +3919,110 @@
             loadClassDropdownForGrade(grade);
         }
 
-        document.addEventListener('DOMContentLoaded', async () => {
-            // Sembunyikan semua kecuali spinner loading segera
+        async function initializeAppFlow() {
+            // 1. Sembunyikan semua dan tampilkan spinner
+            accessBlockedOverlay.style.display = 'none';
             welcomeScreen.style.display = 'none';
             loginContainer.style.display = 'none';
             examContainer.style.display = 'none';
-            initialLoginScreen.style.display = 'none'; /* Pastikan login awal tersembunyi */
-            loadingSpinner.style.display = 'flex'; /* Tampilkan spinner */
+            initialLoginScreen.style.display = 'none';
+            loadingSpinner.style.display = 'flex';
             loadingSpinner.style.opacity = 1;
 
-            // Fungsi untuk melakukan login otomatis
-            const performAutomaticLogin = async () => {
-                const email = loginEmailInput.value;
-                const password = loginPasswordInput.value;
-                
-                loginButton.disabled = true;
-                loginButton.textContent = 'Memuat...'; // Teks tombol saat proses login
+            // Fungsi helper untuk menampilkan konten selamat datang
+            async function showWelcomeScreenContent() {
+                await initializeButtonConfigFirebase();
+                await loadAndRenderWelcomeButtons();
+                loadingSpinner.style.opacity = 0;
+                setTimeout(() => {
+                    loadingSpinner.style.display = 'none';
+                    welcomeScreen.style.display = 'flex';
+                    welcomeScreen.style.opacity = 1;
+                    document.body.style.overflow = '';
+                }, 300);
+            }
 
-                try {
-                    // Pastikan initialLoginAuth sudah siap
-                    if (!initialLoginAuth) {
-                        console.error("initialLoginAuth belum diinisialisasi.");
-                        throw new Error('Firebase Auth belum siap.');
+            // Fungsi helper untuk menampilkan layar blokir
+            async function showAccessBlockedScreen() {
+                 try {
+                    const firstConfigKey = Object.keys(allFirebaseConfigs)[0];
+                    const firstClassName = allFirebaseConfigs[firstConfigKey].allowedClasses[0];
+                    const instance = await getFirebaseInstanceForClass(firstClassName);
+                    if (instance && instance.db) {
+                        const lockSettingsRef = ref(instance.db, 'lock_settings');
+                        const snapshot = await get(lockSettingsRef);
+                        if (snapshot.exists()) {
+                            accessUnlockKey = snapshot.val().lockKey || "";
+                        } else {
+                           unlockMessage.textContent = "Kunci akses tidak dikonfigurasi.";
+                        }
                     }
+                } catch (error) {
+                    console.error("Gagal mengambil kunci akses:", error);
+                    unlockMessage.textContent = "Gagal memuat kunci akses.";
+                }
+
+                loadingSpinner.style.opacity = 0;
+                setTimeout(() => {
+                    loadingSpinner.style.display = 'none';
+                    accessBlockedOverlay.style.display = 'flex';
+                    setTimeout(() => accessBlockedOverlay.style.opacity = 1, 10);
+                }, 300);
+
+                // Setup listener untuk tombol buka kunci sekali saja
+                const unlockHandler = async () => {
+                    const enteredKey = unlockKeyInput.value;
+                    if (enteredKey && enteredKey === accessUnlockKey) {
+                        accessBlockedOverlay.style.opacity = 0;
+                        setTimeout(async () => {
+                            accessBlockedOverlay.style.display = 'none';
+                            // Tampilkan spinner lagi selama memuat konten selamat datang
+                            loadingSpinner.style.display = 'flex';
+                            loadingSpinner.style.opacity = 1;
+                            await showWelcomeScreenContent(); // Lanjutkan ke layar selamat datang
+                        }, 300); // Tunggu animasi fade-out selesai
+                    } else {
+                        unlockMessage.textContent = "Kunci yang dimasukkan salah.";
+                        unlockKeyInput.value = "";
+                    }
+                };
+                unlockAccessBtn.onclick = unlockHandler; 
+                unlockKeyInput.onkeydown = (e) => {
+                    if (e.key === 'Enter') unlockHandler();
+                };
+
+                togglePasswordVisibility.onclick = () => { 
+                    const isOpen = unlockKeyInput.type === 'text';
+                    unlockKeyInput.type = isOpen ? 'password' : 'text';
+                    document.getElementById('eye-open').style.display = isOpen ? 'block' : 'none';
+                    document.getElementById('eye-closed').style.display = isOpen ? 'none' : 'block';
+                };
+            }
+
+            // Fungsi yang akan dipanggil setelah login berhasil
+            async function handleSuccessfulLogin() {
+                if (isAllowedEnvironment()) {
+                    await showWelcomeScreenContent();
+                } else {
+                    await showAccessBlockedScreen();
+                }
+            }
+            
+            // 2. Lakukan login
+            const performAutomaticLogin = async () => {
+                const email = "siswa@gmail.com";
+                const password = "12345678";
+                
+                try {
+                    if (!initialLoginAuth) throw new Error('Firebase Auth belum siap.');
 
                     await signInWithEmailAndPassword(initialLoginAuth, email, password);
-                    // console.log('Login email/password berhasil!'); // Dihapus
                     
-                    // Store the credentials globally after successful initial login
                     globalUserEmail = email;
                     globalUserPassword = password;
 
-                    // Sembunyikan spinner setelah login berhasil
-                    loadingSpinner.style.opacity = 0;
-                    setTimeout(async () => {
-                        loadingSpinner.style.display = 'none';
-                        // Inisialisasi Firebase untuk konfigurasi tombol kustom dan muat tombol setelah login berhasil
-                        await initializeButtonConfigFirebase();
-                        await loadAndRenderWelcomeButtons();
-                        welcomeScreen.style.display = 'flex';
-                        welcomeScreen.style.opacity = 1;
-                        document.body.style.overflow = '';
-                    }, 500);
+                    // 3. Setelah login berhasil, periksa lingkungan
+                    await handleSuccessfulLogin();
 
                 } catch (error) {
                     console.error("Login gagal:", error.message);
@@ -3903,7 +4035,6 @@
                         errorMessage = `Terjadi kesalahan: ${error.message}`;
                     }
                     
-                    // Jika login gagal, sembunyikan spinner dan tampilkan layar login awal dengan pesan error
                     loadingSpinner.style.opacity = 0;
                     setTimeout(() => {
                         loadingSpinner.style.display = 'none';
@@ -3916,19 +4047,18 @@
                     }, 500);
                 }
             };
-
-            // Set nilai input (meskipun layar tersembunyi)
-            loginEmailInput.value = "siswa@gmail.com";
-            loginPasswordInput.value = "12345678";
-
-            // Tambahkan event listener ke tombol login (jika pengguna mengklik secara manual)
+            
             loginButton.addEventListener('click', performAutomaticLogin);
-
-            // Panggil fungsi login otomatis secara langsung
-            // Menggunakan setTimeout 0 untuk memastikan event loop memproses pendaftaran event listener terlebih dahulu
+            
             setTimeout(performAutomaticLogin, 0);
+        }
 
 
+        document.addEventListener('DOMContentLoaded', async () => {
+            
+            await initializeAppFlow(); // Memulai alur aplikasi berdasarkan deteksi lingkungan
+
+            // Event listener lainnya yang bersifat umum
             customSelectKelasDisplay.addEventListener('click', openClassModal);
             customSelectNamaSiswaDisplay.addEventListener('click', openStudentModal);
 
@@ -3959,13 +4089,12 @@
             overlayUnderstandBtn.addEventListener('click', hideOverlay);
             
             backToLoginFromSubmissionBtn.addEventListener('click', () => {
-                window.location.reload();
+                window.location.reload(true);
             });
 
             window.onpopstate = function(event) {
                 if (isInExamMode) {
                     history.pushState(null, '', location.href);
-                    // console.log("Navigasi kembali dicegah selama ujian."); // Dihapus
                 }
             };
 
@@ -3977,7 +4106,7 @@
             reEnterFullscreenBtn.addEventListener('click', attemptFullscreen);
 
             lockKeySubmitBtn.addEventListener('click', async () => {
-                const enteredKey = lockKeyInput.value;
+                const enteredKey = lockKeyInputEl.value;
                 lockKeyMessage.textContent = '';
 
                 if (enteredKey === lockKeyGlobal) {
@@ -3990,7 +4119,6 @@
                         const accessStatusRef = child(dbRefs.examAccessStatusRef, `${foundTokenGlobal.key}/${studentId}`);
                         try {
                             await update(accessStatusRef, { attemptsLeft: currentAttemptsLeft, studentId: studentId });
-                            // console.log("attemptsLeft direset di Firebase setelah entri kunci yang berhasil."); // Dihapus
                         } catch (error) {
                             console.error("Gagal mereset attemptsLeft di Firebase:", error);
                         }
@@ -3999,18 +4127,18 @@
                     lockKeySection.style.display = 'none';
                     attemptsLeftInfo.style.display = 'none';
                     reEnterFullscreenBtn.style.display = 'block';
-                    lockKeyInput.value = '';
+                    lockKeyInputEl.value = '';
                     lockKeyMessage.textContent = '';
 
                     attemptFullscreen();
                 } else {
                     lockKeyMessage.style.color = 'red';
                     lockKeyMessage.textContent = 'Kunci salah. Silakan coba lagi.';
-                    lockKeyInput.value = '';
-                    lockKeyInput.focus();
+                    lockKeyInputEl.value = '';
+                    lockKeyInputEl.focus();
                 }
             });
-            lockKeyInput.addEventListener('keydown', (event) => {
+            lockKeyInputEl.addEventListener('keydown', (event) => {
                 if (event.key === 'Enter') {
                     event.preventDefault();
                     lockKeySubmitBtn.click();
@@ -4180,12 +4308,9 @@
             refreshIframeBtn.addEventListener('click', () => {
                 resetAutoHideTimer();
                 const currentIframeSrc = examIframe.src;
-                // console.log("Tombol refresh diklik. Src iframe saat ini:", examIframe.src); // Dihapus
-                // console.log("globalExamUrl yang tersimpan:", globalExamUrl); // Dihapus
                 examIframe.src = '';
                 setTimeout(() => {
                     examIframe.src = currentIframeSrc;
-                    // console.log("Iframe di-refresh dengan mereset src."); // Dihapus
                 }, 50);
             });
 
@@ -4200,7 +4325,6 @@
                     currentTranslateX = translate.x;
                     currentTranslateY = translate.y;
                     examIframe.classList.add('dragging');
-                    // console.log(`Pan Mulai (Mouse): translateX awal=${currentTranslateX}, translateY awal=${currentTranslateY}`); // Dihapus
                 }
             });
 
@@ -4239,7 +4363,6 @@
                     currentTranslateX = translate.x;
                     currentTranslateY = translate.y;
                     examIframe.classList.remove('dragging');
-                    // console.log(`Pan Selesai (Mouse): translateX akhir=${currentTranslateX}, translateY akhir=${currentTranslateY}`); // Dihapus
                 }
             });
 
@@ -4254,7 +4377,6 @@
                     currentTranslateX = translate.x;
                     currentTranslateY = translate.y;
                     examIframe.classList.add('dragging');
-                    // console.log(`Pan Mulai (Sentuh): translateX awal=${currentTranslateX}, translateY awal=${currentTranslateY}`); // Dihapus
                 }
             });
 
@@ -4293,7 +4415,6 @@
                     currentTranslateX = translate.x;
                     currentTranslateY = translate.y;
                     examIframe.classList.remove('dragging');
-                    // console.log(`Pan Selesai (Sentuh): translateX akhir=${currentTranslateX}, translateY akhir=${currentTranslateY}`); // Dihapus
                 }
             });
 
@@ -4310,7 +4431,6 @@
             updateDateTime();
             setInterval(updateDateTime, 1000);
 
-            // Coba pulihkan sesi ujian jika ada
             await restoreExamState();
         });
 
@@ -4437,8 +4557,6 @@
                     return;
                 }
 
-                // console.log("cekToken: foundToken.answerKey is:", foundToken.answerKey); // Dihapus
-
                 const now = new Date();
                 const startTime = new Date(foundToken.startTime);
                 const endTime = new Date(foundToken.endTime);
@@ -4490,7 +4608,6 @@
                 
                 const answerKeyArray = foundToken.answerKey ? foundToken.answerKey.split(',') : [];
                 const numQuestions = answerKeyArray.length;
-                // console.log("cekToken: Jumlah pertanyaan yang dihitung:", numQuestions); // Dihapus
 
                 const accessStatusRef = child(dbRefs.examAccessStatusRef, `${foundTokenGlobal.key}/${studentId}`);
                 const accessStatusSnapshot = await get(accessStatusRef);
@@ -4510,7 +4627,6 @@
                     if (answersSnapshot.exists()) {
                         const savedAnswersData = answersSnapshot.val();
                         loadedAnswers = savedAnswersData.answers ? savedAnswersData.answers.split(',') : Array(numQuestions).fill('');
-                        // console.log("Jawaban siswa dimuat dari Firebase (login pertama):", loadedAnswers); // Dihapus
                     } else {
                         console.warn("Tidak ada jawaban yang disimpan di Firebase pada jalur ini, dimulai dengan array kosong.");
                     }
