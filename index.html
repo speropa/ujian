@@ -1733,33 +1733,49 @@
         </div>
         <div class="card-body">
             <div class="judul-ujian" id="loginJudulUjian">UJIAN KELAS</div>
-            <div id="locationBlocked" style="display: none; color: red; margin-bottom: 10px; font-weight: bold; text-align: center;">
-                AKSES UJIAN DIBLOKIR, silahkan aktifkan lokasi perangkat Anda di SMPN 2 Pajangan! Setelah diaktifkan, silahkan refresh halaman login!
+            
+             <!-- Pesan Blokir Lokasi -->
+            <div id="locationBlockedDiv" style="display: none; color: red; margin-bottom: 10px; font-weight: bold; text-align: center;"></div>
+             <!-- Kontainer untuk Kunci Akses Lokasi -->
+            <div id="locationKeyContainer" style="display: none;">
+                <p>Jika lokasi tetap tidak valid, silahkan hubungi pengawas untuk mendapatkan kunci akses lokasi.</p>
+                <div class="password-input-container">
+                    <input type="password" id="locationKeyInput" placeholder="Masukkan Kunci Akses">
+                    <span class="password-toggle-icon" id="toggleLocationKeyVisibility">
+                        <svg id="loc-eye-open" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                        <svg id="loc-eye-closed" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display: none;"><path d="M9.88 9.88a3 3 0 1 0 4.24 4.24"></path><path d="M10.73 5.08A10.43 10.43 0 0 1 12 5c7 0 10 7 10 7a13.16 13.16 0 0 1-1.67 2.68"></path><path d="M6.61 6.61A13.526 13.526 0 0 0 2 12s3 7 10 7a9.74 9.74 0 0 0 5.39-1.61"></path><line x1="2" x2="22" y1="2" y2="22"></line></svg>
+                    </span>
+                </div>
+                <button id="validateLocationKeyBtn">Validasi Kunci</button>
+                <p class="message" id="locationKeyMessage"></p>
             </div>
+            
             <p class="message" id="message"></p>
-            <p id="locationStatus" style="color: gray; font-size: 12px; text-align: center;">Memuat status lokasi...</p>
+            <p id="locationStatus" style="color: gray; font-size: 12px; text-align: center; display: none;">Memuat status lokasi...</p>
 
-            <div class="custom-dropdown-container">
-                <div id="customSelectKelasDisplay" class="custom-dropdown-display" data-placeholder="-- Pilih Kelas --">
-                    -- Pilih Kelas --
+            <div id="mainLoginControls" style="display: none;">
+                <div class="custom-dropdown-container">
+                    <div id="customSelectKelasDisplay" class="custom-dropdown-display" data-placeholder="-- Pilih Kelas --">
+                        -- Pilih Kelas --
+                    </div>
+                    <input type="hidden" id="selectKelas" value="" />
                 </div>
-                <input type="hidden" id="selectKelas" value="" />
-            </div>
 
-            <div class="custom-dropdown-container">
-                <div id="customSelectNamaSiswaDisplay" class="custom-dropdown-display" data-placeholder="-- Pilih Nama Siswa --">
-                    -- Pilih Nama Siswa --
+                <div class="custom-dropdown-container">
+                    <div id="customSelectNamaSiswaDisplay" class="custom-dropdown-display" data-placeholder="-- Pilih Nama Siswa --">
+                        -- Pilih Nama Siswa --
+                    </div>
+                    <input type="hidden" id="selectNamaSiswa" value="" />
                 </div>
-                <input type="hidden" id="selectNamaSiswa" value="" />
-            </div>
 
-            <div class="token-input-group">
-                <input type="text" id="inputTokenPrefix" placeholder="TOKEN (contoh: ABCDE)" />
-                <span class="token-separator">-</span>
-                <input type="text" id="displayStudentId" placeholder="ID Siswa" readonly />
-            </div>
+                <div class="token-input-group">
+                    <input type="text" id="inputTokenPrefix" placeholder="TOKEN (contoh: ABCDE)" />
+                    <span class="token-separator">-</span>
+                    <input type="text" id="displayStudentId" placeholder="ID Siswa" readonly />
+                </div>
 
-            <button id="loginBtn">Login</button>
+                <button id="loginBtn">Login</button>
+            </div>
         </div>
         <div class="footer">
             © Admin SMPN 2 Pajangan<br>
@@ -1951,105 +1967,84 @@
     </div>
 
     <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.8.1/firebase-app.js";
-        import { getDatabase, ref, get, child, runTransaction, set, onValue, off, update, remove } from "https://www.gstatic.com/firebasejs/11.8.1/firebase-database.js";
-        // Import tambahan untuk otentikasi email/password
-        import { getAuth, signInAnonymously, signInWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/11.8.1/firebase-auth.js";
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-app.js";
+        import { getDatabase, ref, get, child, runTransaction, set, onValue, off, update, remove } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-database.js";
+        import { getAuth, signInWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-auth.js";
 
-        // Konfigurasi Firebase untuk login awal (email/password)
-        const initialLoginFirebaseConfig = {
-            apiKey: "AIzaSyAOBCX8x60pYqxtXmXMz2xc5dwC3HJH5EE",
-            authDomain: "ujian-online-berbasis-android.firebaseapp.com",
-            databaseURL: "https://ujian-online-berbasis-android-default-rtdb.firebaseio.com",
-            projectId: "ujian-online-berbasis-android",
-            storageBucket: "ujian-online-berbasis-android.firebasestorage.app",
-            messagingSenderId: "923446282537",
-            appId: "1:923446282537:web:60d374dde8aca61f6a0f38"
+        // Konfigurasi Firebase untuk SETUP (login utama dan pengaturan global)
+        const setupFirebaseConfig = {
+            apiKey: "AIzaSyBbXJ4VuACXyHJhl2eVSB2vHiT6hrx-XnE",
+            authDomain: "setup-73809.firebaseapp.com",
+            databaseURL: "https://setup-73809-default-rtdb.firebaseio.com",
+            projectId: "setup-73809",
+            storageBucket: "setup-73809.firebasestorage.app",
+            messagingSenderId: "843995999446",
+            appId: "1:843995999446:web:7fd92546f2d0bea73fed77"
         };
-        const initialLoginApp = initializeApp(initialLoginFirebaseConfig, "initialLoginApp");
-        const initialLoginAuth = getAuth(initialLoginApp);
+        const setupApp = initializeApp(setupFirebaseConfig, "setupApp");
+        const setupAuth = getAuth(setupApp);
+        const setupDb = getDatabase(setupApp);
+
 
         // Global variables for authenticated user credentials
         let globalUserEmail = '';
         let globalUserPassword = '';
 
-        // Firebase for Custom Buttons (now links to initialLoginApp)
-        let buttonConfigDb = null;
-        let publicSettings = null; // Untuk menyimpan konfigurasi publicSettings dari Firebase
-        let buttonConfigAuth = null; // Will be set to initialLoginAuth
-
-        // Fungsi untuk menginisialisasi Firebase untuk konfigurasi tombol.
-        // Sekarang akan menggunakan instance aplikasi utama.
-        async function initializeButtonConfigFirebase() {
-            try {
-                // Karena initialLoginFirebaseConfig dan buttonConfigFirebaseConfig (sebelumnya) identik,
-                // kita bisa langsung menggunakan instance database dan auth dari initialLoginApp.
-                buttonConfigDb = getDatabase(initialLoginApp);
-                buttonConfigAuth = initialLoginAuth; // Menggunakan kembali instance auth dari login awal
-
-                // Status autentikasi dikelola oleh login utama (initialLoginAuth).
-                // Tidak perlu signInAnonymously terpisah di sini.
-            } catch (error) {
-                console.error("Gagal menginisialisasi Firebase untuk konfigurasi tombol (saat menghubungkan ke aplikasi utama):", error);
-                document.getElementById('welcomeMessage').textContent = 'Gagal memuat konfigurasi. Silakan refresh halaman. (Error: ' + error.message + ')';
-            }
-        }
-
-
+        // Konfigurasi Firebase untuk setiap grup kelas (3 Angkatan)
         const allFirebaseConfigs = {
-            'kelas7-group1': {
-                apiKey: "AIzaSyBJBl_HWsOsnBBI1EPs1yQlJd0Hso8HcSo",
-                authDomain: "ujianpdf-7abc.firebaseapp.com",
-                databaseURL: "https://ujianpdf-7abc-default-rtdb.firebaseio.com",
-                projectId: "ujianpdf-7abc",
-                storageBucket: "ujianpdf-7abc.firebasestorage.app",
-                messagingSenderId: "1035978389542",
-                appId: "1:1035978389542:web:413eb32b04c0d09bc48ee7",
+            'kelas7-group1': { /* 7ABC */
+                apiKey: "AIzaSyBAKwT7JY_HGnvK6h3u30-dfgRPXfef8l8",
+                authDomain: "abc-a13ea.firebaseapp.com",
+                databaseURL: "https://abc-a13ea-default-rtdb.firebaseio.com",
+                projectId: "abc-a13ea",
+                storageBucket: "abc-a13ea.firebasestorage.app",
+                messagingSenderId: "1052966795599",
+                appId: "1:1052966795599:web:d4d331199ca9081321ed3a",
                 theme: {
-                    primary: '#0066cc', // Biru lebih gelap untuk header, hitung mundur, dll.
-                    accent: '#007bff',  // Biru lebih terang untuk tombol
-                    warning: '#0066cc' // Judul Ujian sama dengan primer
+                    primary: '#0066cc',
+                    accent: '#007bff',
+                    warning: '#0066cc'
                 },
                 allowedClasses: ['7A', '7B', '7C']
             },
-            'kelas7-group2': {
-                apiKey: "AIzaSyDQKdbwaG0Tg7_tfHs0hCbNR3xlqT3vWLA",
-                authDomain: "ujianpdf-7def.firebaseapp.com",
-                databaseURL: "https://ujianpdf-7def-default-rtdb.firebaseio.com",
-                projectId: "ujianpdf-7def",
-                storageBucket: "ujianpdf-7def.firebasestorage.app",
-                messagingSenderId: "210211262444",
-                appId: "1:210211262444:web:a06a988913ede65369bac9",
-                theme: {
+            'kelas7-group2': { /* 7DEF */
+                apiKey: "AIzaSyBkhBZw3oADXUAJ9FXY9-g7XBsSmQhzZVk",
+                authDomain: "def-ab5ee.firebaseapp.com",
+                databaseURL: "https://def-ab5ee-default-rtdb.firebaseio.com",
+                projectId: "def-ab5ee",
+                storageBucket: "def-ab5ee.firebasestorage.app",
+                messagingSenderId: "129712840107",
+                appId: "1:129712840107:web:ab10576fed95f735dd46ee",
+                 theme: {
                     primary: '#0066cc',
                     accent: '#007bff',
                     warning: '#0066cc'
                 },
                 allowedClasses: ['7D', '7E', '7F']
             },
-            'kelas8-group1': {
-                apiKey: "AIzaSyAsbVn2qVIgH278ZjPfkMihlGYmyL8zJFA",
-                authDomain: "ujianpdf8abc-3bedf.firebaseapp.com",
-                databaseURL: "https://ujianpdf8abc-3bedf-default-rtdb.firebaseio.com",
-                projectId: "ujianpdf8abc-3bedf",
-                storageBucket: "ujianpdf8abc-3bedf.firebasestorage.app",
-                messagingSenderId: "408487358048",
-                appId: "1:408487358048:web:10cc8796510f4b8ab99d05",
+            'kelas8-group1': { /* 8ABC */
+                apiKey: "AIzaSyAwilwwwEJ2MAdSf09BotxNH-z6RiXaHXY",
+                authDomain: "abc-43e73.firebaseapp.com",
+                databaseURL: "https://abc-43e73-default-rtdb.firebaseio.com",
+                projectId: "abc-43e73",
+                storageBucket: "abc-43e73.firebasestorage.app",
+                messagingSenderId: "1043754727577",
+                appId: "1:1043754727577:web:56c3732bf2a6ac900c2008",
                 theme: {
-                    primary: '#cc7a00', // Oranye lebih gelap
-                    accent: '#ff9900',  // Oranye lebih terang
-                    warning: '#ff9900' // Judul Ujian sama dengan aksen
+                    primary: '#cc7a00',
+                    accent: '#ff9900',
+                    warning: '#ff9900'
                 },
                 allowedClasses: ['8A', '8B', '8C']
             },
-            'kelas8-group2': {
-                apiKey: "AIzaSyBvkIMTkJkDqe2nKspIMXOCeT9vc6h8xjA",
-                authDomain: "ujianpdf8def-9bdcd.firebaseapp.com",
-                databaseURL: "https://ujianpdf8def-9bdcd-default-rtdb.firebaseio.com",
-                projectId: "ujianpdf8def-9bdcd",
-                storageBucket: "ujianpdf8def-9bdcd.firebasestorage.app",
-                messagingSenderId: "69381651529",
-                appId: "1:69381651529:web:af517e87735d2ad51a9398",
+            'kelas8-group2': { /* 8DEF */
+                apiKey: "AIzaSyBeCI57lmZ4-8DAKYJ7nvYjnXOfvy0vqrk",
+                authDomain: "def-efcb2.firebaseapp.com",
+                databaseURL: "https://def-efcb2-default-rtdb.firebaseio.com",
+                projectId: "def-efcb2",
+                storageBucket: "def-efcb2.firebasestorage.app",
+                messagingSenderId: "12569956361",
+                appId: "1:12569956361:web:fea36c4e034e65f33ba8d8",
                 theme: {
                     primary: '#cc7a00',
                     accent: '#ff9900',
@@ -2057,29 +2052,29 @@
                 },
                 allowedClasses: ['8D', '8E', '8F']
             },
-            'kelas9-group1': {
-                apiKey: "AIzaSyCjf42a3CCB3IuNto2K8MGpTX_SM1FXyrw",
-                authDomain: "ujianpdf-9abc.firebaseapp.com",
-                databaseURL: "https://ujianpdf-9abc-default-rtdb.firebaseio.com",
-                projectId: "ujianpdf-9abc",
-                storageBucket: "ujianpdf-9abc.firebasestorage.app",
-                messagingSenderId: "939178637981",
-                appId: "1:939178637981:web:b9a15dfa72180d15d77274",
+            'kelas9-group1': { /* 9ABC */
+                apiKey: "AIzaSyBZ6JR3ggnUiZFQ-wdrewbfhzMUwFaGGzQ",
+                authDomain: "abc-d272a.firebaseapp.com",
+                databaseURL: "https://abc-d272a-default-rtdb.firebaseio.com",
+                projectId: "abc-d272a",
+                storageBucket: "abc-d272a.firebasestorage.app",
+                messagingSenderId: "1036605132828",
+                appId: "1:1036605132828:web:2b59f91290d50afe304fd9",
                 theme: {
-                    primary: '#5a0000', // Merah marun lebih gelap
-                    accent: '#800000',  // Merah marun lebih terang
-                    warning: '#800000' // Judul Ujian sama dengan aksen
+                    primary: '#5a0000',
+                    accent: '#800000',
+                    warning: '#800000'
                 },
                 allowedClasses: ['9A', '9B', '9C']
             },
-            'kelas9-group2': {
-                apiKey: "AIzaSyDK50Amn6N8gl_q6CVhDjV_DRPpdCpCTrw",
-                authDomain: "ujianpdf-9def.firebaseapp.com",
-                databaseURL: "https://ujianpdf-9def-default-rtdb.firebaseio.com",
-                projectId: "ujianpdf-9def",
-                storageBucket: "ujianpdf-9def.firebasestorage.app",
-                messagingSenderId: "450883192159",
-                appId: "1:450883192159:web:6ad39c42db5756ff0f62ea",
+            'kelas9-group2': { /* 9DEF */
+                apiKey: "AIzaSyC2iwuDMWTaJIG8g464Wt0En3CXI2DZiz4",
+                authDomain: "def-85f32.firebaseapp.com",
+                databaseURL: "https://def-85f32-default-rtdb.firebaseio.com",
+                projectId: "def-85f32",
+                storageBucket: "def-85f32.firebasestorage.app",
+                messagingSenderId: "82670626048",
+                appId: "1:82670626048:web:f5fdfda8fe078245b6bfe5",
                 theme: {
                     primary: '#5a0000',
                     accent: '#800000',
@@ -2123,39 +2118,21 @@
 
             if (!firebaseApps[classGroupKey]) {
                 const config = allFirebaseConfigs[classGroupKey];
-                const appInstance = initializeApp(config, classGroupKey); // Inisialisasi instance aplikasi baru untuk proyek yang berbeda
+                const appInstance = initializeApp(config, classGroupKey);
                 firebaseApps[classGroupKey] = appInstance;
                 firebaseDBs[classGroupKey] = getDatabase(appInstance);
                 firebaseAuths[classGroupKey] = getAuth(appInstance);
 
                 try {
-                    // Coba masuk dengan email/kata sandi yang sama dengan yang digunakan untuk login awal
                     if (globalUserEmail && globalUserPassword) {
                         await signInWithEmailAndPassword(firebaseAuths[classGroupKey], globalUserEmail, globalUserPassword);
                     } else {
-                        console.warn(`Peringatan: Kredensial pengguna tidak tersedia (mungkin belum login atau memulihkan sesi). Mencoba login anonim sebagai fallback untuk ${classGroupKey}.`);
-                        await signInAnonymously(firebaseAuths[classGroupKey]); // Fallback jika kredensial tidak diatur (misalnya, memulihkan sesi)
+                       console.warn(`Peringatan: Kredensial pengguna tidak tersedia. Tidak bisa login ke DB kelas ${classGroupKey}.`);
                     }
                 } catch (error) {
-                    console.error(`Gagal login email/kata sandi untuk aplikasi Firebase ${classGroupKey}:`, error);
-                    // Tangani kesalahan autentikasi tertentu jika pengguna tidak ada di autentikasi proyek tertentu ini
-                    if (error.code === 'auth/user-not-found' || error.code === 'auth/wrong-password' || error.code === 'auth/invalid-email' || error.code === 'auth/invalid-credential') {
-                        console.warn(`Peringatan: Akun login email/kata sandi tidak ditemukan atau tidak valid di proyek Firebase untuk ${classGroupKey}. Ini mungkin karena setiap proyek memiliki basis data pengguna yang terpisah. Mencoba login anonim sebagai fallback.`);
-                        try {
-                            await signInAnonymously(firebaseAuths[classGroupKey]); // Fallback jika email/kata sandi gagal untuk proyek tertentu
-                        } catch (anonError) {
-                            console.error(`Gagal login anonim ke Firebase ${classGroupKey} sebagai fallback:`, anonError);
-                            window.showCustomMessageModal("Kesalahan Autentikasi", `Gagal mengautentikasi ke database untuk kelas ini (${classGroupKey}). Mohon hubungi administrator. (Error: ${anonError.message})`, 'error');
-                            return null;
-                        }
-                    } else if (error.code === 'auth/network-request-failed') {
-                        console.error(`Kesalahan Jaringan saat login ke Firebase ${classGroupKey}:`, error);
-                        window.showCustomMessageModal("Kesalahan Jaringan", `Gagal terhubung ke database untuk kelas ini (${classGroupKey}). Mohon periksa koneksi internet Anda.`, 'error');
-                        return null;
-                    } else {
-                        window.showCustomMessageModal("Kesalahan Autentikasi", `Gagal mengautentikasi ke database untuk kelas ini (${classGroupKey}). Mohon hubungi administrator. (Error: ${error.message})`, 'error');
-                        return null;
-                    }
+                    console.error(`Gagal login ke database kelas ${classGroupKey}:`, error);
+                    window.showCustomMessageModal("Kesalahan Autentikasi Kelas", `Gagal mengautentikasi ke database untuk kelas ini. Mohon hubungi administrator.`, 'error');
+                    return null;
                 }
             }
             return { db: firebaseDBs[classGroupKey], auth: firebaseAuths[classGroupKey] };
@@ -2167,27 +2144,35 @@
                 return null;
             }
             return {
-                settingsRef: ref(currentDb, 'setlokasi'),
-                lockSettingsRef: ref(currentDb, 'lock_settings'),
-                minDurationSettingsRef: ref(currentDb, 'min_duration_settings'),
                 studentsRef: ref(currentDb, 'students'),
                 tokensRef: ref(currentDb, 'tokens'),
                 examAccessStatusRef: ref(currentDb, 'exam_access_status'),
-                adminSettingsRef: ref(currentDb, 'admin_settings'),
                 submittedExamsRef: ref(currentDb, 'submitted_exams'),
                 studentAnswersRef: ref(currentDb, 'student_answers')
             };
         }
+        
+        function getSetupDbRefs() {
+             return {
+                settingsRef: ref(setupDb, 'setlokasi'),
+                lockSettingsRef: ref(setupDb, 'lock_settings'),
+                minDurationSettingsRef: ref(setupDb, 'min_duration_settings'),
+                publicSettingsRef: ref(setupDb, 'publicSettings')
+            };
+        }
+
 
         let isLocationEnabled = true;
         let firebaseAllowedRadiusKm = 0.075;
+        let locationAccessKey = ""; // Kunci untuk validasi lokasi
 
         let isLockEnabledGlobal = false;
         let lockKeyGlobal = "";
-        let accessUnlockKey = ""; // Kunci untuk membuka akses yang diblokir
+        let accessUnlockKey = ""; 
         let toleranceLimitGlobal = 0;
         let minDurationSettingsGlobal = { isMinDurationEnabled: false, minDurationSeconds: 1800 };
         let currentAttemptsLeft = 0;
+        let publicSettings = null;
 
         const allowedLatitude = -7.8589546;
         const allowedLongitude = 110.2655596;
@@ -2221,7 +2206,9 @@
         const warningOverlay = document.getElementById('warningOverlay');
         const warningCountdown = document.getElementById('warningCountdown');
 
-        const locationBlockedDiv = document.getElementById('locationBlocked');
+        const locationBlockedDiv = document.getElementById('locationBlockedDiv');
+        const locationKeyContainer = document.getElementById('locationKeyContainer');
+        const mainLoginControls = document.getElementById('mainLoginControls');
         const message = document.getElementById('message');
         const loginBtn = document.getElementById('loginBtn');
         const confirmModal = document.getElementById('confirmModal');
@@ -2403,7 +2390,7 @@
         };
 
         function updateLoginButtonStatus() {
-            const isLocationCheckPassed = (isLocationEnabled && isTouchDevice()) ? isLocationValid : true;
+            const isLocationCheckPassed = isLocationValid;
             const isClassAndStudentSelected = hiddenSelectKelas.value !== "" && hiddenSelectNamaSiswa.value !== "";
             const isTokenPrefixFilled = inputTokenPrefix.value.trim() !== "";
             const isStudentIdDisplayed = displayStudentId.value.trim() !== "";
@@ -2444,22 +2431,40 @@
 
             sessionStorage.clear();
         };
+        
+        function showLocationFailureScreen(errorText, showKeyInput = false) {
+            locationBlockedDiv.textContent = errorText;
+            locationBlockedDiv.style.display = 'block';
+            if (showKeyInput) {
+                locationKeyContainer.style.display = 'block';
+            } else {
+                locationKeyContainer.style.display = 'none';
+            }
+            mainLoginControls.style.display = 'none';
+            locationStatus.style.display = 'none';
+            isLocationValid = false;
+        }
+        
+        function showMainLoginForm() {
+            locationKeyContainer.style.display = 'none';
+            locationBlockedDiv.style.display = 'none';
+            locationStatus.style.display = 'none';
+            mainLoginControls.style.display = 'block';
+            isLocationValid = true;
+            updateLoginButtonStatus();
+        }
 
         function checkLocation(latitude, longitude) {
             const distance = getDistanceFromLatLonInKm(allowedLatitude, allowedLongitude, latitude, longitude);
             if (distance <= firebaseAllowedRadiusKm) {
-                locationBlockedDiv.style.display = 'none';
-                isLocationValid = true;
+                showMainLoginForm();
                 locationStatus.textContent = "Lokasi valid.";
                 locationStatus.style.color = "green";
+                locationStatus.style.display = 'block';
             } else {
-                locationBlockedDiv.style.display = 'block';
-                locationBlockedDiv.textContent = 'AKSES UJIAN DIBLOKIR, silahkan aktifkan lokasi perangkat Anda di SMPN 2 Pajangan! Setelah diaktifkan, silahkan refresh halaman login!';
-                isLocationValid = false;
-                locationStatus.textContent = `Anda berada ${distance.toFixed(2)} km dari lokasi yang diizinkan.`;
-                locationStatus.style.color = "red";
+                const errorText = `Lokasi Anda saat ini berada ${distance.toFixed(2)} km dari radius yg diizinkan! keluar aplikasi, hidupkan mode pesawat dan matikan lokasi. Kemudian matikan mode pesawat, hidupkan lokasi dan coba akses ujian kembali`;
+                showLocationFailureScreen(errorText, true);
             }
-            updateLoginButtonStatus();
         }
 
         function handleLocation(position) {
@@ -2467,57 +2472,53 @@
         }
 
         function handleLocationError(error) {
-            console.error("Error mendapatkan lokasi:", error);
+            console.error("Gagal mendapatkan lokasi. Objek error mentah:", JSON.stringify(error, Object.getOwnPropertyNames(error)));
 
-            locationBlockedDiv.style.display = 'block';
-            locationBlockedDiv.textContent = 'AKSES UJIAN DIBLOKIR, silahkan aktifkan lokasi perangkat Anda di SMPN 2 Pajangan! Setelah diaktifkan, silahkan refresh halaman login!';
-            message.style.color = "orange";
-
-            let errorMessage = "Terjadi kesalahan tak terduga dengan layanan lokasi. Pastikan GPS aktif dan izin lokasi diberikan.";
+            let errorMessage;
+            let showKey = true;
 
             if (error && typeof error.code === 'number') {
-                switch(error.code) {
-                    case error.PERMISSION_DENIED:
-                        errorMessage = "Lokasi belum diaktifkan, mohon aktifkan lokasi di pengaturan perangkat Anda.";
+                switch (error.code) {
+                    case 1: // PERMISSION_DENIED
+                        errorMessage = "Aktifkan lokasi di perangkat Anda! keluar aplikasi, hidupkan mode pesawat dan matikan lokasi. Kemudian matikan mode pesawat, hidupkan lokasi dan coba akses ujian kembali";
+                        showKey = false; // Jangan tampilkan kunci jika izin ditolak, paksa pengguna untuk memperbaiki izin
                         break;
-                    case error.POSITION_UNAVAILABLE:
-                        errorMessage = "Informasi lokasi tidak tersedia.";
+                    case 2: // POSITION_UNAVAILABLE
+                        errorMessage = "Informasi lokasi tidak tersedia saat ini. Pastikan GPS aktif dan sinyal memadai.";
                         break;
-                    case error.TIMEOUT:
-                        errorMessage = "Waktu permintaan lokasi habis.";
+                    case 3: // TIMEOUT
+                        errorMessage = "Waktu permintaan lokasi habis. Mohon coba refresh halaman.";
+                        break;
+                    default:
+                        errorMessage = "Terjadi kesalahan lokasi yang tidak diketahui (Kode: " + error.code + ").";
                         break;
                 }
             } else if (error && error.message) {
-                errorMessage = `Terjadi kesalahan: ${error.message}`;
+                 errorMessage = `Terjadi kesalahan lokasi: ${error.message}`;
+            } else {
+                errorMessage = "Gagal mengakses layanan lokasi. Pastikan GPS dan izin lokasi untuk aplikasi ini telah diaktifkan.";
+                showKey = false;
             }
-
-            message.textContent = errorMessage;
-            isLocationValid = false;
-            updateLoginButtonStatus();
+            
+            showLocationFailureScreen(errorMessage, showKey);
         }
+
 
         function getLocation() {
             if (isLocationEnabled && isTouchDevice()) {
                 locationStatus.style.display = 'block';
-                locationStatus.textContent = 'Mencari lokasi Anda...';
+                locationStatus.textContent = 'Memvalidasi lokasi...';
                 if (navigator.geolocation) {
-                    navigator.geolocation.watchPosition(handleLocation, handleLocationError, {
+                    navigator.geolocation.getCurrentPosition(handleLocation, handleLocationError, {
                         enableHighAccuracy: true,
                         timeout: 10000,
                         maximumAge: 0
                     });
                 } else {
-                    locationBlockedDiv.style.display = 'block';
-                    locationBlockedDiv.textContent = 'Geolocation tidak didukung oleh perangkat ini.';
-                    message.style.color = "red";
-                    isLocationValid = false;
-                    updateLoginButtonStatus();
+                    showLocationFailureScreen('Layanan Geolocation tidak didukung oleh perangkat ini.', true);
                 }
             } else {
-                locationBlockedDiv.style.display = 'none';
-                isLocationValid = true;
-                locationStatus.style.display = 'none';
-                updateLoginButtonStatus();
+                showMainLoginForm();
             }
         }
 
@@ -3661,116 +3662,49 @@
             }
         }
 
-        // Fungsi untuk memuat dan menampilkan tombol berdasarkan konfigurasi Firebase (publicSettings)
         async function loadAndRenderWelcomeButtons() {
-            welcomeButtonsContainer.innerHTML = ''; // Bersihkan tombol yang ada
-            welcomeMessageElement.textContent = 'Memuat pilihan ujian...'; // Perbarui pesan pemuatan
+            welcomeButtonsContainer.innerHTML = '';
+            welcomeMessageElement.textContent = 'Memuat pilihan ujian...';
 
-            if (!buttonConfigDb) {
-                console.error("Database konfigurasi tombol belum diinisialisasi.");
-                welcomeMessageElement.textContent = 'Gagal memuat konfigurasi. Silakan refresh halaman.';
-                return;
+            if (!publicSettings) {
+                console.warn("Node publicSettings tidak ditemukan di Firebase. Menampilkan tombol default.");
+                publicSettings = {};
             }
 
-            try {
-                const publicSettingsRef = ref(buttonConfigDb, 'publicSettings'); // Use ref from buttonConfigDb
-                const snapshot = await get(publicSettingsRef); // Use get from buttonConfigDb
+            const activeButtons = [];
 
-                if (snapshot.exists()) {
-                    publicSettings = snapshot.val();
-
-                    const activeButtons = [];
-
-                    // Cek Kelas 7, 8, 9
-                    ['kelas7', 'kelas8', 'kelas9'].forEach(kelas => {
-                        if (publicSettings[kelas] && publicSettings[kelas].enabled) {
-                            activeButtons.push({
-                                id: `btn-${kelas}`,
-                                text: `PILIH ${kelas.toUpperCase().replace('KELAS', 'KELAS ')}`,
-                                class: `welcome-button btn-${kelas}`,
-                                action: () => handleCustomButtonClassClick(kelas, publicSettings[kelas].url)
-                            });
-                        }
+            ['kelas7', 'kelas8', 'kelas9'].forEach(kelas => {
+                if (publicSettings[kelas] && publicSettings[kelas].enabled) {
+                    activeButtons.push({
+                        id: `btn-${kelas}`,
+                        text: `PILIH ${kelas.toUpperCase().replace('KELAS', 'KELAS ')}`,
+                        class: `welcome-button btn-${kelas}`,
+                        action: () => handleCustomButtonClassClick(kelas, publicSettings[kelas].url)
                     });
-
-                    // Cek Susulan
-                    if (publicSettings.susulan && publicSettings.susulan.enabled && publicSettings.susulan.list && Object.keys(publicSettings.susulan.list).length > 0) {
-                        activeButtons.push({
-                            id: `btn-susulan`,
-                            text: `UJIAN SUSULAN`,
-                            class: `welcome-button btn-susulan`,
-                            action: showSusulanListModal
-                        });
-                    }
-
-                    if (activeButtons.length > 0) {
-                        activeButtons.forEach(buttonInfo => {
-                            const button = document.createElement('button');
-                            button.id = buttonInfo.id;
-                            button.className = buttonInfo.class;
-                            button.textContent = buttonInfo.text;
-                            button.addEventListener('click', buttonInfo.action);
-                            welcomeButtonsContainer.appendChild(button);
-                        });
-                        welcomeTitle.textContent = 'SELAMAT DATANG';
-                        welcomeMessageElement.textContent = 'Silakan pilih jenjang kelas Anda untuk melanjutkan ke halaman ujian:';
-                    } else {
-                        // Tidak ada tombol kustom yang aktif, tampilkan tombol default
-                        welcomeTitle.textContent = 'SELAMAT DATANG';
-                        welcomeMessageElement.textContent = 'Silakan pilih jenjang kelas Anda untuk melanjutkan ke halaman ujian:';
-                        
-                        const btnKelas7 = document.createElement('button');
-                        btnKelas7.id = 'btnKelas7';
-                        btnKelas7.className = 'welcome-button btn-kelas7';
-                        btnKelas7.textContent = 'KELAS 7';
-                        btnKelas7.addEventListener('click', () => selectGrade(7));
-                        welcomeButtonsContainer.appendChild(btnKelas7);
-
-                        const btnKelas8 = document.createElement('button');
-                        btnKelas8.id = 'btnKelas8';
-                        btnKelas8.className = 'welcome-button btn-kelas8';
-                        btnKelas8.textContent = 'KELAS 8';
-                        btnKelas8.addEventListener('click', () => selectGrade(8));
-                        welcomeButtonsContainer.appendChild(btnKelas8);
-
-                        const btnKelas9 = document.createElement('button');
-                        btnKelas9.id = 'btnKelas9';
-                        btnKelas9.className = 'welcome-button btn-kelas9';
-                        btnKelas9.textContent = 'KELAS 9';
-                        btnKelas9.addEventListener('click', () => selectGrade(9));
-                        welcomeButtonsContainer.appendChild(btnKelas9);
-                    }
-                } else {
-                    console.warn("Node publicSettings tidak ditemukan di Firebase. Menampilkan tombol default.");
-                    // Tampilkan tombol default jika publicSettings tidak ada
-                    welcomeTitle.textContent = 'SELAMAT DATANG';
-                    welcomeMessageElement.textContent = 'Silakan pilih jenjang kelas Anda untuk melanjutkan ke halaman ujian:';
-                    
-                    const btnKelas7 = document.createElement('button');
-                    btnKelas7.id = 'btnKelas7';
-                    btnKelas7.className = 'welcome-button btn-kelas7';
-                    btnKelas7.textContent = 'KELAS 7';
-                    btnKelas7.addEventListener('click', () => selectGrade(7));
-                    welcomeButtonsContainer.appendChild(btnKelas7);
-
-                    const btnKelas8 = document.createElement('button');
-                    btnKelas8.id = 'btnKelas8';
-                    btnKelas8.className = 'welcome-button btn-kelas8';
-                    btnKelas8.textContent = 'KELAS 8';
-                    btnKelas8.addEventListener('click', () => selectGrade(8));
-                    welcomeButtonsContainer.appendChild(btnKelas8);
-
-                    const btnKelas9 = document.createElement('button');
-                    btnKelas9.id = 'btnKelas9';
-                    btnKelas9.className = 'welcome-button btn-kelas9';
-                    btnKelas9.textContent = 'KELAS 9';
-                    btnKelas9.addEventListener('click', () => selectGrade(9));
-                    welcomeButtonsContainer.appendChild(btnKelas9);
                 }
-            } catch (error) {
-                console.error("Gagal memuat konfigurasi tombol dari Firebase:", error);
-                welcomeMessageElement.textContent = 'Gagal memuat konfigurasi. Silakan refresh halaman.';
-                // Tampilkan tombol default sebagai fallback jika terjadi error
+            });
+
+            if (publicSettings.susulan && publicSettings.susulan.enabled && publicSettings.susulan.list && Object.keys(publicSettings.susulan.list).length > 0) {
+                activeButtons.push({
+                    id: `btn-susulan`,
+                    text: `UJIAN SUSULAN`,
+                    class: `welcome-button btn-susulan`,
+                    action: showSusulanListModal
+                });
+            }
+
+            if (activeButtons.length > 0) {
+                activeButtons.forEach(buttonInfo => {
+                    const button = document.createElement('button');
+                    button.id = buttonInfo.id;
+                    button.className = buttonInfo.class;
+                    button.textContent = buttonInfo.text;
+                    button.addEventListener('click', buttonInfo.action);
+                    welcomeButtonsContainer.appendChild(button);
+                });
+                welcomeTitle.textContent = 'SELAMAT DATANG';
+                welcomeMessageElement.textContent = 'Silakan pilih jenjang kelas Anda untuk melanjutkan ke halaman ujian:';
+            } else {
                 welcomeTitle.textContent = 'SELAMAT DATANG';
                 welcomeMessageElement.textContent = 'Silakan pilih jenjang kelas Anda untuk melanjutkan ke halaman ujian:';
                 
@@ -3797,34 +3731,36 @@
             }
         }
 
-        // Fungsi handler untuk tombol Kelas 7, 8, 9 yang kustom
         function handleCustomButtonClassClick(kelas, url) {
             if (url) {
-                // Arahkan langsung ke URL ujian (misal Google Form)
-                // Ini akan keluar dari aplikasi ujian ini.
-                window.location.href = url;
+                let fullUrl = url;
+                if (!/^https?:\/\//i.test(url)) {
+                    fullUrl = 'https://' + url;
+                }
+                window.location.href = fullUrl;
             } else {
                 window.showCustomMessageModal("URL Tidak Ditemukan", `URL untuk ${kelas.toUpperCase()} tidak ditemukan. Harap hubungi administrator.`, 'error');
             }
         }
 
-        // Fungsi untuk menampilkan modal ujian susulan
         function showSusulanListModal() {
             const susulanModalList = document.getElementById('susulanModalList');
-            susulanModalList.innerHTML = ''; // Bersihkan daftar yang ada
+            susulanModalList.innerHTML = '';
 
             if (publicSettings && publicSettings.susulan && publicSettings.susulan.list) {
                 const susulanItems = Object.values(publicSettings.susulan.list);
-                // Urutkan berdasarkan nama ujian
                 susulanItems.sort((a, b) => a.name.localeCompare(b.name)); 
 
                 susulanItems.forEach(item => {
                     const listItem = document.createElement('li');
-                    // Hanya menyertakan nama ujian, bukan URL
                     listItem.innerHTML = `<span class="item-name">${item.name}</span>`;
                     listItem.addEventListener('click', () => {
                         if (item.url) {
-                            window.open(item.url, '_blank'); // Buka di tab baru
+                            let fullUrl = item.url;
+                             if (!/^https?:\/\//i.test(item.url)) {
+                                fullUrl = 'https://' + item.url;
+                            }
+                            window.open(fullUrl, '_blank');
                             window.closeSusulanListModal();
                         } else {
                             window.showCustomMessageModal("URL Tidak Ditemukan", `URL untuk ${item.name} tidak ditemukan.`, 'error');
@@ -3839,15 +3775,13 @@
             }
 
             susulanListModal.classList.add('show');
-            isAnyModalOpen = true; // Tandai bahwa modal terbuka
+            isAnyModalOpen = true;
         }
 
-        // Fungsi untuk menutup modal ujian susulan
-        window.closeSusulanListModal = function() { // Buat ini global agar bisa diakses dari onclick
+        window.closeSusulanListModal = function() {
             susulanListModal.classList.remove('show');
             isAnyModalOpen = false;
         }
-
 
         async function selectGrade(grade) {
             currentSelectedGrade = grade;
@@ -3856,28 +3790,35 @@
                 welcomeScreen.style.display = 'none';
                 loginContainer.style.display = 'block';
                 loginContainer.classList.add('show');
+                
+                if (isLocationEnabled) {
+                    mainLoginControls.style.display = 'none';
+                    getLocation();
+                } else {
+                    locationKeyContainer.style.display = 'none';
+                    mainLoginControls.style.display = 'block';
+                    isLocationValid = true; 
+                }
+
                 document.body.style.overflow = '';
             }, 500);
 
-            // Setel variabel CSS dinamis berdasarkan tema kelas yang dipilih
-            const gradeConfig = allFirebaseConfigs[`kelas${grade}-group1`]; // Asumsikan grup pertama memiliki informasi tema
+            const gradeConfig = allFirebaseConfigs[`kelas${grade}-group1`];
             if (gradeConfig && gradeConfig.theme) {
                 document.documentElement.style.setProperty('--primary-color', gradeConfig.theme.primary);
                 document.documentElement.style.setProperty('--accent-color', gradeConfig.theme.accent);
                 document.documentElement.style.setProperty('--warning-color', gradeConfig.theme.warning);
 
-                // Juga perbarui gaya elemen tertentu
                 document.querySelector('.header-box').style.backgroundColor = gradeConfig.theme.primary;
-                document.querySelector('.judul-ujian').style.color = gradeConfig.theme.warning; // Warna Judul ujian
+                document.querySelector('.judul-ujian').style.color = gradeConfig.theme.warning;
                 document.querySelector('#loginBtn').style.backgroundColor = gradeConfig.theme.accent;
-                document.querySelector('#loginBtn').onmouseover = () => document.querySelector('#loginBtn').style.backgroundColor = gradeConfig.theme.primary; // Warna hover
-                document.querySelector('#loginBtn').onmouseout = () => document.querySelector('#loginBtn').style.backgroundColor = gradeConfig.theme.accent; // Pulihkan saat mouseout
+                document.querySelector('#loginBtn').onmouseover = () => document.querySelector('#loginBtn').style.backgroundColor = gradeConfig.theme.primary;
+                document.querySelector('#loginBtn').onmouseout = () => document.querySelector('#loginBtn').style.backgroundColor = gradeConfig.theme.accent;
 
                 document.querySelector('#countdownDisplay').style.backgroundColor = gradeConfig.theme.primary;
                 document.querySelector('#customMessageModalButton').style.backgroundColor = gradeConfig.theme.accent;
                 document.querySelector('#customConfirmModalConfirmBtn').style.backgroundColor = gradeConfig.theme.accent;
                 
-                // Perbarui event listener untuk tombol kontrol zoom secara dinamis
                 const zoomButtons = document.querySelectorAll('#zoomControls button');
                 zoomButtons.forEach(btn => {
                     btn.style.backgroundColor = gradeConfig.theme.accent;
@@ -3885,7 +3826,6 @@
                     btn.onmouseout = (e) => e.target.style.backgroundColor = gradeConfig.theme.accent;
                 });
 
-                // Latar belakang overlay layar penuh
                 document.querySelector('#fullscreenOverlay .overlay-content').style.background = `linear-gradient(135deg, ${gradeConfig.theme.primary} 0%, ${gradeConfig.theme.primary} 100%)`;
                 
                 document.querySelector('.custom-modal-content h4').style.color = gradeConfig.theme.primary;
@@ -3907,20 +3847,22 @@
             classModalTitle.textContent = `Pilih Kelas ${grade}`;
 
             currentClassGroupKeys = getClassGroupKeysByGrade(grade);
-
-            if (currentClassGroupKeys.length > 0) {
-                await loadSettingsAndStudents(currentClassGroupKeys[0]);
-            } else {
-                console.error(`Tidak ada konfigurasi Firebase ditemukan untuk kelas ${grade}.`);
-                message.style.color = "red";
-                message.textContent = `Tidak ada konfigurasi Firebase ditemukan untuk kelas ${grade}. Hubungi administrator.`;
-            }
-
             loadClassDropdownForGrade(grade);
+        }
+        
+        function validateLocationKey() {
+            const locationKeyMessage = document.getElementById('locationKeyMessage');
+            const enteredKey = document.getElementById('locationKeyInput').value;
+
+            if (enteredKey && enteredKey === locationAccessKey) {
+                locationKeyMessage.textContent = '';
+                showMainLoginForm();
+            } else {
+                locationKeyMessage.textContent = "Kunci Akses Lokasi salah.";
+            }
         }
 
         async function initializeAppFlow() {
-            // 1. Sembunyikan semua dan tampilkan spinner
             accessBlockedOverlay.style.display = 'none';
             welcomeScreen.style.display = 'none';
             loginContainer.style.display = 'none';
@@ -3929,9 +3871,45 @@
             loadingSpinner.style.display = 'flex';
             loadingSpinner.style.opacity = 1;
 
-            // Fungsi helper untuk menampilkan konten selamat datang
+            async function fetchGlobalSettings() {
+                try {
+                    const refs = getSetupDbRefs();
+                    const settingsPromises = [
+                        get(refs.settingsRef),
+                        get(refs.lockSettingsRef),
+                        get(refs.minDurationSettingsRef),
+                        get(refs.publicSettingsRef)
+                    ];
+                    const [locSnap, lockSnap, minDurSnap, pubSetSnap] = await Promise.all(settingsPromises);
+
+                    if (locSnap.exists()) {
+                        const settings = locSnap.val();
+                        isLocationEnabled = settings.isLocationEnabled !== undefined ? settings.isLocationEnabled : true;
+                        firebaseAllowedRadiusKm = settings.allowedRadiusKm !== undefined ? settings.allowedRadiusKm : 0.075;
+                        locationAccessKey = settings.currentKey || "";
+                    }
+                    if (lockSnap.exists()) {
+                        const settings = lockSnap.val();
+                        isLockEnabledGlobal = settings.isLockEnabled !== undefined ? settings.isLockEnabled : false;
+                        lockKeyGlobal = settings.lockKey !== undefined ? settings.lockKey : "";
+                        accessUnlockKey = lockKeyGlobal; 
+                        toleranceLimitGlobal = settings.toleranceLimit !== undefined ? settings.toleranceLimit : 3;
+                    }
+                     if (minDurSnap.exists()) {
+                        const settings = minDurSnap.val();
+                        minDurationSettingsGlobal.isMinDurationEnabled = settings.isMinDurationEnabled !== undefined ? settings.isMinDurationEnabled : false;
+                        minDurationSettingsGlobal.minDurationSeconds = settings.minDurationSeconds !== undefined ? settings.minDurationSeconds : 1800;
+                    }
+                    if (pubSetSnap.exists()) {
+                        publicSettings = pubSetSnap.val();
+                    }
+
+                } catch (error) {
+                    console.error("Gagal mengambil pengaturan global dari Firebase SETUP:", error);
+                }
+            }
+            
             async function showWelcomeScreenContent() {
-                await initializeButtonConfigFirebase();
                 await loadAndRenderWelcomeButtons();
                 loadingSpinner.style.opacity = 0;
                 setTimeout(() => {
@@ -3942,26 +3920,7 @@
                 }, 300);
             }
 
-            // Fungsi helper untuk menampilkan layar blokir
             async function showAccessBlockedScreen() {
-                 try {
-                    const firstConfigKey = Object.keys(allFirebaseConfigs)[0];
-                    const firstClassName = allFirebaseConfigs[firstConfigKey].allowedClasses[0];
-                    const instance = await getFirebaseInstanceForClass(firstClassName);
-                    if (instance && instance.db) {
-                        const lockSettingsRef = ref(instance.db, 'lock_settings');
-                        const snapshot = await get(lockSettingsRef);
-                        if (snapshot.exists()) {
-                            accessUnlockKey = snapshot.val().lockKey || "";
-                        } else {
-                           unlockMessage.textContent = "Kunci akses tidak dikonfigurasi.";
-                        }
-                    }
-                } catch (error) {
-                    console.error("Gagal mengambil kunci akses:", error);
-                    unlockMessage.textContent = "Gagal memuat kunci akses.";
-                }
-
                 loadingSpinner.style.opacity = 0;
                 setTimeout(() => {
                     loadingSpinner.style.display = 'none';
@@ -3969,18 +3928,16 @@
                     setTimeout(() => accessBlockedOverlay.style.opacity = 1, 10);
                 }, 300);
 
-                // Setup listener untuk tombol buka kunci sekali saja
                 const unlockHandler = async () => {
                     const enteredKey = unlockKeyInput.value;
                     if (enteredKey && enteredKey === accessUnlockKey) {
                         accessBlockedOverlay.style.opacity = 0;
                         setTimeout(async () => {
                             accessBlockedOverlay.style.display = 'none';
-                            // Tampilkan spinner lagi selama memuat konten selamat datang
                             loadingSpinner.style.display = 'flex';
                             loadingSpinner.style.opacity = 1;
-                            await showWelcomeScreenContent(); // Lanjutkan ke layar selamat datang
-                        }, 300); // Tunggu animasi fade-out selesai
+                            await showWelcomeScreenContent();
+                        }, 300);
                     } else {
                         unlockMessage.textContent = "Kunci yang dimasukkan salah.";
                         unlockKeyInput.value = "";
@@ -3999,8 +3956,8 @@
                 };
             }
 
-            // Fungsi yang akan dipanggil setelah login berhasil
             async function handleSuccessfulLogin() {
+                await fetchGlobalSettings();
                 if (isAllowedEnvironment()) {
                     await showWelcomeScreenContent();
                 } else {
@@ -4008,26 +3965,21 @@
                 }
             }
             
-            // 2. Lakukan login
             const performAutomaticLogin = async () => {
-                const email = "siswa@gmail.com";
-                const password = "12345678";
+                loginEmailInput.value = "speropa@gmail.com";
+                loginPasswordInput.value = "Pajangan201184*";
+                const email = loginEmailInput.value;
+                const password = loginPasswordInput.value;
                 
                 try {
-                    if (!initialLoginAuth) throw new Error('Firebase Auth belum siap.');
-
-                    await signInWithEmailAndPassword(initialLoginAuth, email, password);
-                    
+                    await signInWithEmailAndPassword(setupAuth, email, password);
                     globalUserEmail = email;
                     globalUserPassword = password;
-
-                    // 3. Setelah login berhasil, periksa lingkungan
                     await handleSuccessfulLogin();
-
                 } catch (error) {
                     console.error("Login gagal:", error.message);
                     let errorMessage = "Login gagal. Periksa kembali email dan password Anda.";
-                    if (error.code === 'auth/user-not-found' || error.code === 'auth/wrong-password') {
+                    if (error.code === 'auth/user-not-found' || error.code === 'auth/wrong-password' || error.code === 'auth/invalid-credential') {
                         errorMessage = "Email atau password salah.";
                     } else if (error.code === 'auth/invalid-email') {
                         errorMessage = "Format email tidak valid.";
@@ -4055,12 +4007,25 @@
 
 
         document.addEventListener('DOMContentLoaded', async () => {
+            await initializeAppFlow();
             
-            await initializeAppFlow(); // Memulai alur aplikasi berdasarkan deteksi lingkungan
-
-            // Event listener lainnya yang bersifat umum
             customSelectKelasDisplay.addEventListener('click', openClassModal);
             customSelectNamaSiswaDisplay.addEventListener('click', openStudentModal);
+            
+            const validateLocationKeyBtn = document.getElementById('validateLocationKeyBtn');
+            const locationKeyInput = document.getElementById('locationKeyInput');
+            const toggleLocationKeyVisibility = document.getElementById('toggleLocationKeyVisibility');
+
+            validateLocationKeyBtn.addEventListener('click', validateLocationKey);
+            locationKeyInput.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter') validateLocationKey();
+            });
+            toggleLocationKeyVisibility.addEventListener('click', () => {
+                const isOpen = locationKeyInput.type === 'text';
+                locationKeyInput.type = isOpen ? 'password' : 'text';
+                document.getElementById('loc-eye-open').style.display = isOpen ? 'block' : 'none';
+                document.getElementById('loc-eye-closed').style.display = isOpen ? 'none' : 'block';
+            });
 
 
             classModal.addEventListener('click', (event) => {
@@ -4085,9 +4050,7 @@
             });
 
             loginBtn.addEventListener('click', window.cekToken);
-
             overlayUnderstandBtn.addEventListener('click', hideOverlay);
-            
             backToLoginFromSubmissionBtn.addEventListener('click', () => {
                 window.location.reload(true);
             });
@@ -4104,7 +4067,6 @@
             document.addEventListener('msfullscreenchange', handleFullscreenChange);
 
             reEnterFullscreenBtn.addEventListener('click', attemptFullscreen);
-
             lockKeySubmitBtn.addEventListener('click', async () => {
                 const enteredKey = lockKeyInputEl.value;
                 lockKeyMessage.textContent = '';
@@ -4433,56 +4395,6 @@
 
             await restoreExamState();
         });
-
-        async function loadSettingsAndStudents(initialGroupKey) {
-            locationStatus.style.display = 'block';
-            locationStatus.textContent = 'Memuat status lokasi dan data siswa...';
-
-            const initialDbInstance = await getFirebaseInstanceForClass(allFirebaseConfigs[initialGroupKey].allowedClasses[0]);
-            if (!initialDbInstance || !initialDbInstance.db) {
-                console.error("Gagal menginisialisasi database awal untuk pengaturan lokasi.");
-                locationStatus.style.color = "red";
-                locationStatus.textContent = "Gagal menginisialisasi database awal.";
-                return;
-            }
-            const db = initialDbInstance.db;
-
-            try {
-                const settingsSnapshot = await get(ref(db, 'setlokasi'));
-                if (settingsSnapshot.exists()) {
-                    const settings = settingsSnapshot.val();
-                    isLocationEnabled = settings.isLocationEnabled !== undefined ? settings.isLocationEnabled : true;
-                    firebaseAllowedRadiusKm = settings.allowedRadiusKm !== undefined ? settings.allowedRadiusKm : 0.075;
-                } else {
-                    console.warn("Tidak dapat mengambil pengaturan lokasi dari Firebase, menggunakan default.");
-                }
-
-                const lockSettingsSnapshot = await get(ref(db, 'lock_settings'));
-                if (lockSettingsSnapshot.exists()) {
-                    const lockSettings = lockSettingsSnapshot.val();
-                    isLockEnabledGlobal = lockSettings.isLockEnabled !== undefined ? lockSettings.isLockEnabled : false;
-                    lockKeyGlobal = lockSettings.lockKey !== undefined ? lockSettings.lockKey : "";
-                    toleranceLimitGlobal = lockSettings.toleranceLimit !== undefined ? lockSettings.toleranceLimit : 3;
-                } else {
-                    console.warn("Tidak dapat mengambil pengaturan kunci dari Firebase, menggunakan default.");
-                }
-                
-                const minDurationSnapshot = await get(ref(db, 'min_duration_settings'));
-                if (minDurationSnapshot.exists()) {
-                    const settings = minDurationSnapshot.val();
-                    minDurationSettingsGlobal.isMinDurationEnabled = settings.isMinDurationEnabled !== undefined ? settings.isMinDurationEnabled : false;
-                    minDurationSettingsGlobal.minDurationSeconds = settings.minDurationSeconds !== undefined ? settings.minDurationSeconds : 1800;
-                } else {
-                    console.warn("Tidak dapat mengambil pengaturan durasi minimum dari Firebase, menggunakan default.");
-                }
-
-            } catch (error) {
-                console.error("Gagal mengambil pengaturan dari Firebase:", error);
-            }
-            locationStatus.textContent = '';
-            updateLoginButtonStatus();
-            getLocation();
-        }
 
         window.cekToken = async function() {
             const tokenPrefix = inputTokenPrefix.value.trim().toUpperCase();
