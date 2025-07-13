@@ -4,23 +4,27 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes, maximum-scale=2.0" />
     <title>Ujian Siswa</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@500&display=swap" rel="stylesheet">
     <style>
         html, body {
             height: 100%;
             width: 100%;
             margin: 0;
             padding: 0;
-            /* Warna primer default, akan ditimpa oleh JS */
             --primary-color: #0066cc; /* Default untuk Kelas 7 */
             --accent-color: #007bff; /* Warna tombol default */
             --warning-color: #ea4b16; /* Default untuk Judul Ujian */
+            --light-bg: #f4f7f9;
+            --border-color: #e0e0e0;
+            --danger-color: #dc3545;
+            --success-color: #28a745;
         }
 
         body {
             font-family: 'Inter', Arial, sans-serif;
             background-color: #e0e0e0;
-            box-shadow: inset 0 2px 4px rgba(0,0,0,0.1),
-                        inset 0 -2px 4px rgba(255,255,255,0.7);
             text-align: center;
             display: flex;
             justify-content: center;
@@ -44,7 +48,7 @@
             box-shadow: 0 4px 8px rgba(0,0,0,0.1);
             overflow: hidden;
             padding: 30px 20px;
-            display: none; /* Awalnya tersembunyi, diganti spinner */
+            display: none; /* Awalnya tersembunyi */
             flex-direction: column;
             gap: 15px;
             opacity: 1;
@@ -109,7 +113,7 @@
             box-shadow: 0 4px 8px rgba(0,0,0,0.1);
             overflow: hidden;
             padding: 30px 20px;
-            display: flex;
+            display: none; /* Awalnya tersembunyi */
             flex-direction: column;
             gap: 15px;
             opacity: 1;
@@ -172,7 +176,6 @@
             background-color: #5a0000;
         }
 
-        /* Gaya untuk tombol susulan */
         .btn-susulan {
             background-color: #28a745; /* Hijau */
         }
@@ -203,13 +206,32 @@
             background-color: var(--primary-color);
             padding: 20px 15px;
             color: white;
+            position: relative;
+            text-align: center;
+        }
+        
+        .back-button {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            cursor: pointer;
+            color: white;
+            padding: 5px;
+            border-radius: 50%;
+            transition: background-color 0.2s ease;
+            z-index: 2;
+        }
+
+        .back-button:hover {
+            background-color: rgba(255, 255, 255, 0.2);
         }
 
         .header-box .logo {
             width: 80px;
+            height: auto;
         }
 
-        .title {
+        .header-box .title {
             font-size: 22px;
             font-weight: bold;
             margin-top: 10px;
@@ -374,6 +396,7 @@
             font-size: 14px;
             min-height: 30px;
             text-align: center;
+            word-wrap: break-word;
         }
 
         .spinner {
@@ -471,16 +494,15 @@
             background-color: #e0e0e0;
         }
 
-        /* Gaya untuk modal daftar ujian susulan */
         #susulanListModal .custom-modal-content {
-            max-width: 450px; /* Sedikit lebih lebar */
+            max-width: 450px;
         }
 
         #susulanListModal .custom-modal-list li {
             display: flex;
             flex-direction: column;
             align-items: flex-start;
-            padding: 15px 20px; /* Lebih banyak padding */
+            padding: 15px 20px;
             gap: 5px;
         }
 
@@ -493,7 +515,7 @@
         #susulanListModal .custom-modal-list li .item-url {
             font-size: 0.85em;
             color: #666;
-            word-break: break-all; /* Memastikan URL tidak melebar */
+            word-break: break-all;
         }
 
 
@@ -598,6 +620,7 @@
             min-height: 1.2em;
         }
 
+        /* === [START] GAYA TAMPILAN UJIAN BARU === */
         #examContainer {
             display: none;
             position: fixed;
@@ -606,372 +629,366 @@
             width: 100vw;
             height: 100vh;
             flex-direction: column;
-            background-color: #f0f0f0;
+            background-color: var(--light-bg);
             z-index: 500;
             opacity: 0;
             transition: opacity 0.5s ease-in-out;
         }
 
-        #countdownDisplay {
-            background-color: var(--primary-color); /* Warna dinamis */
-            color: white;
-            padding: 10px;
-            font-size: 1.5em;
-            font-weight: bold;
-            display: flex;
-            align-items: center;
-            justify-content: flex-start;
-            flex-shrink: 0;
-            gap: 10px;
-            overflow: hidden;
-        }
-
-        #countdownDisplay #timerText {
-            flex-shrink: 0;
-        }
-
-        #countdownDisplay #studentNameDisplay,
-        #countdownDisplay #classDisplay {
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            flex-grow: 1;
-            min-width: 0;
-        }
-
-        #examContentWrapper {
-            display: flex;
-            flex-grow: 1;
-            width: 100%;
-            position: relative;
-            overflow: hidden;
-            background-color: transparent;
-        }
-
-        #examIframe {
-            flex-grow: 1;
-            width: 100%;
-            border: none;
-            margin: 0;
-            padding: 0;
-            display: block;
-            transition: filter 0.3s ease, width 0.3s ease, transform 0.3s ease;
-            transform-origin: top left;
-            cursor: grab;
-            overflow: auto;
-        }
-        #examIframe.blurred {
-            filter: grayscale(100%) blur(5px);
-            pointer-events: none;
-        }
-        #examIframe.dragging {
-            cursor: grabbing;
-            pointer-events: none;
-        }
-
-        #topIframeBlocker {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 25%;
-            background: transparent;
-            z-index: 550;
-            pointer-events: auto;
-        }
-
-        #answerSidebar {
-            position: absolute;
-            top: 0;
-            right: 0;
-            height: 100%;
-            width: 250px;
-            background-color: transparent;
-            box-shadow: none;
+        #examBody {
             display: flex;
             flex-direction: column;
-            transform: translateX(calc(100% - 56px));
-            transition: transform 0.3s ease-in-out;
-            z-index: 600;
+            padding: 15px;
+            gap: 15px;
+            flex-grow: 1;
+            overflow: hidden;
+            padding-bottom: 40px; /* DITAMBAHKAN: Ruang untuk footer */
         }
 
-        #answerSidebar.open {
-            transform: translateX(0);
+        #examMainContent {
+            order: 2;
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+            flex-grow: 1;
         }
 
-        #sidebarToggle {
-            background-color: #28a745;
-            color: white;
-            font-size: 1.1em;
+        #examSidePanel {
+            order: 1;
+            display: flex;
+            flex-direction: column;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            background-color: #ffffff;
+            overflow: hidden;
+            flex-shrink: 0;
+        }
+        
+        .sidebar-header {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 10px 15px;
+            position: relative;
+            border-bottom: 1px solid var(--border-color);
+            background-color: #f8f9fa;
+        }
+        
+        .sidebar-header #timerText {
+            font-family: Arial, sans-serif;
             font-weight: bold;
-            cursor: pointer;
+            font-size: 2.2em;
+            color: var(--danger-color);
             text-align: center;
-            position: absolute;
-            right: 0;
-            top: 0;
-            height: 56px;
-            width: 56px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 8px;
-            box-shadow: none;
-            transition: background-color 0.2s ease, transform 0.3s ease-in-out, opacity 0.2s ease;
-            padding: 0;
-            box-sizing: border-box;
-            z-index: 601;
-            transform: translateX(0);
-            opacity: 0.5;
         }
-
-        #sidebarToggle:hover {
-            background-color: #218838;
-            opacity: 1;
-        }
-
-        #sidebarToggle #sidebarText {
-            writing-mode: horizontal-tb;
-            text-orientation: unset;
-            transform: none;
-            white-space: nowrap;
-            padding: 10px 5px;
-            font-size: 0.8em;
-        }
-
-        #closeSidebarButton {
-            background-color: #dc3545;
-            color: white;
-            font-size: 1.1em;
-            font-weight: bold;
-            cursor: pointer;
+        
+        #mobileSidebarToggle {
+            display: block; /* Selalu tampil di mobile */
+            background: none;
             border: none;
-            border-radius: 8px;
-            box-shadow: none;
-            display: none;
+            cursor: pointer;
+            padding: 5px;
+            margin: 0;
+            width: 30px;
+            height: 30px;
             position: absolute;
-            left: 0;
-            top: 0;
-            height: 56px;
-            width: 56px;
-            flex-direction: row;
-            align-items: center;
-            justify-content: center;
-            transition: background-color 0.2s ease, opacity 0.2s ease;
-            z-index: 602;
-            padding: 0;
-            box-sizing: border-box;
-            opacity: 0.5;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+        #mobileSidebarToggle .arrow-icon {
+            width: 100%;
+            height: 100%;
+            stroke: black;
+            transition: transform 0.3s ease;
+        }
+        #mobileSidebarToggle.up .arrow-icon {
+            transform: rotate(180deg);
         }
 
-        #closeSidebarButton:hover {
-            background-color: #c82333;
-            opacity: 1;
+        /* [DIUBAH] Logika transisi untuk penutupan panel yang lebih mulus */
+        .sidebar-content-wrapper {
+            transition: max-height 0.4s ease-in-out;
+            max-height: 500px; /* Nilai yang cukup besar untuk konten */
+            overflow: hidden;
+        }
+        .sidebar-content-wrapper > * {
+            transition: opacity 0.2s ease-in-out;
+        }
+        .sidebar-content-wrapper.collapsed {
+            max-height: 0;
+            border-top: none;
+            padding-top: 0;
+            padding-bottom: 0;
+        }
+        .sidebar-content-wrapper.collapsed > * {
+            opacity: 0;
+            pointer-events: none;
         }
 
-        #closeSidebarButton #closeSidebarText {
-            writing-mode: horizontal-tb;
-            text-orientation: unset;
-            transform: none;
-            white-space: nowrap;
-            padding: 10px 5px;
-            font-size: 0.8em;
+        @media (min-width: 992px) {
+            #examBody {
+                display: grid;
+                grid-template-columns: 1fr 2.5fr; /* Side panel on left */
+                padding: 25px;
+                gap: 25px;
+                padding-bottom: 50px; /* DITAMBAHKAN: Ruang untuk footer */
+            }
+            #examMainContent {
+                order: 2;
+            }
+            #examSidePanel {
+                order: 1;
+                max-height: none;
+            }
+            #mobileSidebarToggle {
+                display: none;
+            }
+            .sidebar-content-wrapper.collapsed {
+                max-height: 500px;
+            }
+            .sidebar-content-wrapper.collapsed > * {
+                opacity: 1;
+                pointer-events: auto;
+            }
         }
-
-        #examContentWrapper.sidebar-open #examIframe {
-            width: calc(100% - 250px);
-        }
-
-        #examContentWrapper.sidebar-open #sidebarToggle {
-            display: none;
-        }
-
-        #examContentWrapper.sidebar-open #answerSidebar {
-            transform: translateX(0);
-        }
-
-        #examContentWrapper.sidebar-open #closeSidebarButton {
+        
+        #questionPanelHeader {
             display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-bottom: 15px;
+            margin-bottom: 20px;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        #questionPanelHeader .ragu-checkbox-container {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        #questionPanelHeader label {
+            cursor: pointer;
+            font-weight: 500;
+        }
+        #questionPanelHeader input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+        }
+        #questionHeaderNumber {
+            font-size: 1.2em;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+        }
+        
+        .question-number-box {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 3px 9px;
+            border-radius: 5px;
+            margin-left: 8px;
+            font-size: 1em;
         }
 
-        #answerListContainer {
+
+        #questionDisplayBox {
+            flex-grow: 1;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 30px;
+            background-color: #ffffff;
+        }
+
+        #questionContent {
+            font-size: 1.1em;
+            line-height: 1.7;
+            margin-bottom: 30px;
+            text-align: left;
+        }
+        
+        #questionContent img, .cbt-option-label .option-text img {
+            max-width: 100%;
+            height: auto;
+            margin: 10px 5px;
+            border-radius: 5px;
+            vertical-align: middle;
+        }
+
+        #cbtAnswerOptions {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .cbt-option-label {
+            display: flex;
+            align-items: center;
+            justify-content: flex-start; /* DIUBAH */
+            gap: 15px; /* DITAMBAHKAN */
+            padding: 15px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .cbt-option-label:hover {
+            border-color: var(--primary-color);
+            background-color: #f8f9fa;
+        }
+        .cbt-option-label.selected {
+            background-color: #e2f0ff;
+            border-color: var(--primary-color);
+        }
+        .cbt-option-label input[type="radio"] {
+            margin: 0; /* DIUBAH */
+            flex-shrink: 0;
+            width: 18px;
+            height: 18px;
+        }
+        .cbt-option-label .option-text {
+            flex-grow: 1;
+            text-align: left;
+        }
+
+        #examNavigation {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 20px;
+        }
+        #examNavigation button {
+            width: auto;
+            padding: 10px 30px;
+            font-size: 1em;
+            font-weight: bold;
+            border-radius: 8px;
+            margin: 0;
+        }
+        #prevQuestionBtn, #nextQuestionBtn {
+            background-color: var(--accent-color);
+        }
+        #prevQuestionBtn:hover, #nextQuestionBtn:hover {
+            background-color: var(--primary-color);
+        }
+        
+        /* DITAMBAHKAN: Gaya untuk tombol Berikutnya saat menjadi tombol kirim */
+        #nextQuestionBtn.submit-mode {
+            background-color: var(--danger-color);
+        }
+        #nextQuestionBtn.submit-mode:hover {
+            background-color: #c82333;
+        }
+
+        #examNavigation button:disabled {
+            background-color: #ccc;
+            border-color: #ccc;
+            cursor: not-allowed;
+            opacity: 0.7;
+        }
+
+        #questionGridContainer {
             flex-grow: 1;
             overflow-y: auto;
-            padding: 10px;
+            padding: 15px;
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(30px, 1fr));
-            gap: 8px;
-            flex-shrink: 1;
-            margin-left: 56px;
+            grid-template-columns: repeat(auto-fill, minmax(45px, 1fr));
+            gap: 10px;
+            align-content: flex-start;
         }
 
-        .answer-box {
-            background-color: #f0f0f0;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            padding: 5px 3px;
-            text-align: center;
-            cursor: pointer;
+        .question-nav-box {
+            position: relative;
+            width: 100%;
+            aspect-ratio: 1 / 1;
             display: flex;
-            flex-direction: column;
             align-items: center;
             justify-content: center;
-            height: 30px;
-            transition: background-color 0.2s ease, border-color 0.2s ease;
-        }
-
-        .answer-box:hover {
-            background-color: #e0e0e0;
-        }
-
-        .answer-box .question-number {
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            cursor: pointer;
             font-weight: bold;
-            margin-bottom: 2px;
-            color: #333;
-            font-size: 0.7em;
-            line-height: 1;
+            transition: all 0.2s ease;
+        }
+        .question-nav-box:hover {
+            border-color: var(--primary-color);
+            color: var(--primary-color);
+        }
+        .question-nav-box.answered {
+            background-color: var(--success-color);
+            color: white;
+            border-color: var(--success-color);
+        }
+        .question-nav-box.current {
+            border-color: var(--accent-color);
+            box-shadow: 0 0 0 3px var(--accent-color);
+            transform: scale(1.05);
+        }
+        .question-nav-box.ragu::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 0;
+            height: 0;
+            border-style: solid;
+            border-width: 0 12px 12px 0;
+            border-color: transparent var(--danger-color) transparent transparent;
         }
 
-        .answer-box .selected-answer {
-            font-weight: bold;
-            color: #555;
-            font-size: 0.7em;
-            line-height: 1;
+        .sidebar-footer {
+            padding: 15px;
+            border-top: 1px solid var(--border-color);
         }
-
-        .answer-box.answered {
-            background-color: #d4edda;
-            border-color: #28a745;
-        }
-
-        .answer-box.unanswered {
-            background-color: #f8d7da;
-            border-color: #dc3545;
-        }
-
-        .submission-warning-message {
+        #submissionWarningMessage {
             color: red;
             font-weight: bold;
             text-align: center;
-            margin: 5px 0 10px 56px;
             font-size: 0.9em;
             min-height: 1.2em;
-        }
-
-        #submitAnswersButton {
-            background-color: var(--accent-color); /* Warna dinamis */
-            color: white;
-            padding: 12px;
-            margin-top: 0px;
             margin-bottom: 10px;
-            margin-left: 56px;
-            margin-right: 10px;
-            width: calc(100% - 66px);
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
+        }
+        #submitAnswersButton {
+            width: 100%;
+            padding: 12px;
             font-size: 1.1em;
-            flex-shrink: 0;
-            transition: background-color 0.2s ease;
+            background-color: var(--danger-color); /* DIUBAH */
         }
-
         #submitAnswersButton:hover {
-            background-color: var(--primary-color); /* Warna dinamis */
+            background-color: #c82333; /* DIUBAH */
         }
+        #submitAnswersButton:disabled {
+             background-color: #cccccc;
+             cursor: not-allowed;
+        }
+        /* === [END] GAYA TAMPILAN UJIAN BARU === */
 
-        .custom-modal {
-            display: none;
+        /* [BARU] Gaya untuk footer identitas siswa */
+        #examFooter {
             position: fixed;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
-            background: rgba(0, 0, 0, 0.5);
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background-color: #343a40;
+            color: white;
+            padding: 8px 15px;
+            box-sizing: border-box;
+            z-index: 501; /* Di atas konten, di bawah overlay */
+            text-align: center;
+            font-size: 0.9em;
+            display: flex;
             justify-content: center;
             align-items: center;
-            z-index: 1000;
-            opacity: 0;
-            transition: opacity 0.3s ease-in-out;
         }
 
-        .custom-modal.show {
-            display: flex;
-            opacity: 1;
+        #studentIdentityDisplay {
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 90%;
         }
 
-        .custom-modal-content {
-            background: white;
-            padding: 20px;
-            border-radius: 10px;
-            max-width: 350px;
-            width: 90%;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
-            max-height: 80vh;
-            overflow-y: auto;
-            display: flex;
-            flex-direction: column;
-        }
-
-        #answerSelectionModal .modal-content {
-            background: white;
-            padding: 25px;
-            border-radius: 10px;
-            max-width: 300px;
-            width: 90%;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
-            text-align: center;
-        }
-
-        #answerSelectionModal h4 {
-            font-size: 1.5em;
-            color: var(--primary-color); /* Warna dinamis */
-            margin-bottom: 20px;
-        }
-
-        #answerOptions {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            gap: 10px;
-            margin-bottom: 20px;
-        }
-
-        #answerOptions button {
-            width: 60px;
-            height: 60px;
-            font-size: 1.5em;
-            border-radius: 50%;
-            background-color: #f0f0f0;
-            color: #333;
-            border: 1px solid #ccc;
-            transition: background-color 0.2s ease, transform 0.1s ease;
-        }
-
-        #answerOptions button:hover {
-            background-color: #e0e0e0;
-            transform: translateY(-2px);
-        }
-
-        #answerOptions button:active {
-            transform: translateY(0);
-        }
-
-        #answerOptions button.selected {
-            background-color: #28a745;
-            color: white;
-            border-color: #28a745;
-        }
-
-        #clearAnswerButton {
-            background-color: #dc3545;
-            color: white;
-            padding: 10px 20px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 1em;
-            margin-top: 10px;
-        }
-        #clearAnswerButton:hover {
-            background-color: #c82333;
-        }
 
         #warningOverlay {
             display: none;
@@ -1160,187 +1177,9 @@
             user-select: none;
         }
 
-        #fullscreenOverlay {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            background: rgba(0, 0, 0, 0.6);
-            z-index: 1000;
-            justify-content: center;
-            align-items: center;
-            overflow: hidden;
-            pointer-events: none;
-            opacity: 0;
-            transition: opacity 0.3s ease-in-out;
-        }
-        #fullscreenOverlay.show {
-            display: flex;
-            opacity: 1;
-            pointer-events: auto;
-        }
-        #fullscreenOverlay .overlay-content {
-            background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-color) 100%); /* Warna dinamis */
-            color: white;
-            padding: 40px;
-            border-radius: 15px;
-            max-width: 500px;
-            width: 90%;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
-            text-align: center;
-            box-sizing: border-box;
-            animation: fadeInScale 0.5s ease-out forwards;
-        }
-
-        #fullscreenOverlay .overlay-title {
-            font-size: 2.5em;
-            font-weight: bold;
-            margin-bottom: 20px;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
-        }
-
-        #fullscreenOverlay .overlay-instructions {
-            list-style: none;
-            padding: 0;
-            margin-bottom: 30px;
-            font-size: 1.2em;
-            line-height: 1.6;
-        }
-
-        #fullscreenOverlay .overlay-instructions li {
-            margin-bottom: 10px;
-            position: relative;
-            padding-left: 30px;
-            text-align: left;
-        }
-
-        #fullscreenOverlay .overlay-instructions li::before {
-            content: '✅';
-            position: absolute;
-            left: 0;
-            color: #d4edda;
-            font-size: 1.2em;
-        }
-
-        #fullscreenOverlay .overlay-button {
-            background-color: #28a745;
-            color: white;
-            padding: 15px 30px;
-            font-size: 1.3em;
-            border-radius: 8px;
-            border: none;
-            cursor: pointer;
-            transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
-        }
-
-        #fullscreenOverlay .overlay-button:hover {
-            background-color: #218838;
-            transform: translateY(-3px);
-            box-shadow: 0 8px 20px rgba(0,0,0,0.3);
-        }
-
-        #fullscreenOverlay .overlay-button:active {
-            transform: translateY(0);
-            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-        }
-
-        #zoomControls {
-            position: absolute;
-            top: 10px;
-            left: 10px;
-            display: flex;
-            flex-direction: column;
-            gap: 5px;
-            z-index: 700;
-            background-color: rgba(0, 0, 0, 0.5);
-            border-radius: 8px;
-            padding: 5px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.3);
-            transition: all 0.3s ease-in-out;
-        }
-
-        #mainToggleBtnContainer {
-            display: flex;
-            gap: 5px;
-            margin-bottom: 5px;
-        }
-
-        #zoomControls button {
-            width: 40px;
-            height: 40px;
-            font-size: 1.5em;
-            font-weight: bold;
-            color: white;
-            background-color: var(--accent-color); /* Warna dinamis */
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            transition: background-color 0.2s ease, transform 0.1s ease, opacity 0.2s ease;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0;
-            opacity: 0.5;
-        }
-
-        #zoomControls button:hover {
-            background-color: var(--primary-color); /* Warna dinamis */
-            transform: scale(1.05);
-            opacity: 1;
-        }
-
-        #zoomControls button:active {
-            transform: scale(0.95);
-        }
-
-        #zoomControls button:disabled {
-            background-color: #cccccc;
-            cursor: not-allowed;
-            opacity: 0.5;
-        }
-
-        #controlsGrid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 5px;
-            transition: all 0.3s ease-in-out;
-            overflow: hidden;
-            height: 0;
-            opacity: 0;
-            pointer-events: none;
-        }
-
-        #zoomControls.show-controls #controlsGrid {
-            height: auto;
-            opacity: 1;
-            pointer-events: auto;
-        }
-
-        #refreshIframeBtn .icon {
-            font-size: 1.2em;
-        }
-
-        #panLeftBtn .icon, #panRightBtn .icon {
-            font-size: 1.5em;
-        }
-
-        @keyframes fadeInScale {
-            from {
-                opacity: 0;
-                transform: scale(0.9);
-            }
-            to {
-                opacity: 1;
-                transform: scale(1);
-            }
-        }
-
         /* Gaya Spinner */
         #loadingSpinner {
-            display: flex;
+            display: none; /* Awalnya tersembunyi */
             flex-direction: column;
             align-items: center;
             justify-content: center;
@@ -1349,7 +1188,7 @@
             position: fixed;
             top: 0;
             left: 0;
-            background-color: #e0e0e0; /* Sesuaikan dengan latar belakang body */
+            background-color: rgba(224, 224, 224, 0.8); /* Latar belakang semi-transparan */
             z-index: 10000; /* Pastikan di atas */
             transition: opacity 0.3s ease-in-out;
         }
@@ -1382,7 +1221,7 @@
             z-index: 9999;
             justify-content: center;
             align-items: center;
-            opacity: 0;
+            opacity: 1;
             transition: opacity 0.3s ease-in-out;
         }
 
@@ -1449,237 +1288,40 @@
             min-height: 1.2em;
         }
 
-        /* Penyesuaian responsif */
-        @media (max-width: 600px) {
-            .initial-login-screen {
-                margin-top: 40px;
-                margin-bottom: 40px;
-                border-radius: 0;
-                box-shadow: none;
-                width: 100%;
+        @media (max-width: 991px) {
+            #examBody {
+                display: flex;
+                flex-direction: column;
             }
-            .initial-login-screen h2 {
-                font-size: 1.8em;
+            #examMainContent {
+                order: 2;
+                flex-grow: 1;
             }
-            .initial-login-screen p {
-                font-size: 0.9em;
+            #examSidePanel {
+                order: 1;
+                flex-shrink: 0;
             }
-            .initial-login-screen input {
-                font-size: 1em;
-                padding: 10px;
-            }
-            .initial-login-screen button {
-                font-size: 1.1em;
-                padding: 12px 20px;
-            }
-
-            .welcome-screen {
-                margin-top: 40px;
-                margin-bottom: 40px;
-                border-radius: 0;
-                box-shadow: none;
-                width: 100%;
-            }
-            .welcome-screen h2 {
-                font-size: 1.8em;
-            }
-            .welcome-screen p {
-                font-size: 0.9em;
-            }
-            .welcome-button {
-                font-size: 1.2em;
-                padding: 12px 20px;
-            }
-
-            .container {
-                margin-top: 40px;
-                margin-bottom: 40px;
-                border-radius: 0;
-                border: none;
-                box-shadow: none;
-                width: 100%;
-            }
-            .header-box {
-                border-radius: 0;
-            }
-            #confirmModal .modal-content {
-                padding: 20px;
-                max-width: 90%;
-            }
-            #confirmModal .modal-content h4 {
-                font-size: 1.5em;
-            }
-            #confirmModal .modal-content .info-table td {
-                font-size: 1em;
-            }
-            #confirmModal .modal-content td:first-child {
-                width: 90px;
-            }
-            .checkbox-container {
-                padding-left: 5px;
-            }
-            #fullscreenOverlay .overlay-content {
-                padding: 25px;
-                max-width: 95%;
-            }
-            #fullscreenOverlay .overlay-title {
-                font-size: 2em;
-            }
-            #fullscreenOverlay .overlay-instructions {
-                font-size: 0.9em;
-            }
-            #fullscreenOverlay .overlay-instructions li {
-                padding-left: 25px;
-            }
-            #fullscreenOverlay .overlay-instructions li::before {
-                font-size: 1em;
-            }
-            #fullscreenOverlay .overlay-button {
-                font-size: 1.1em;
-                padding: 12px 25px;
-            }
-            #countdownDisplay {
-                font-size: 1.1em;
-                padding: 8px;
-            }
-            #countdownDisplay #studentNameDisplay,
-            #countdownDisplay #classDisplay {
-                font-size: 0.9em;
-            }
-            #warningCountdown {
-                font-size: 3em;
-            }
-            #warningMessage {
-                font-size: 1.2em;
-            }
-            .warning-content-box {
-                padding: 20px;
-                max-width: 90%;
-            }
-            #submissionConfirmationOverlay h1 {
-                font-size: 2em;
-            }
-            #submissionConfirmationOverlay p {
-                font-size: 1.2em;
-            }
-            #submissionConfirmationOverlay button {
-                font-size: 1em;
-                padding: 12px 25px;
-            }
-            .submission-content {
-                padding: 20px;
-                max-width: 90%;
-            }
-            .exit-warning-content {
-                padding: 20px;
-                max-width: 90%;
-            }
-            .exit-warning-content h2 {
-                font-size: 1.8em;
-            }
-            .exit-warning-content p {
-                font-size: 1em;
-            }
-            .exit-warning-button {
-                font-size: 1em;
-                padding: 10px 20px;
-            }
-
-            .custom-modal-content {
-                padding: 15px;
-                width: 95%;
-                max-height: 90vh;
-            }
-            .custom-modal-content h4 {
-                font-size: 1.2em;
-            }
-            .custom-modal-list li {
-                padding: 10px 12px;
-                font-size: 1em;
-            }
-
-            #answerSidebar {
-                width: 180px;
-                transform: translateX(calc(100% - 56px));
-            }
-            #answerSidebar.open {
-                transform: translateX(0);
-            }
-            #sidebarToggle {
-                width: 56px;
-                height: 56px;
-            }
-            #sidebarToggle #sidebarText {
-                font-size: 0.7em;
-            }
-            #closeSidebarButton {
-                width: 56px;
-                height: 56px;
-            }
-            #closeSidebarButton #closeSidebarText {
-                font-size: 0.7em;
-            }
-            #answerListContainer {
-                grid-template-columns: repeat(auto-fill, minmax(25px, 1fr));
-                gap: 5px;
-                margin-left: 56px;
-            }
-            .answer-box {
-                height: 30px;
-                font-size: 0.8em;
-            }
-            .answer-box .question-number,
-            .answer-box .selected-answer {
-                font-size: 0.7em;
-            }
-            #submitAnswersButton {
-                font-size: 0.9em;
-                padding: 10px;
-                width: calc(100% - 66px);
-            }
-            #answerSelectionModal .modal-content {
-                max-width: 280px;
-            }
-            #answerOptions button {
-                width: 50px;
-                height: 50px;
-                font-size: 1.2em;
-            }
-            #zoomControls button {
-                width: 35px;
-                height: 35px;
-                font-size: 1.2em;
+            #mobileSidebarToggle {
+                display: block;
             }
         }
 
-        @media (max-width: 400px) {
-            .header-box .logo {
-                width: 60px;
+        @media (max-width: 600px) {
+            .initial-login-screen, .welcome-screen, .container {
+                margin-top: 0; margin-bottom: 0; border-radius: 0; box-shadow: none; width: 100%; height: 100%; justify-content: center;
             }
-            .title {
-                font-size: 18px;
+            #confirmModal .modal-content, .custom-modal-content, .exit-warning-content, .submission-content, .blocked-content {
+                max-width: 95%; width: 95%;
             }
-            .card-body {
+            #examBody {
+                padding: 15px;
+                gap: 15px;
+            }
+            #questionDisplayBox {
                 padding: 15px;
             }
-            input {
-                font-size: 14px;
-                padding: 8px;
-            }
-            button {
-                font-size: 14px;
-                padding: 8px 15px;
-            }
-            .footer {
-                font-size: 10px;
-            }
-            .checkbox-container {
-                font-size: 0.9em;
-            }
-            .custom-dropdown-display {
-                font-size: 14px;
-                padding: 8px;
-            }
+            #warningCountdown { font-size: 3em; }
+            #warningMessage { font-size: 1.2em; }
         }
     </style>
 </head>
@@ -1718,7 +1360,7 @@
         <button id="loginButton">Login</button>
     </div>
 
-    <div id="welcomeScreen" class="welcome-screen" style="display: none;">
+    <div id="welcomeScreen" class="welcome-screen">
         <h2 id="welcomeTitle">SELAMAT DATANG</h2>
         <p id="welcomeMessage">Memuat pilihan ujian...</p>
         <div id="welcomeButtonsContainer" style="display: flex; flex-direction: column; gap: 15px;">
@@ -1726,8 +1368,12 @@
         </div>
     </div>
 
-    <div id="loginContainer" class="container" style="display: none;">
+    <div id="loginContainer" class="container">
         <div class="header-box">
+            <!-- [BARU] Tombol Kembali -->
+            <div id="backToWelcomeBtn" class="back-button">
+                <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
+            </div>
             <img src="https://raw.githubusercontent.com/smp2pajangan/gambar/refs/heads/main/logosmpn2pjg.png" alt="Logo" class="logo" />
             <div class="title">SMPN 2 PAJANGAN</div>
         </div>
@@ -1783,46 +1429,48 @@
         </div>
     </div>
 
+    <!-- [START] CONTAINER UJIAN BARU -->
     <div id="examContainer" style="display: none;">
-        <div id="countdownDisplay">
-            <span id="timerText"></span> | <span id="studentNameDisplay"></span> | <span id="classDisplay"></span>
-        </div>
-        <div id="examContentWrapper">
-            <iframe id="examIframe" src="" frameborder="0"></iframe>
-            <div id="topIframeBlocker"></div>
-
-            <div id="zoomControls">
-                <div id="mainToggleBtnContainer">
-                    <button id="toggleControlsBtn" title="Alihkan Kontrol">
-                        <span class="icon">&#9776;</span> </button>
-                    <button id="refreshIframeBtn" title="Muat Ulang Iframe">
-                        <span class="icon">&#x21BB;</span>
+        <div id="examBody">
+            <div id="examSidePanel">
+                <div class="sidebar-header">
+                    <span id="timerText">00:00</span>
+                    <button id="mobileSidebarToggle">
+                        <svg class="arrow-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
                     </button>
                 </div>
-                <div id="controlsGrid">
-                    <button id="zoomInBtn">+</button>
-                    <button id="zoomOutBtn">-</button>
-                    <button id="panLeftBtn"><span class="icon">&larr;</span></button>
-                    <button id="panRightBtn"><span class="icon">&rarr;</span></button>
+                <div class="sidebar-content-wrapper">
+                    <div id="questionGridContainer"></div>
+                    <div class="sidebar-footer">
+                        <button id="submitAnswersButton" disabled>KIRIM JAWABAN</button>
+                        <p id="submissionWarningMessage"></p>
+                    </div>
                 </div>
             </div>
-
-            <button id="sidebarToggle">
-                <span id="sidebarText">JAWAB</span>
-            </button>
-
-            <div id="answerSidebar">
-                <button id="closeSidebarButton">
-                    <span id="closeSidebarText">TUTUP</span>
-                </button>
-
-                <div id="answerListContainer">
+            <div id="examMainContent">
+                <div id="questionDisplayBox">
+                    <div id="questionPanelHeader">
+                        <span id="questionHeaderNumber">Soal No. 1</span>
+                        <div class="header-controls-right">
+                            <div class="ragu-checkbox-container">
+                                <label for="raguRaguCheckbox">Ragu-ragu</label>
+                                <input type="checkbox" id="raguRaguCheckbox" />
+                            </div>
+                        </div>
+                    </div>
+                    <div id="resizableContent">
+                        <div id="questionContent"></div>
+                        <div id="cbtAnswerOptions"></div>
+                    </div>
+                    <div id="examNavigation">
+                        <button id="prevQuestionBtn" disabled>Sebelumnya</button>
+                        <button id="nextQuestionBtn">Selanjutnya</button>
+                    </div>
                 </div>
-                <p id="submissionWarningMessage" class="submission-warning-message"></p>
-                <button id="submitAnswersButton" disabled style="background-color: #cccccc; cursor: not-allowed;">KIRIM JAWABAN</button>
             </div>
         </div>
-
+        
+        <!-- Overlay yang sudah ada dipindahkan ke dalam examContainer -->
         <div id="warningOverlay" style="display: none;">
             <div class="warning-content-box">
                 <div id="warningCountdown"></div>
@@ -1835,51 +1483,23 @@
                 <h2 id="exitWarningTitle">PERINGATAN!</h2>
                 <p id="exitWarningMessage">Anda telah keluar dari mode layar penuh. Mohon kembali ke mode layar penuh untuk melanjutkan ujian.</p>
                 <p id="attemptsLeftInfo" style="font-size: 1.1em; color: #0066cc; font-weight: bold; margin-top: 10px; display: none;"></p>
-
                 <div id="lockKeySection" style="margin-top: 20px; display: none;">
                     <p style="font-size: 1.1em; color: #333; margin-bottom: 10px;">Masukkan kunci untuk melanjutkan:</p>
                     <input type="password" id="lockKeyInput" placeholder="Kunci..." style="width: calc(100% - 20px); padding: 10px; border: 1px solid #ccc; border-radius: 5px; text-align: center; margin-bottom: 10px;">
                     <p id="lockKeyMessage" style="color: red; font-size: 0.9em; min-height: 1.2em;"></p>
                     <button id="lockKeySubmitBtn" class="exit-warning-button" style="background-color: #28a745;">Masuk dengan Kunci</button>
                 </div>
-
                 <button id="reEnterFullscreenBtn" class="exit-warning-button">Kembali ke Layar Penuh</button>
             </div>
         </div>
-
-        <div id="answerSelectionModal" class="custom-modal">
-            <div class="modal-content">
-                <h4 id="answerModalTitle">Pilih Jawaban Soal No. <span id="currentQuestionNumber"></span></h4>
-                <div id="answerOptions">
-                    <button data-answer="A">A</button>
-                    <button data-answer="B">B</button>
-                    <button data-answer="C">C</button>
-                    <button data-answer="D">D</button>
-                </div>
-                <button id="clearAnswerButton">Hapus Jawaban</button>
-            </div>
-        </div>
-
-        <div id="customMessageModal" class="custom-modal">
-            <div class="custom-modal-content">
-                <h4 id="customMessageModalTitle"></h4>
-                <p id="customMessageModalText"></p>
-                <button id="customMessageModalButton" onclick="window.hideCustomMessageModal()">OK</button>
-            </div>
-        </div>
-
-        <div id="customConfirmModal" class="custom-modal">
-            <div class="custom-modal-content">
-                <h4 id="customConfirmModalTitle"></h4>
-                <p id="customConfirmModalText"></p>
-                <div style="display: flex; justify-content: space-around; margin-top: 20px;">
-                    <button id="customConfirmModalConfirmBtn" style="background-color: #28a745; width: 45%;">Ya</button>
-                    <button id="customConfirmModalCancelBtn" style="background-color: #dc3545; width: 45%;">Tidak</button>
-                </div>
-            </div>
+        
+        <!-- [BARU] Footer Identitas Siswa -->
+        <div id="examFooter">
+            <span id="studentIdentityDisplay"></span>
         </div>
     </div>
-
+    <!-- [END] CONTAINER UJIAN BARU -->
+    
     <div id="confirmModal">
         <div class="modal-content">
             <h4>DATA UJIAN ONLINE</h4>
@@ -1918,21 +1538,6 @@
         </div>
     </div>
 
-    <div id="fullscreenOverlay" style="display: none;">
-        <div class="overlay-content">
-            <h2 class="overlay-title">PERHATIKAN HAL-HAL BERIKUT:</h2>
-            <ul class="overlay-instructions">
-                <li>Berdoa & kerjakan dengan sungguh-sungguh</li>
-                <li>Dilarang melakukan kecurangan</li>
-                <li>Pastikan jaringan stabil</li>
-                <li>Klik "JAWAB" di kanan untuk menjawab</li>
-                <li>"Kirim Jawaban" akan aktif sesuai jadwal</li>
-                <li>Ujian otomatis terkirim jika waktu habis</li>
-            </ul>
-            <button id="overlayUnderstandBtn" class="overlay-button">SAYA MENGERTI</button>
-        </div>
-    </div>
-
     <div id="submissionConfirmationOverlay">
         <div class="submission-content">
             <h1 id="submissionOverlayTitle"></h1>
@@ -1963,6 +1568,25 @@
             <ul id="susulanModalList" class="custom-modal-list">
             </ul>
             <button id="closeSusulanModalButton" onclick="window.closeSusulanListModal()">TUTUP</button>
+        </div>
+    </div>
+
+    <div id="customMessageModal" class="custom-modal">
+        <div class="custom-modal-content">
+            <h4 id="customMessageModalTitle"></h4>
+            <p id="customMessageModalText"></p>
+            <button id="customMessageModalButton" onclick="window.hideCustomMessageModal()">OK</button>
+        </div>
+    </div>
+
+    <div id="customConfirmModal" class="custom-modal">
+        <div class="custom-modal-content">
+            <h4 id="customConfirmModalTitle"></h4>
+            <p id="customConfirmModalText"></p>
+            <div style="display: flex; justify-content: space-around; margin-top: 20px;">
+                <button id="customConfirmModalConfirmBtn" style="background-color: #28a745; width: 45%;">Ya</button>
+                <button id="customConfirmModalCancelBtn" style="background-color: #dc3545; width: 45%;">Tidak</button>
+            </div>
         </div>
     </div>
 
@@ -2148,7 +1772,8 @@
                 tokensRef: ref(currentDb, 'tokens'),
                 examAccessStatusRef: ref(currentDb, 'exam_access_status'),
                 submittedExamsRef: ref(currentDb, 'submitted_exams'),
-                studentAnswersRef: ref(currentDb, 'student_answers')
+                studentAnswersRef: ref(currentDb, 'student_answers'),
+                ujianRef: ref(currentDb, 'ujian')
             };
         }
         
@@ -2160,7 +1785,6 @@
                 publicSettingsRef: ref(setupDb, 'publicSettings')
             };
         }
-
 
         let isLocationEnabled = true;
         let firebaseAllowedRadiusKm = 0.075;
@@ -2196,13 +1820,7 @@
         const welcomeButtonsContainer = document.getElementById('welcomeButtonsContainer');
         const loginContainer = document.getElementById('loginContainer');
         const examContainer = document.getElementById('examContainer');
-        const countdownDisplay = document.getElementById('countdownDisplay');
         const timerText = document.getElementById('timerText');
-        const studentNameDisplay = document.getElementById('studentNameDisplay');
-        const classDisplay = document.getElementById('classDisplay');
-        const examIframe = document.getElementById('examIframe');
-        const fullscreenOverlay = document.getElementById('fullscreenOverlay');
-        const overlayUnderstandBtn = document.getElementById('overlayUnderstandBtn');
         const warningOverlay = document.getElementById('warningOverlay');
         const warningCountdown = document.getElementById('warningCountdown');
 
@@ -2247,32 +1865,19 @@
         const studentModalList = document.getElementById('studentModalList');
 
         const susulanListModal = document.getElementById('susulanListModal');
-        const susulanModalList = document.getElementById('susulanModalList');
-
-
-        const answerSidebar = document.getElementById('answerSidebar');
-        const sidebarToggle = document.getElementById('sidebarToggle');
-        const answerListContainer = document.getElementById('answerListContainer');
+        
+        const questionGridContainer = document.getElementById('questionGridContainer');
         const submitAnswersButton = document.getElementById('submitAnswersButton');
         const submissionWarningMessage = document.getElementById('submissionWarningMessage');
-
-        const sidebarText = document.getElementById('sidebarText');
-        const closeSidebarButton = document.getElementById('closeSidebarButton');
-        const closeSidebarText = document.getElementById('closeSidebarText');
-
-        const examContentWrapper = document.getElementById('examContentWrapper');
-
-        const zoomControls = document.getElementById('zoomControls');
-        const toggleControlsBtn = document.getElementById('toggleControlsBtn');
-        const controlsGrid = document.getElementById('controlsGrid');
-        const zoomInBtn = document.getElementById('zoomInBtn');
-        const zoomOutBtn = document.getElementById('zoomOutBtn');
-        const panLeftBtn = document.getElementById('panLeftBtn');
-        const panRightBtn = document.getElementById('panRightBtn');
-        const refreshIframeBtn = document.getElementById('refreshIframeBtn');
+        const questionHeaderNumber = document.getElementById('questionHeaderNumber');
+        const questionContent = document.getElementById('questionContent');
+        const cbtAnswerOptions = document.getElementById('cbtAnswerOptions');
+        const prevQuestionBtn = document.getElementById('prevQuestionBtn');
+        const nextQuestionBtn = document.getElementById('nextQuestionBtn');
+        const raguRaguCheckbox = document.getElementById('raguRaguCheckbox');
 
         const loginJudulUjian = document.getElementById('loginJudulUjian');
-
+        
         let allStudentsData = [];
         let selectedStudentData = null;
         let isLocationValid = false;
@@ -2284,49 +1889,26 @@
         let isInExamMode = false;
         let isAnyModalOpen = false;
 
-        let totalQuestions = 0;
+        let currentExamQuestions = [];
         let studentAnswers = [];
-        let currentQuestionIndexForModal = -1;
+        let raguRaguStatus = [];
+        let currentQuestionIndex = 0; // Gunakan 0-based index untuk *shuffled* view
 
-        const answerSelectionModal = document.getElementById('answerSelectionModal');
-        const currentQuestionNumberSpan = document.getElementById('currentQuestionNumber');
-        const answerOptionsContainer = document.getElementById('answerOptions');
-        const clearAnswerButton = document.getElementById('clearAnswerButton');
+        // [BARU] Variabel untuk menyimpan peta acak
+        let shuffledQuestionIndices = [];
+        let shuffledOptionOrders = [];
+
+        let sidebarCollapseTimer = null;
 
         const customMessageModal = document.getElementById('customMessageModal');
         const customMessageModalTitle = document.getElementById('customMessageModalTitle');
         const customMessageModalText = document.getElementById('customMessageModalText');
-        const customMessageModalButton = document.getElementById('customMessageModalButton');
 
         const customConfirmModal = document.getElementById('customConfirmModal');
         const customConfirmModalTitle = document.getElementById('customConfirmModalTitle');
         const customConfirmModalText = document.getElementById('customConfirmModalText');
         const customConfirmModalConfirmBtn = document.getElementById('customConfirmModalConfirmBtn');
         const customConfirmModalCancelBtn = document.getElementById('customConfirmModalCancelBtn');
-
-        let globalExamUrl = '';
-        let globalExamDurationMinutes = 0;
-        let globalNumQuestions = 0;
-        let globalExamStartTime = 0;
-        let globalInitialAnswers = null;
-
-        let currentZoom = 1.0;
-        const MIN_ZOOM = 1.0;
-        const MAX_ZOOM = 2.0;
-        const ZOOM_STEP = 0.1;
-        const PAN_STEP = 10;
-
-        let isDragging = false;
-        let startX, startY;
-        let currentTranslateX = 0;
-        let currentTranslateY = 0;
-        let autoHideTimer;
-
-        let panIntervalId = null;
-        let panDirection = 0;
-        const PAN_START_DELAY = 1500;
-        const PAN_INTERVAL = 150;
-        let panPressTimer = null;
 
         function padStudentId(id) {
             return String(id).padStart(3, '0');
@@ -2365,6 +1947,13 @@
             const isAndroidWebView = ua.includes('wv') || (ua.includes('android') && !ua.includes('chrome') && !ua.includes('firefox'));
             const isIOSWebView = (ua.includes('iphone') || ua.includes('ipad')) && !ua.includes('safari');
             return isSEB || isAndroidWebView || isIOSWebView;
+        }
+
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
         }
 
         window.formatTokenPrefix = function (inputElement) {
@@ -2665,58 +2254,56 @@
             closeStudentModal();
             updateLoginButtonStatus();
         }
+        
+        // [DIPERBAIKI] Logika untuk mengaktifkan tombol kirim
+        function updateSubmissionButtonState() {
+            if (!submitAnswersButton || !nextQuestionBtn) return;
+
+            let isDisabled = true;
+            const allAnswered = !studentAnswers.includes(null);
+
+            if (minDurationSettingsGlobal.isMinDurationEnabled) {
+                // Tombol non-aktif jika durasi minimum belum terpenuhi ATAU jika belum semua soal dijawab
+                isDisabled = (remainingTime > minDurationSettingsGlobal.minDurationSeconds) || !allAnswered;
+            } else {
+                // Tombol non-aktif jika belum semua soal dijawab
+                isDisabled = !allAnswered;
+            }
+
+            submitAnswersButton.disabled = isDisabled;
+            
+            if (currentQuestionIndex === currentExamQuestions.length - 1) {
+                nextQuestionBtn.disabled = isDisabled;
+            }
+        }
 
         function updateTimerDisplay() {
-            if (!timerText || !studentNameDisplay || !classDisplay) return;
+            if (!timerText) return;
 
             const minutes = Math.floor(remainingTime / 60);
             const seconds = remainingTime % 60;
 
             const formattedTime = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
             timerText.textContent = formattedTime;
-            studentNameDisplay.textContent = selectedStudentData ? selectedStudentData.name : '';
-            classDisplay.textContent = selectedStudentData ? selectedStudentData.class : '';
 
-            let submissionTimeInSeconds;
-            if (minDurationSettingsGlobal.isMinDurationEnabled) {
-                submissionTimeInSeconds = minDurationSettingsGlobal.minDurationSeconds;
-            } else {
-                submissionTimeInSeconds = 120 * 60;
-            }
-
-            if (submitAnswersButton) {
-                if (remainingTime <= submissionTimeInSeconds && remainingTime > 0) {
-                    submitAnswersButton.disabled = false;
-                    submitAnswersButton.style.backgroundColor = document.documentElement.style.getPropertyValue('--accent-color');
-                    submitAnswersButton.style.cursor = 'pointer';
-                } else {
-                    submitAnswersButton.disabled = true;
-                    submitAnswersButton.style.backgroundColor = '#cccccc';
-                    submitAnswersButton.style.cursor = 'not-allowed';
-                }
-            }
+            updateSubmissionButtonState();
 
             if (remainingTime <= 300 && remainingTime > 0) {
-                countdownDisplay.style.display = 'none';
+                timerText.style.color = 'var(--danger-color)';
                 warningCountdown.textContent = formattedTime;
-                warningOverlay.style.display = 'flex';
-                setTimeout(() => { warningOverlay.style.opacity = 1; }, 10);
+                warningOverlay.classList.add('show');
             } else {
-                warningOverlay.style.opacity = 0;
-                setTimeout(() => { warningOverlay.style.display = 'none'; }, 300);
+                timerText.style.color = 'var(--danger-color)';
+                warningOverlay.classList.remove('show');
             }
 
             if (remainingTime <= 0) {
                 clearInterval(timerInterval);
                 timerText.textContent = "00:00";
-                countdownDisplay.style.display = 'block';
-                warningOverlay.style.opacity = 0;
-                setTimeout(() => { warningOverlay.style.display = 'none'; }, 300);
+                warningOverlay.classList.remove('show');
 
                 if (submitAnswersButton) {
                     submitAnswersButton.disabled = true;
-                    submitAnswersButton.style.backgroundColor = '#cccccc';
-                    submitAnswersButton.style.cursor = 'not-allowed';
                 }
 
                 submitAnswers(true);
@@ -2726,38 +2313,13 @@
             remainingTime--;
         }
 
-        function showOverlay(initialAnswers = null) {
-            globalInitialAnswers = initialAnswers;
-            loginContainer.style.opacity = 0;
-            setTimeout(() => {
-                loginContainer.style.display = 'none';
-                fullscreenOverlay.style.display = 'flex';
-                fullscreenOverlay.classList.add('show');
-                document.body.style.overflow = 'hidden';
-                examIframe.classList.add('blurred');
-                isAnyModalOpen = true;
-            }, 500);
-        }
-
-        function hideOverlay() {
-            fullscreenOverlay.classList.remove('show');
-            setTimeout(() => {
-                fullscreenOverlay.style.display = 'none';
-                document.body.style.overflow = '';
-                examIframe.classList.remove('blurred');
-                isAnyModalOpen = false;
-                startExamProcess(globalExamUrl, globalExamDurationMinutes, globalNumQuestions, globalExamStartTime, globalInitialAnswers);
-            }, 300);
-        }
-
         async function showSubmissionConfirmationOverlay(isAutoSubmit) {
             sessionStorage.clear();
             loginContainer.style.display = 'none';
             examContainer.style.opacity = 0;
             setTimeout(async () => {
                 examContainer.style.display = 'none';
-                submissionConfirmationOverlay.style.display = 'flex';
-                setTimeout(() => { submissionConfirmationOverlay.style.opacity = 1; }, 10);
+                submissionConfirmationOverlay.classList.add('show');
                 document.body.style.overflow = 'hidden';
                 if (timerInterval) clearInterval(timerInterval);
                 if (submissionListenerRef) {
@@ -2770,9 +2332,6 @@
                 if (document.fullscreenElement) {
                     document.exitFullscreen();
                 }
-                answerSidebar.classList.remove('open');
-                examContentWrapper.classList.remove('sidebar-open');
-                examIframe.style.width = '100%';
                 isAnyModalOpen = true;
 
                 if (isAutoSubmit) {
@@ -2806,9 +2365,8 @@
         }
 
         function hideSubmissionConfirmationOverlay() {
-            submissionConfirmationOverlay.style.opacity = 0;
+            submissionConfirmationOverlay.classList.remove('show');
             setTimeout(() => {
-                submissionConfirmationOverlay.style.display = 'none';
                 document.body.style.overflow = '';
                 isAnyModalOpen = false;
             }, 300);
@@ -2819,16 +2377,13 @@
                 document.addEventListener('copy', preventDefaultBehavior);
                 document.addEventListener('cut', preventDefaultBehavior);
                 document.addEventListener('paste', preventDefaultBehavior);
-
                 document.body.classList.add('no-select');
                 document.addEventListener('selectstart', preventDefaultBehavior);
                 document.addEventListener('contextmenu', preventDefaultBehavior);
-                
             } else {
                 document.removeEventListener('copy', preventDefaultBehavior);
                 document.removeEventListener('cut', preventDefaultBehavior);
                 document.removeEventListener('paste', preventDefaultBehavior);
-
                 document.body.classList.remove('no-select');
                 document.removeEventListener('selectstart', preventDefaultBehavior);
                 document.removeEventListener('contextmenu', preventDefaultBehavior);
@@ -2841,20 +2396,16 @@
         }
 
         function attemptFullscreen() {
-            if (document.fullscreenElement || document.mozFullScreenElement || document.webkitFullscreenElement || document.msFullscreenElement) {
-                return;
-            }
-
-            if (examContainer.requestFullscreen) {
-                examContainer.requestFullscreen().catch(err => {
-                    console.warn(`Gagal masuk layar penuh: ${err.message}`);
-                });
-            } else if (examContainer.mozRequestFullScreen) {
-                examContainer.mozRequestFullScreen().catch(err => console.warn(`Gagal masuk layar penuh (Firefox): ${err.message}`));
-            } else if (examContainer.webkitRequestFullscreen) {
-                examContainer.webkitRequestFullscreen().catch(err => console.warn(`Gagal masuk layar penuh (Webkit): ${err.message}`));
-            } else if (examContainer.msRequestFullscreen) {
-                examContainer.msRequestFullscreen().catch(err => console.warn(`Gagal masuk layar penuh (MS): ${err.message}`));
+            if (document.fullscreenElement) return;
+            const element = document.documentElement;
+            if (element.requestFullscreen) {
+                element.requestFullscreen().catch(err => console.warn(`Gagal masuk layar penuh: ${err.message}`));
+            } else if (element.mozRequestFullScreen) {
+                element.mozRequestFullScreen();
+            } else if (element.webkitRequestFullscreen) {
+                element.webkitRequestFullscreen();
+            } else if (element.msRequestFullscreen) {
+                element.msRequestFullscreen();
             }
         }
 
@@ -2865,17 +2416,8 @@
             const studentId = padStudentId(selectedStudentData.id);
             const accessStatusRef = child(dbRefs.examAccessStatusRef, `${foundTokenGlobal.key}/${studentId}`);
 
-            if (!document.fullscreenElement && !document.mozFullScreenElement && !document.webkitFullscreenElement && !document.msFullscreenElement && isInExamMode) {
-                examIframe.classList.add('blurred');
-                document.body.style.overflow = 'hidden';
-                
-                countdownDisplay.style.display = 'none';
-                zoomControls.style.display = 'none';
-                sidebarToggle.style.display = 'none';
-                closeSidebarButton.style.display = 'none';
-                answerSidebar.classList.remove('open');
-                examContentWrapper.classList.remove('sidebar-open');
-                examIframe.style.width = '100%';
+            if (!document.fullscreenElement && isInExamMode) {
+                document.getElementById('examBody').style.filter = 'blur(5px)';
                 isAnyModalOpen = true;
 
                 if (isLockEnabledGlobal) {
@@ -2898,14 +2440,10 @@
 
                     if (currentAttemptsLeft > 0) {
                         exitWarningMessage.textContent = "Anda telah keluar dari mode layar penuh. Mohon kembali ke mode layar penuh untuk melanjutkan ujian.";
-                        if (currentAttemptsLeft === 1) {
-                            attemptsLeftInfo.textContent = `Ini adalah kesempatan terakhir Anda untuk keluar dari mode layar penuh!`;
-                        } else {
-                            attemptsLeftInfo.textContent = `Anda memiliki ${currentAttemptsLeft} kesempatan tersisa untuk keluar dari mode layar penuh.`;
-                        }
+                        attemptsLeftInfo.textContent = `Anda memiliki ${currentAttemptsLeft} kesempatan tersisa.`;
                         reEnterFullscreenBtn.style.display = 'block';
                     } else {
-                        exitWarningMessage.textContent = "Anda telah melebihi batas toleransi keluar dari mode layar penuh. Anda harus memasukkan kunci untuk melanjutkan ujian.";
+                        exitWarningMessage.textContent = "Anda telah melebihi batas toleransi. Masukkan kunci untuk melanjutkan.";
                         attemptsLeftInfo.textContent = "Kesempatan keluar sudah habis.";
                         reEnterFullscreenBtn.style.display = 'none';
                         lockKeySection.style.display = 'block';
@@ -2918,72 +2456,64 @@
                     reEnterFullscreenBtn.style.display = 'block';
                 }
 
-                fullscreenExitWarningOverlay.style.display = 'flex';
-                setTimeout(() => { fullscreenExitWarningOverlay.style.opacity = 1; }, 10);
+                fullscreenExitWarningOverlay.classList.add('show');
 
-            } else if (document.fullscreenElement || document.mozFullScreenElement || document.webkitFullscreenElement || document.msFullscreenElement) {
-                fullscreenExitWarningOverlay.style.opacity = 0;
-                setTimeout(() => { fullscreenExitWarningOverlay.style.display = 'none'; }, 300);
-                examIframe.classList.remove('blurred');
-                document.body.style.overflow = '';
+            } else if (document.fullscreenElement) {
+                fullscreenExitWarningOverlay.classList.remove('show');
+                document.getElementById('examBody').style.filter = 'none';
                 isAnyModalOpen = false;
-
-                countdownDisplay.style.display = 'flex';
-                zoomControls.style.display = 'flex';
-                sidebarToggle.style.display = 'flex';
-                closeSidebarButton.style.display = 'none';
             }
         }
 
         function startSubmissionStatusListener() {
-            if (!foundTokenGlobal || !selectedStudentData || !currentDb) {
-                console.warn("Token, data siswa, atau database tidak lengkap untuk memulai listener pengiriman.");
-                return;
-            }
-
+            if (!foundTokenGlobal || !selectedStudentData || !currentDb) return;
             const dbRefs = getDbRefs();
             if (!dbRefs) return;
-
-            const tokenFirebaseKey = foundTokenGlobal.key;
-            const studentId = padStudentId(selectedStudentData.id);
-            
-            const studentSubmissionRef = child(dbRefs.submittedExamsRef, `${tokenFirebaseKey}/${studentId}`);
-
-            if (submissionListenerRef) {
-                off(submissionListenerRef);
-                submissionListenerRef = null;
-            }
-
+            const studentSubmissionRef = child(dbRefs.submittedExamsRef, `${foundTokenGlobal.key}/${padStudentId(selectedStudentData.id)}`);
+            if (submissionListenerRef) off(submissionListenerRef);
             onValue(studentSubmissionRef, (snapshot) => {
-                if (snapshot.exists() && snapshot.val().isSubmitted === true) {
-                    if (examContainer.style.display === 'flex') {
-                        showSubmissionConfirmationOverlay(true);
-                        examIframe.src = '';
-                    }
+                if (snapshot.exists() && snapshot.val().isSubmitted === true && examContainer.style.display === 'flex') {
+                    showSubmissionConfirmationOverlay(true);
                 }
-            }, (error) => {
-                console.error("Gagal mendengarkan status pengiriman:", error);
-            });
+            }, (error) => console.error("Gagal mendengarkan status pengiriman:", error));
         }
 
-        function startExamProcess(examUrl, examDurationMinutes, numQuestions, examStartTime, initialAnswers = null) {
+        async function startExamProcess(examDurationMinutes, examStartTime, initialData) {
+            
+            if (initialData.shuffledQuestionIndices && initialData.shuffledOptionOrders) {
+                shuffledQuestionIndices = initialData.shuffledQuestionIndices;
+                shuffledOptionOrders = initialData.shuffledOptionOrders;
+            } else {
+                shuffledQuestionIndices = Array.from({ length: currentExamQuestions.length }, (_, i) => i);
+                shuffleArray(shuffledQuestionIndices);
+                shuffledOptionOrders = currentExamQuestions.map(() => {
+                    const options = ['A', 'B', 'C', 'D'];
+                    shuffleArray(options);
+                    return options;
+                });
+                await saveStudentAnswersToFirebase(); 
+            }
+            
+            sessionStorage.setItem('shuffledQuestionIndices', JSON.stringify(shuffledQuestionIndices));
+            sessionStorage.setItem('shuffledOptionOrders', JSON.stringify(shuffledOptionOrders));
+
             sessionStorage.setItem('isInExamMode', 'true');
             sessionStorage.setItem('selectedStudentData', JSON.stringify(selectedStudentData));
             sessionStorage.setItem('foundTokenGlobal', JSON.stringify(foundTokenGlobal));
-            sessionStorage.setItem('examIframeSrc', examUrl);
+            sessionStorage.setItem('examData', JSON.stringify(currentExamQuestions));
             sessionStorage.setItem('examStartTime', Number(examStartTime));
             sessionStorage.setItem('examDurationMinutes', examDurationMinutes);
-            sessionStorage.setItem('totalQuestions', numQuestions);
             sessionStorage.setItem('selectedClass', hiddenSelectKelas.value);
             sessionStorage.setItem('selectedGrade', currentSelectedGrade);
 
-            if (initialAnswers && initialAnswers.length > 0) {
-                studentAnswers = initialAnswers;
-                sessionStorage.setItem('studentAnswers', studentAnswers.join(','));
-            } else {
-                studentAnswers = Array(numQuestions).fill('');
-                sessionStorage.removeItem('studentAnswers');
-            }
+            const numQuestions = currentExamQuestions.length;
+            studentAnswers = (initialData.answers && initialData.answers.length === numQuestions) ? initialData.answers : Array(numQuestions).fill(null);
+            raguRaguStatus = (initialData.ragu && initialData.ragu.length === numQuestions) ? initialData.ragu : Array(numQuestions).fill(false);
+            const lastQuestionIndex = initialData.lastQuestionIndex || 0;
+
+            sessionStorage.setItem('studentAnswers', JSON.stringify(studentAnswers));
+            sessionStorage.setItem('raguRaguStatus', JSON.stringify(raguRaguStatus));
+            sessionStorage.setItem('lastQuestionIndex', lastQuestionIndex);
 
             loginContainer.style.opacity = 0;
             setTimeout(() => {
@@ -2993,11 +2523,13 @@
                     examContainer.style.opacity = 1;
                     isInExamMode = true;
                     toggleExamSecurityFeatures(true);
-                    renderAnswerBoxes();
+                    updateStudentIdentityPanel(); // [BARU] Panggil fungsi untuk menampilkan identitas
+                    currentQuestionIndex = lastQuestionIndex;
+                    displayQuestion(currentQuestionIndex);
+                    renderQuestionGrid();
+                    updateSubmissionButtonState();
                 }, 10);
             }, 500);
-
-            examIframe.src = examUrl;
             
             const totalDurationSeconds = examDurationMinutes * 60;
             const elapsedSeconds = Math.floor((Date.now() - examStartTime) / 1000);
@@ -3006,440 +2538,298 @@
             if (remainingTime < 0) remainingTime = 0;
 
             timerInterval = setInterval(updateTimerDisplay, 1000);
-            countdownDisplay.style.display = 'flex';
             updateTimerDisplay();
 
             attemptFullscreen();
             history.pushState(null, '', location.href);
             startSubmissionStatusListener();
-
-            sidebarToggle.style.display = 'flex';
-            closeSidebarButton.style.display = 'none';
         }
 
         async function restoreExamState() {
-            const storedIsInExamMode = sessionStorage.getItem('isInExamMode');
-            if (storedIsInExamMode === 'true') {
-                const storedSelectedStudentData = JSON.parse(sessionStorage.getItem('selectedStudentData'));
-                const storedFoundTokenGlobal = JSON.parse(sessionStorage.getItem('foundTokenGlobal'));
-                const storedExamIframeSrc = sessionStorage.getItem('examIframeSrc');
-                const storedExamDurationMinutes = parseInt(sessionStorage.getItem('examDurationMinutes'), 10);
-                const storedTotalQuestions = parseInt(sessionStorage.getItem('totalQuestions'), 10);
-                const storedSelectedClass = sessionStorage.getItem('selectedClass');
-                const storedSelectedGrade = sessionStorage.getItem('selectedGrade');
+            if (sessionStorage.getItem('isInExamMode') !== 'true') return false;
+            
+            selectedStudentData = JSON.parse(sessionStorage.getItem('selectedStudentData'));
+            foundTokenGlobal = JSON.parse(sessionStorage.getItem('foundTokenGlobal'));
+            currentExamQuestions = JSON.parse(sessionStorage.getItem('examData'));
+            const examDurationMinutes = parseInt(sessionStorage.getItem('examDurationMinutes'), 10);
+            const selectedClass = sessionStorage.getItem('selectedClass');
+            const selectedGrade = sessionStorage.getItem('selectedGrade');
+            let examStartTime = Number(sessionStorage.getItem('examStartTime'));
+            
+            const initialData = {
+                answers: JSON.parse(sessionStorage.getItem('studentAnswers')),
+                ragu: JSON.parse(sessionStorage.getItem('raguRaguStatus')),
+                lastQuestionIndex: parseInt(sessionStorage.getItem('lastQuestionIndex') || '0', 10),
+                shuffledQuestionIndices: JSON.parse(sessionStorage.getItem('shuffledQuestionIndices')),
+                shuffledOptionOrders: JSON.parse(sessionStorage.getItem('shuffledOptionOrders'))
+            };
+            
+            if (!selectedStudentData || !foundTokenGlobal || !currentExamQuestions || isNaN(examDurationMinutes) || !selectedClass || !selectedGrade || isNaN(examStartTime) || !initialData.shuffledQuestionIndices) {
+                sessionStorage.clear();
+                return false;
+            }
 
-                let storedExamStartTimeRaw = sessionStorage.getItem('examStartTime');
-                let storedExamStartTime = Number(storedExamStartTimeRaw);
+            currentSelectedGrade = selectedGrade;
+            const gradeConfig = allFirebaseConfigs[`kelas${currentSelectedGrade}-group1`];
+            if (gradeConfig && gradeConfig.theme) {
+                Object.keys(gradeConfig.theme).forEach(key => {
+                    document.documentElement.style.setProperty(`--${key}-color`, gradeConfig.theme[key]);
+                });
+            }
 
-                if (isNaN(storedExamStartTime) || storedExamStartTime <= 0) {
-                    console.error("Restore State: Gagal mengambil examStartTime yang valid dari sessionStorage. Menggunakan 0. Raw:", storedExamStartTimeRaw);
-                    storedExamStartTime = 0;
-                }
+            const instances = await getFirebaseInstanceForClass(selectedClass);
+            if (!instances) {
+                sessionStorage.clear();
+                return false;
+            }
+            currentDb = instances.db;
+            currentAuth = instances.auth;
 
-                if (storedSelectedStudentData && storedFoundTokenGlobal && storedExamIframeSrc &&
-                    !isNaN(storedExamStartTime) && storedExamStartTime > 0 &&
-                    !isNaN(storedExamDurationMinutes) && storedExamDurationMinutes > 0 &&
-                    !isNaN(storedTotalQuestions) && storedTotalQuestions >= 0 &&
-                    storedSelectedClass && storedSelectedGrade) {
-                    
-                    selectedStudentData = storedSelectedStudentData;
-                    foundTokenGlobal = storedFoundTokenGlobal;
-                    isInExamMode = true;
-                    totalQuestions = storedTotalQuestions;
-                    currentSelectedGrade = storedSelectedGrade;
+            const elapsedSeconds = Math.floor((Date.now() - examStartTime) / 1000);
+            const totalDurationSeconds = examDurationMinutes * 60;
+            remainingTime = totalDurationSeconds - elapsedSeconds;
 
-                    // Terapkan warna tema terlebih dahulu
-                    const gradeConfig = allFirebaseConfigs[`kelas${currentSelectedGrade}-group1`]; // Asumsikan grup pertama memiliki info tema
-                    if (gradeConfig && gradeConfig.theme) {
-                        document.documentElement.style.setProperty('--primary-color', gradeConfig.theme.primary);
-                        document.documentElement.style.setProperty('--accent-color', gradeConfig.theme.accent);
-                        document.documentElement.style.setProperty('--warning-color', gradeConfig.theme.warning);
-
-                        // Juga perbarui gaya elemen tertentu
-                        document.querySelector('.header-box').style.backgroundColor = gradeConfig.theme.primary;
-                        document.querySelector('.judul-ujian').style.color = gradeConfig.theme.warning;
-                        document.querySelector('#loginBtn').style.backgroundColor = gradeConfig.theme.accent;
-                        document.querySelector('#loginBtn').onmouseover = () => document.querySelector('#loginBtn').style.backgroundColor = gradeConfig.theme.primary;
-                        document.querySelector('#loginBtn').onmouseout = () => document.querySelector('#loginBtn').style.backgroundColor = gradeConfig.theme.accent;
-
-                        document.querySelector('#countdownDisplay').style.backgroundColor = gradeConfig.theme.primary;
-                        document.querySelector('#customMessageModalButton').style.backgroundColor = gradeConfig.theme.accent;
-                        document.querySelector('#customConfirmModalConfirmBtn').style.backgroundColor = gradeConfig.theme.accent;
-                        
-                        // Perbarui event listener untuk tombol kontrol zoom secara dinamis
-                        const zoomButtons = document.querySelectorAll('#zoomControls button');
-                        zoomButtons.forEach(btn => {
-                            btn.style.backgroundColor = gradeConfig.theme.accent;
-                            btn.onmouseover = (e) => e.target.style.backgroundColor = gradeConfig.theme.primary;
-                            btn.onmouseout = (e) => e.target.style.backgroundColor = gradeConfig.theme.accent;
-                        });
-
-                        document.querySelector('#fullscreenOverlay .overlay-content').style.background = `linear-gradient(135deg, ${gradeConfig.theme.primary} 0%, ${gradeConfig.theme.primary} 100%)`;
-                        document.querySelector('.custom-modal-content h4').style.color = gradeConfig.theme.primary;
-                        document.querySelector('#confirmModal .modal-content h4').style.color = gradeConfig.theme.primary;
-                        document.querySelector('#answerSelectionModal h4').style.color = gradeConfig.theme.primary;
-                        document.querySelector('#submitAnswersButton').style.backgroundColor = gradeConfig.theme.accent;
-                        document.querySelector('#submitAnswersButton').onmouseover = () => document.querySelector('#submitAnswersButton').style.backgroundColor = gradeConfig.theme.primary;
-                        document.querySelector('#submitAnswersButton').onmouseout = () => document.querySelector('#submitAnswersButton').style.backgroundColor = gradeConfig.theme.accent;
-                        
-                        const exitWarningButtons = document.querySelectorAll('.exit-warning-button');
-                        exitWarningButtons.forEach(btn => {
-                            btn.style.backgroundColor = gradeConfig.theme.accent;
-                            btn.onmouseover = () => btn.style.backgroundColor = gradeConfig.theme.primary;
-                            btn.onmouseout = () => btn.style.backgroundColor = gradeConfig.theme.accent;
-                        });
-                    }
-                    loginJudulUjian.textContent = `UJIAN KELAS ${currentSelectedGrade}`;
-
-                    const instances = await getFirebaseInstanceForClass(storedSelectedClass);
-                    if (!instances) {
-                        console.error("Restore State: Gagal menginisialisasi database untuk kelas yang disimpan. Membersihkan sesi.");
-                        sessionStorage.clear();
-                        return;
-                    }
-                    currentDb = instances.db;
-                    currentAuth = instances.auth; // Set currentAuth di sini
-                    
-                    const dbRefs = getDbRefs();
-                    if (!dbRefs) {
-                        console.error("Restore State: Gagal mendapatkan referensi database saat memulihkan jawaban.");
-                        sessionStorage.clear();
-                        return;
-                    }
-
-                    const tokenFirebaseKey = foundTokenGlobal.key;
-                    const studentId = padStudentId(selectedStudentData.id);
-                    const accessStatusRef = child(dbRefs.examAccessStatusRef, `${tokenFirebaseKey}/${studentId}`);
-                    const studentAnswersPath = child(dbRefs.studentAnswersRef, `${tokenFirebaseKey}/${studentId}`);
-                    
-                    let loadedAnswers = Array(totalQuestions).fill('');
-                    let storedAttemptsLeft = toleranceLimitGlobal;
-
-                    try {
-                        const answersSnapshot = await get(studentAnswersPath);
-                        if (answersSnapshot.exists()) {
-                            const savedAnswersData = answersSnapshot.val();
-                            loadedAnswers = savedAnswersData.answers ? savedAnswersData.answers.split(',') : Array(totalQuestions).fill('');
-                        } else {
-                            console.warn("Restore State: Tidak ada jawaban yang disimpan di Firebase pada jalur ini, dimulai dengan array kosong.");
-                        }
-
-                        const accessStatusSnapshot = await get(accessStatusRef);
-                        if (accessStatusSnapshot.exists()) {
-                            const accessData = accessStatusSnapshot.val();
-                            if (accessData.attemptsLeft !== undefined) {
-                                storedAttemptsLeft = accessData.attemptsLeft;
-                            }
-                            if (accessData.isLoggedIn === true) {
-                                message.style.color = "red";
-                                message.textContent = "Anda sudah Login di perangkat lain. Mohon hubungi admin untuk mereset akun Anda.";
-                                initialLoginScreen.style.display = 'none';
-                                welcomeScreen.style.display = 'none';
-                                loginContainer.style.display = 'flex';
-                                loginContainer.style.opacity = 1;
-                                examContainer.style.display = 'none';
-                                sessionStorage.clear();
-                                updateLoginButtonStatus();
-                                return;
-                            }
-                        }
-                    } catch (error) {
-                        console.error("Restore State: Gagal memuat jawaban atau status akses dari Firebase:", error);
-                    }
-                    sessionStorage.setItem('attemptsLeft', storedAttemptsLeft);
-                    currentAttemptsLeft = storedAttemptsLeft;
-
-                    const elapsedSeconds = Math.floor((Date.now() - storedExamStartTime) / 1000);
-                    const totalDurationSeconds = storedExamDurationMinutes * 60;
-                    remainingTime = totalDurationSeconds - elapsedSeconds;
-
-                    if (remainingTime > 0) {
-                        initialLoginScreen.style.display = 'none';
-                        welcomeScreen.style.display = 'none';
-                        loginContainer.style.opacity = 0;
-                        setTimeout(() => {
-                            loginContainer.style.display = 'none';
-                            examContainer.style.display = 'flex';
-                            setTimeout(() => {
-                                examContainer.style.opacity = 1;
-                                startExamProcess(storedExamIframeSrc, storedExamDurationMinutes, storedTotalQuestions, storedExamStartTime, loadedAnswers);
-                                examContentWrapper.classList.remove('sidebar-open');
-                                sidebarToggle.style.display = 'flex';
-                                closeSidebarButton.style.display = 'none';
-                            }, 10);
-                        }, 500);
-                    } else {
-                        sessionStorage.clear();
-                        initialLoginScreen.style.display = 'none';
-                        welcomeScreen.style.display = 'none';
-                        loginContainer.style.display = 'none';
-                        examContainer.style.display = 'flex';
-                        examContainer.style.opacity = 1;
-                        timerText.textContent = "00:00";
-                        countdownDisplay.style.display = 'block';
-                        submitAnswers(true);
-                    }
-                } else {
-                    console.warn("Restore State: Status ujian tidak lengkap atau tidak valid ditemukan di penyimpanan sesi. Membersihkan.");
-                    sessionStorage.clear();
-                }
+            if (remainingTime > 0) {
+                initialLoginScreen.style.display = 'none';
+                welcomeScreen.style.display = 'none';
+                loginContainer.style.display = 'none';
+                examContainer.style.display = 'flex';
+                examContainer.style.opacity = 1;
+                
+                await startExamProcess(examDurationMinutes, examStartTime, initialData);
+                return true;
+            } else {
+                sessionStorage.clear();
+                examContainer.style.display = 'flex';
+                examContainer.style.opacity = 1;
+                timerText.textContent = "00:00";
+                updateStudentIdentityPanel();
+                submitAnswers(true);
+                return true;
             }
         }
 
-        async function handleLanjutClick(fullTokenId, examDurationMinutes, numQuestions, initialAnswers = null) {
+        async function handleLanjutClick(foundToken) {
             if (!confirmCheckbox.checked) {
                 modalMessage.style.display = 'block';
                 modalMessage.textContent = "Anda harus mencentang cekbox untuk melanjutkan!";
                 return;
-            } else {
-                modalMessage.style.display = 'none';
             }
-
+            modalMessage.style.display = 'none';
             confirmModal.classList.remove('show');
             isAnyModalOpen = false;
 
-            if (!foundTokenGlobal || !selectedStudentData || !currentDb) {
-                console.error("Error: Data ujian, data siswa, atau database tidak ditemukan untuk pengalihan (handleLanjutClick).");
-                message.style.color = "red";
-                message.textContent = "Terjadi kesalahan saat menyiapkan tautan ujian. Pastikan koneksi internet Anda stabil dan coba lagi.";
-                updateLoginButtonStatus();
-                loginContainer.style.display = 'flex';
-                examContainer.style.display = 'none';
-                sessionStorage.clear();
+            if (!foundToken || !selectedStudentData || !currentDb) {
+                window.showCustomMessageModal("Error", "Terjadi kesalahan data. Mohon muat ulang halaman.", "error");
                 return;
             }
 
-            message.innerHTML = `Mencatat akses ujian... <span class="spinner"></span>`;
+            loadingSpinner.querySelector('p').textContent = 'Mengunduh bank soal...';
+            loadingSpinner.style.display = 'flex';
 
             const dbRefs = getDbRefs();
             if (!dbRefs) return;
 
-            const tokenFirebaseKey = foundTokenGlobal.key;
-            const studentId = padStudentId(selectedStudentData.id);
-            const accessStatusRef = child(dbRefs.examAccessStatusRef, `${tokenFirebaseKey}/${studentId}`);
-            const studentFirebaseKey = selectedStudentData.key;
-
             try {
-                let examAccessDataAfterTransaction = await runTransaction(accessStatusRef, (currentAccess) => {
-                    const nowAccess = Date.now();
-                    let updatedAccess = currentAccess;
+                const tahunAjaranPath = foundToken.tahunAjaran.replace(/\//g, '-').trim();
+                const ujianNamePath = foundToken.ujianName.replace(/\s+/g, '-').trim();
+                const kelasPath = `Kelas-${foundToken.kelas.trim()}`;
+                const subjectPath = foundToken.subject.replace(/\s+/g, '-').trim();
+                const examPath = `ujian/${tahunAjaranPath}/${ujianNamePath}/${kelasPath}/${subjectPath}`;
+                
+                const examSnapshot = await get(ref(currentDb, examPath));
+                
+                if (!examSnapshot.exists()) {
+                    throw new Error(`Bank soal tidak ditemukan.`);
+                }
+                const examData = examSnapshot.val();
+                if (!examData || !Array.isArray(examData.soal) || examData.soal.length <= 1) {
+                    throw new Error("Struktur bank soal tidak valid atau kosong.");
+                }
+                
+                currentExamQuestions = examData.soal.slice(1);
+                
+                loadingSpinner.querySelector('p').textContent = 'Mempersiapkan sesi ujian...';
 
-                    if (currentAccess === null || currentAccess.isLoggedIn === false) {
-                        updatedAccess = {
-                            accessCount: (currentAccess ? currentAccess.accessCount || 0 : 0) + 1,
-                            firstLoginTimestamp: currentAccess ? currentAccess.firstLoginTimestamp : nowAccess,
-                            lastAccessTimestamp: nowAccess,
+                const studentId = padStudentId(selectedStudentData.id);
+                const tokenFirebaseKey = foundToken.key;
+                const studentFirebaseKey = selectedStudentData.key;
+                const accessStatusRef = child(dbRefs.examAccessStatusRef, `${tokenFirebaseKey}/${studentId}`);
+                
+                const transactionResult = await runTransaction(accessStatusRef, (currentAccess) => {
+                    const now = Date.now();
+                    if (currentAccess === null || !currentAccess.isLoggedIn) {
+                        return {
+                            accessCount: (currentAccess?.accessCount || 0) + 1,
+                            firstLoginTimestamp: currentAccess?.firstLoginTimestamp || now,
+                            lastAccessTimestamp: now,
                             isLoggedIn: true,
-                            examStartTime: currentAccess ? currentAccess.examStartTime : nowAccess,
+                            examStartTime: currentAccess?.examStartTime || now,
                             studentId: studentId,
                             attemptsLeft: toleranceLimitGlobal
                         };
-                        if (updatedAccess.logoutTimestamp) {
-                            delete updatedAccess.logoutUserTimestamp;
-                        }
-                    } else {
-                        updatedAccess.accessCount = (currentAccess.accessCount || 0) + 1;
-                        updatedAccess.lastAccessTimestamp = nowAccess;
-                        updatedAccess.isLoggedIn = true;
-                        if (foundTokenGlobal.isForceActive && (!currentAccess.examStartTime || isNaN(currentAccess.examStartTime) || currentAccess.examStartTime <= 0)) {
-                            updatedAccess.examStartTime = nowAccess;
-                        }
-                        updatedAccess.studentId = currentAccess.studentId || studentId;
-                        updatedAccess.attemptsLeft = currentAccess.attemptsLeft !== undefined ? currentAccess.attemptsLeft : toleranceLimitGlobal;
                     }
-                    return updatedAccess;
+                    return;
                 });
 
-                if (examAccessDataAfterTransaction.committed) {
+                if (transactionResult.committed) {
                     if (studentFirebaseKey) {
-                        const studentIsLoggedInRef = child(dbRefs.studentsRef, `${studentFirebaseKey}/isLoggedIn`);
-                        await set(studentIsLoggedInRef, true);
-                    } else {
-                        console.warn(`Tidak dapat menemukan kunci Firebase untuk siswa ${selectedStudentData.id} untuk memperbarui status isLoggedIn di node siswa.`);
-                    }
-
-                    globalExamUrl = foundTokenGlobal.googleDriveUrl;
-
-                    if (globalExamUrl.includes('drive.google.com/file/d/')) {
-                        globalExamUrl = globalExamUrl.replace('/view', '/preview');
-                        
-                        if (!globalExamUrl.includes('/preview')) {
-                            const parts = globalExamUrl.split('/file/d/');
-                            if (parts.length > 1) {
-                                const fileIdAndRest = parts[1].split('/');
-                                const fileId = fileIdAndRest[0];
-                                globalExamUrl = `${parts[0]}/file/d/${fileId}/preview`;
-                                if (fileIdAndRest.length > 1) {
-                                    globalExamUrl += fileIdAndRest.slice(1).join('/');
-                                }
-                            }
-                        }
-
-                        const hasQueryParams = globalExamUrl.includes('?');
-                        if (!globalExamUrl.includes('chrome=false')) {
-                            globalExamUrl += hasQueryParams ? '&chrome=false' : '?chrome=false';
-                        }
-                    }
-
-                    globalExamDurationMinutes = examDurationMinutes;
-                    globalNumQuestions = numQuestions;
-                    globalExamStartTime = Number(examAccessDataAfterTransaction.snapshot.val().examStartTime);
-                    globalInitialAnswers = initialAnswers;
-
-                    if (isNaN(globalExamStartTime) || globalExamStartTime <= 0) {
-                        console.error("Kesalahan Kritis: globalExamStartTime tidak valid setelah transaksi di handleLanjutClick. Menggunakan Date.now() sebagai fallback.");
-                        globalExamStartTime = Date.now();
+                        await set(child(dbRefs.studentsRef, `${studentFirebaseKey}/isLoggedIn`), true);
                     }
                     
+                    const examStartTime = Number(transactionResult.snapshot.val().examStartTime);
                     currentAttemptsLeft = toleranceLimitGlobal;
                     sessionStorage.setItem('attemptsLeft', currentAttemptsLeft);
+                    
+                    const savedAnswersSnapshot = await get(child(dbRefs.studentAnswersRef, `${tokenFirebaseKey}/${studentId}`));
+                    const initialData = {};
+                    if (savedAnswersSnapshot.exists()) {
+                        const savedData = savedAnswersSnapshot.val();
+                        initialData.answers = JSON.parse(savedData.answers || 'null');
+                        initialData.ragu = JSON.parse(savedData.ragu || 'null');
+                        if (savedData.shuffledQuestionIndices) initialData.shuffledQuestionIndices = JSON.parse(savedData.shuffledQuestionIndices);
+                        if (savedData.shuffledOptionOrders) initialData.shuffledOptionOrders = JSON.parse(savedData.shuffledOptionOrders);
+                    }
+                    
+                    await startExamProcess(foundToken.durationMinutes, examStartTime, initialData);
+                    loadingSpinner.style.display = 'none';
 
-                    message.textContent = "";
-                    showOverlay(globalInitialAnswers);
                 } else {
-                    console.warn("Transaksi untuk status akses ujian dibatalkan di handleLanjutClick.");
-                    message.style.color = "orange";
-                    message.textContent = "Gagal merekam akses ujian. Silakan coba lagi.";
-                    updateLoginButtonStatus();
-                    loginContainer.style.display = 'flex';
-                    examContainer.style.display = 'none';
-                    sessionStorage.clear();
+                    throw new Error("Gagal memulai sesi. Akun mungkin sedang digunakan di perangkat lain.");
                 }
-
             } catch (err) {
-                console.error("Error di handleLanjutClick (selama transaksi akses ujian):", err);
-                message.style.color = "red";
-                message.textContent = "Terjadi kesalahan saat merekam akses ujian. Silakan coba lagi atau hubungi administrator.";
-                updateLoginButtonStatus();
-                loginContainer.style.display = 'flex';
-                examContainer.style.display = 'none';
-                sessionStorage.clear();
+                console.error("Error di handleLanjutClick:", err);
+                loadingSpinner.style.display = 'none';
+                window.showCustomMessageModal("Error", err.message, "error");
+                loginBtn.disabled = false;
             }
         }
 
-        function toggleSidebar() {
-            const isSidebarOpen = examContentWrapper.classList.contains('sidebar-open');
+        function displayQuestion(shuffledIndex) {
+            if (shuffledIndex < 0 || shuffledIndex >= currentExamQuestions.length) return;
+            currentQuestionIndex = shuffledIndex;
+            sessionStorage.setItem('lastQuestionIndex', shuffledIndex); // Simpan posisi acak
+
+            const originalIndex = shuffledQuestionIndices[shuffledIndex];
+            const question = currentExamQuestions[originalIndex];
             
-            if (!isSidebarOpen) {
-                examContentWrapper.classList.add('sidebar-open');
-                sidebarToggle.style.display = 'none';
-                closeSidebarButton.style.display = 'flex';
-            } else {
-                examContentWrapper.classList.remove('sidebar-open');
-                sidebarToggle.style.display = 'flex';
-                closeSidebarButton.style.display = 'none';
-
-                submissionWarningMessage.textContent = '';
-            }
-            resetIframePan();
-        }
-
-        function closeSidebarOnClickOutside(event) {
-            if (examContentWrapper.classList.contains('sidebar-open')) {
-                const isAnswerSelectionModalVisible = answerSelectionModal.classList.contains('show');
-                if (!answerSidebar.contains(event.target) &&
-                    event.target !== sidebarToggle &&
-                    !sidebarToggle.contains(event.target) &&
-                    event.target !== closeSidebarButton &&
-                    !closeSidebarButton.contains(event.target) &&
-                    (!isAnyModalOpen || !answerSelectionModal.contains(event.target))) {
-                    toggleSidebar();
-                }
-            }
-        }
-
-        function renderAnswerBoxes() {
-            const effectiveTotalQuestions = (totalQuestions > 0) ? totalQuestions : studentAnswers.length;
+            questionHeaderNumber.innerHTML = `Soal No. <span class="question-number-box">${shuffledIndex + 1}</span>`;
+            questionContent.innerHTML = question.pertanyaan || "";
             
-            answerListContainer.innerHTML = '';
-            for (let i = 0; i < effectiveTotalQuestions; i++) {
-                const questionNumber = i + 1;
-                const answer = studentAnswers[i];
-                const answerBox = document.createElement('div');
-                answerBox.classList.add('answer-box');
-                answerBox.dataset.questionIndex = i;
-                answerBox.innerHTML = `
-                    <span class="question-number">${questionNumber}</span>
-                    <span class="selected-answer">${answer || '...'}</span>
-                `;
-                if (answer) {
-                    answerBox.classList.add('answered');
-                    answerBox.classList.remove('unanswered');
-                } else {
-                    answerBox.classList.add('unanswered');
-                    answerBox.classList.remove('answered');
-                }
-                answerBox.addEventListener('click', () => openAnswerSelectionModal(i));
-                answerListContainer.appendChild(answerBox);
-            }
-        }
+            cbtAnswerOptions.innerHTML = '';
+            const optionOrder = shuffledOptionOrders[originalIndex];
 
-        function openAnswerSelectionModal(index) {
-            currentQuestionIndexForModal = index;
-            currentQuestionNumberSpan.textContent = index + 1;
+            optionOrder.forEach(opt => {
+                const optionKey = `pilihan${opt}`;
+                if (question[optionKey]) {
+                    const label = document.createElement('label');
+                    label.className = 'cbt-option-label';
+                    
+                    const radio = document.createElement('input');
+                    radio.type = 'radio';
+                    radio.name = `question_${shuffledIndex}`; // Gunakan shuffledIndex untuk grup radio
+                    radio.value = opt;
+                    radio.onchange = () => selectAnswer(originalIndex, opt);
 
-            const currentAnswer = studentAnswers[index];
-            answerOptionsContainer.querySelectorAll('button').forEach(button => {
-                if (button.dataset.answer === currentAnswer) {
-                    button.classList.add('selected');
-                } else {
-                    button.classList.remove('selected');
+                    if (studentAnswers[originalIndex] === opt) {
+                        radio.checked = true;
+                        label.classList.add('selected');
+                    }
+
+                    const textDiv = document.createElement('div');
+                    textDiv.className = 'option-text';
+                    textDiv.innerHTML = question[optionKey];
+                    
+                    label.appendChild(radio);
+                    label.appendChild(textDiv);
+                    cbtAnswerOptions.appendChild(label);
                 }
             });
 
-            answerSelectionModal.classList.add('show');
-            isAnyModalOpen = true;
-        }
-
-        function closeAnswerSelectionModal() {
-            answerSelectionModal.classList.remove('show');
-            currentQuestionIndexForModal = -1;
-            isAnyModalOpen = false;
-        }
-
-        function selectAnswer(answer) {
-            if (currentQuestionIndexForModal !== -1) {
-                studentAnswers[currentQuestionIndexForModal] = answer;
-                renderAnswerBoxes();
-                sessionStorage.setItem('studentAnswers', studentAnswers.join(','));
-                saveStudentAnswersToFirebase();
-                closeAnswerSelectionModal();
+            raguRaguCheckbox.checked = raguRaguStatus[originalIndex];
+            
+            if (shuffledIndex === currentExamQuestions.length - 1) {
+                nextQuestionBtn.textContent = 'Kirim Jawaban';
+                nextQuestionBtn.classList.add('submit-mode');
+            } else {
+                nextQuestionBtn.textContent = 'Selanjutnya';
+                nextQuestionBtn.disabled = false;
+                nextQuestionBtn.classList.remove('submit-mode');
             }
+            prevQuestionBtn.disabled = shuffledIndex === 0;
+            
+            renderQuestionGrid();
+            updateSubmissionButtonState();
+        }
+        
+        function selectAnswer(originalIndex, choice) {
+            studentAnswers[originalIndex] = choice;
+            sessionStorage.setItem('studentAnswers', JSON.stringify(studentAnswers));
+            saveStudentAnswersToFirebase();
+            
+            // Perbarui tampilan radio button yang dipilih
+            const shuffledIndex = shuffledQuestionIndices.indexOf(originalIndex);
+            if (shuffledIndex === currentQuestionIndex) {
+                document.querySelectorAll('.cbt-option-label').forEach(label => label.classList.remove('selected'));
+                const selectedRadio = document.querySelector(`input[name="question_${shuffledIndex}"][value="${choice}"]`);
+                if (selectedRadio && selectedRadio.parentElement) {
+                    selectedRadio.parentElement.classList.add('selected');
+                }
+            }
+            
+            renderQuestionGrid();
+            updateSubmissionButtonState();
         }
 
-        function clearAnswer() {
-            if (currentQuestionIndexForModal !== -1) {
-                studentAnswers[currentQuestionIndexForModal] = '';
-                renderAnswerBoxes();
-                sessionStorage.setItem('studentAnswers', studentAnswers.join(','));
-                saveStudentAnswersToFirebase();
-                closeAnswerSelectionModal();
+        function toggleRaguRagu() {
+            const originalIndex = shuffledQuestionIndices[currentQuestionIndex];
+            raguRaguStatus[originalIndex] = !raguRaguStatus[originalIndex];
+            sessionStorage.setItem('raguRaguStatus', JSON.stringify(raguRaguStatus));
+            saveStudentAnswersToFirebase();
+            renderQuestionGrid();
+        }
+
+        function renderQuestionGrid() {
+            questionGridContainer.innerHTML = '';
+            for (let i = 0; i < shuffledQuestionIndices.length; i++) {
+                const originalIndex = shuffledQuestionIndices[i];
+                const box = document.createElement('div');
+                box.className = 'question-nav-box';
+                box.textContent = i + 1; // Tampilkan nomor urut acak
+                if (studentAnswers[originalIndex]) {
+                    box.classList.add('answered');
+                }
+                if (raguRaguStatus[originalIndex]) {
+                    box.classList.add('ragu');
+                }
+                if (i === currentQuestionIndex) {
+                    box.classList.add('current');
+                }
+                box.onclick = () => displayQuestion(i);
+                questionGridContainer.appendChild(box);
             }
         }
 
         async function saveStudentAnswersToFirebase() {
-            if (!foundTokenGlobal || !selectedStudentData || !currentDb) {
-                console.warn("Data token, data siswa, atau database tidak lengkap. Tidak dapat menyimpan jawaban ke Firebase.");
-                return;
-            }
-
+            if (!foundTokenGlobal || !selectedStudentData || !currentDb) return;
             const dbRefs = getDbRefs();
             if (!dbRefs) return;
 
-            const tokenFirebaseKey = foundTokenGlobal.key;
-            const studentId = padStudentId(selectedStudentData.id);
-            const studentAnswersPath = child(dbRefs.studentAnswersRef, `${tokenFirebaseKey}/${studentId}`);
-
+            const studentAnswersPath = child(dbRefs.studentAnswersRef, `${foundTokenGlobal.key}/${padStudentId(selectedStudentData.id)}`);
             try {
-                await set(studentAnswersPath, {
-                    answers: studentAnswers.join(','),
+                const payload = {
+                    answers: JSON.stringify(studentAnswers),
+                    ragu: JSON.stringify(raguRaguStatus),
+                    shuffledQuestionIndices: JSON.stringify(shuffledQuestionIndices),
+                    shuffledOptionOrders: JSON.stringify(shuffledOptionOrders),
                     timestamp: Date.now(),
                     studentName: selectedStudentData.name,
                     studentClass: selectedStudentData.class,
                     token: foundTokenGlobal.token,
                     subject: foundTokenGlobal.subject,
-                    studentId: studentId
-                });
+                    studentId: padStudentId(selectedStudentData.id)
+                };
+                await set(studentAnswersPath, payload);
             } catch (error) {
                 console.error("Gagal menyimpan jawaban siswa ke Firebase:", error);
             }
@@ -3447,68 +2837,43 @@
 
         async function submitAnswers(isAutoSubmit = false) {
             submissionWarningMessage.textContent = '';
-
             if (!foundTokenGlobal || !selectedStudentData || !currentDb) {
-                submissionWarningMessage.textContent = 'Error: Data ujian, data siswa, atau database tidak ditemukan. Tidak dapat mengirimkan jawaban.';
+                submissionWarningMessage.textContent = 'Error: Data tidak lengkap.';
                 return;
             }
 
-            const dbRefs = getDbRefs();
-            if (!dbRefs) return;
-
             if (!isAutoSubmit) {
-                const unansweredQuestions = studentAnswers.filter(answer => answer === '').length;
-                if (unansweredQuestions > 0) {
-                    submissionWarningMessage.textContent = `Ada ${unansweredQuestions} jawaban yang belum terisi! Harap periksa kembali.`;
-                    return;
-                }
-            }
-
-            if (!isAutoSubmit) {
-                const confirmed = await window.showCustomConfirmModal("Konfirmasi Pengiriman", "Apakah Anda yakin ingin mengirimkan semua jawaban? Setelah dikirim, Anda tidak dapat mengubahnya lagi.");
-                if (!confirmed) {
-                    return;
+                const unansweredCount = studentAnswers.filter(a => a === null).length;
+                if (unansweredCount > 0) {
+                    const confirmed = await window.showCustomConfirmModal("Konfirmasi", `Masih ada ${unansweredCount} soal yang belum dijawab. Anda yakin ingin mengirim?`);
+                    if (!confirmed) return;
+                } else {
+                     const confirmed = await window.showCustomConfirmModal("Konfirmasi", "Anda yakin ingin mengirim semua jawaban?");
+                    if (!confirmed) return;
                 }
             }
 
             submitAnswersButton.disabled = true;
-            submitAnswersButton.textContent = 'Mengirim Jawaban...';
-            submitAnswersButton.style.backgroundColor = '#cccccc';
+            submitAnswersButton.textContent = 'Mengirim...';
+            nextQuestionBtn.disabled = true;
 
-            const tokenFirebaseKey = foundTokenGlobal.key;
-            const studentId = padStudentId(selectedStudentData.id);
-            const studentFirebaseKey = selectedStudentData.key;
-
+            const dbRefs = getDbRefs();
+            if (!dbRefs) return;
+            
             try {
                 await saveStudentAnswersToFirebase();
-
-                const submittedExamPath = child(dbRefs.submittedExamsRef, `${tokenFirebaseKey}/${studentId}`);
-                await set(submittedExamPath, {
-                    isSubmitted: true,
-                    timestamp: Date.now(),
-                    studentId: studentId
-                });
-
-                const accessStatusRef = child(dbRefs.examAccessStatusRef, `${tokenFirebaseKey}/${studentId}`);
-                await update(accessStatusRef, {
-                    isLoggedIn: false,
-                    studentId: studentId,
-                    attemptsLeft: toleranceLimitGlobal
-                });
-
-                if (studentFirebaseKey) {
-                    const studentIsLoggedInRef = child(dbRefs.studentsRef, `${studentFirebaseKey}/isLoggedIn`);
-                    await set(studentIsLoggedInRef, false);
-                } else {
-                    console.warn(`Tidak dapat menemukan kunci Firebase untuk siswa ${selectedStudentData.id} untuk memperbarui status isLoggedIn di node siswa.`);
-                }
+                const studentId = padStudentId(selectedStudentData.id);
+                const tokenKey = foundTokenGlobal.key;
+                
+                await set(child(dbRefs.submittedExamsRef, `${tokenKey}/${studentId}`), { isSubmitted: true, timestamp: Date.now(), studentId });
+                await update(child(dbRefs.examAccessStatusRef, `${tokenKey}/${studentId}`), { isLoggedIn: false, studentId });
+                await set(child(dbRefs.studentsRef, `${selectedStudentData.key}/isLoggedIn`), false);
 
                 showSubmissionConfirmationOverlay(isAutoSubmit);
-
             } catch (error) {
                 console.error("Gagal mengirimkan jawaban:", error);
-                submissionWarningMessage.textContent = 'Gagal mengirimkan jawaban. Silakan coba lagi atau hubungi administrator.';
-            } finally {
+                submissionWarningMessage.textContent = 'Gagal mengirim. Coba lagi.';
+                submitAnswersButton.disabled = false;
                 submitAnswersButton.textContent = 'KIRIM JAWABAN';
             }
         }
@@ -3516,27 +2881,6 @@
         window.showCustomMessageModal = function (title, messageText, type = 'info') {
             customMessageModalTitle.textContent = title;
             customMessageModalText.textContent = messageText;
-
-            customMessageModalTitle.style.color = '';
-            customMessageModalButton.style.backgroundColor = '';
-            switch (type) {
-                case 'success':
-                    customMessageModalTitle.style.color = '#4CAF50';
-                    customMessageModalButton.style.backgroundColor = '#4CAF50';
-                    break;
-                case 'error':
-                    customMessageModalTitle.style.color = '#dc3545';
-                    customMessageModalButton.style.backgroundColor = '#dc3545';
-                    break;
-                case 'warning':
-                    customMessageModalTitle.style.color = '#ffc107';
-                    customMessageModalButton.style.backgroundColor = '#ffc107';
-                    break;
-                default:
-                    customMessageModalTitle.style.color = document.documentElement.style.getPropertyValue('--primary-color');
-                    customMessageModalButton.style.backgroundColor = document.documentElement.style.getPropertyValue('--accent-color');
-            }
-
             customMessageModal.classList.add('show');
             isAnyModalOpen = true;
         }
@@ -3550,118 +2894,23 @@
             return new Promise((resolve) => {
                 customConfirmModalTitle.textContent = title;
                 customConfirmModalText.textContent = messageText;
-
                 customConfirmModal.classList.add('show');
                 isAnyModalOpen = true;
 
-                const handleConfirm = () => {
+                const onConfirm = () => { cleanup(); resolve(true); };
+                const onCancel = () => { cleanup(); resolve(false); };
+                const cleanup = () => {
                     customConfirmModal.classList.remove('show');
                     isAnyModalOpen = false;
-                    customConfirmModalConfirmBtn.removeEventListener('click', handleConfirm);
-                    customConfirmModalCancelBtn.removeEventListener('click', handleCancel);
-                    resolve(true);
+                    customConfirmModalConfirmBtn.removeEventListener('click', onConfirm);
+                    customConfirmModalCancelBtn.removeEventListener('click', onCancel);
                 };
 
-                const handleCancel = () => {
-                    customConfirmModal.classList.remove('show');
-                    isAnyModalOpen = false;
-                    customConfirmModalConfirmBtn.removeEventListener('click', handleConfirm);
-                    customConfirmModalCancelBtn.removeEventListener('click', handleCancel);
-                    resolve(false);
-                };
-
-                customConfirmModalConfirmBtn.addEventListener('click', handleConfirm);
-                customConfirmModalCancelBtn.addEventListener('click', handleCancel);
+                customConfirmModalConfirmBtn.addEventListener('click', onConfirm);
+                customConfirmModalCancelBtn.addEventListener('click', onCancel);
             });
         }
-
-        function getTranslateValues(element) {
-            const style = window.getComputedStyle(element);
-            const matrix = style.transform;
-
-            if (matrix === 'none') {
-                return { x: 0, y: 0 };
-            }
-
-            const matrixValues = matrix.match(/matrix.*\((.+)\)/)[1].split(', ');
-            return {
-                x: parseFloat(matrixValues[4]),
-                y: parseFloat(matrixValues[5])
-            };
-        }
-
-        function applyIframeTransform() {
-            examIframe.style.transform = `translate(${currentTranslateX}px, ${currentTranslateY}px) scale(${currentZoom})`;
-        }
-
-        function resetIframePan() {
-            currentTranslateX = 0;
-            currentTranslateY = 0;
-            applyIframeTransform();
-        }
-
-        function updateZoomButtonStates() {
-            zoomInBtn.disabled = currentZoom >= MAX_ZOOM;
-            zoomOutBtn.disabled = currentZoom <= MIN_ZOOM;
-            
-            const isZoomedIn = currentZoom > MIN_ZOOM;
-            panLeftBtn.disabled = !isZoomedIn;
-            panRightBtn.disabled = !isZoomedIn;
-
-            refreshIframeBtn.disabled = false;
-        }
-
-        function resetAutoHideTimer() {
-            clearTimeout(autoHideTimer);
-            autoHideTimer = setTimeout(() => {
-                if (zoomControls.classList.contains('show-controls')) {
-                    zoomControls.classList.remove('show-controls');
-                }
-            }, 3000);
-        }
-
-        function toggleControlsPanel() {
-            zoomControls.classList.toggle('show-controls');
-            if (zoomControls.classList.contains('show-controls')) {
-                resetAutoHideTimer();
-            } else {
-                clearTimeout(autoHideTimer);
-            }
-        }
         
-        function startAutoPan() {
-            if (panIntervalId) clearInterval(panIntervalId);
-            panIntervalId = setInterval(() => {
-                if (currentZoom > MIN_ZOOM) {
-                    let newTranslateX = currentTranslateX + (panDirection * PAN_STEP);
-                    
-                    const unscaledIframeWidth = examIframe.offsetWidth;
-                    const scaledIframeWidth = unscaledIframeWidth * currentZoom;
-                    const containerWidth = examContentWrapper.offsetWidth;
-
-                    const maxNegativeX = -(Math.max(0, scaledIframeWidth - containerWidth));
-                    newTranslateX = Math.max(maxNegativeX, Math.min(0, newTranslateX));
-
-                    if (newTranslateX === currentTranslateX) {
-                        stopAutoPan();
-                        return;
-                    }
-
-                    currentTranslateX = newTranslateX;
-                    applyIframeTransform();
-                } else {
-                    stopAutoPan();
-                }
-            }, PAN_INTERVAL);
-        }
-
-        function stopAutoPan() {
-            if (panIntervalId) {
-                clearInterval(panIntervalId);
-                panIntervalId = null;
-            }
-        }
-
         async function loadAndRenderWelcomeButtons() {
             welcomeButtonsContainer.innerHTML = '';
             welcomeMessageElement.textContent = 'Memuat pilihan ujian...';
@@ -3744,8 +2993,8 @@
         }
 
         function showSusulanListModal() {
-            const susulanModalList = document.getElementById('susulanModalList');
-            susulanModalList.innerHTML = '';
+            const susulanModalListEl = document.getElementById('susulanModalList');
+            susulanModalListEl.innerHTML = '';
 
             if (publicSettings && publicSettings.susulan && publicSettings.susulan.list) {
                 const susulanItems = Object.values(publicSettings.susulan.list);
@@ -3766,12 +3015,12 @@
                             window.showCustomMessageModal("URL Tidak Ditemukan", `URL untuk ${item.name} tidak ditemukan.`, 'error');
                         }
                     });
-                    susulanModalList.appendChild(listItem);
+                    susulanModalListEl.appendChild(listItem);
                 });
             } else {
                 const listItem = document.createElement('li');
                 listItem.textContent = 'Tidak ada ujian susulan yang tersedia saat ini.';
-                susulanModalList.appendChild(listItem);
+                susulanModalListEl.appendChild(listItem);
             }
 
             susulanListModal.classList.add('show');
@@ -3785,61 +3034,19 @@
 
         async function selectGrade(grade) {
             currentSelectedGrade = grade;
-            welcomeScreen.style.opacity = 0;
-            setTimeout(() => {
-                welcomeScreen.style.display = 'none';
-                loginContainer.style.display = 'block';
-                loginContainer.classList.add('show');
-                
-                if (isLocationEnabled) {
-                    mainLoginControls.style.display = 'none';
-                    getLocation();
-                } else {
-                    locationKeyContainer.style.display = 'none';
-                    mainLoginControls.style.display = 'block';
-                    isLocationValid = true; 
-                }
-
-                document.body.style.overflow = '';
-            }, 500);
+            welcomeScreen.style.display = 'none';
+            loginContainer.classList.add('show');
+            if (isLocationEnabled) {
+                mainLoginControls.style.display = 'none';
+                getLocation();
+            } else {
+                showMainLoginForm();
+            }
 
             const gradeConfig = allFirebaseConfigs[`kelas${grade}-group1`];
             if (gradeConfig && gradeConfig.theme) {
-                document.documentElement.style.setProperty('--primary-color', gradeConfig.theme.primary);
-                document.documentElement.style.setProperty('--accent-color', gradeConfig.theme.accent);
-                document.documentElement.style.setProperty('--warning-color', gradeConfig.theme.warning);
-
-                document.querySelector('.header-box').style.backgroundColor = gradeConfig.theme.primary;
-                document.querySelector('.judul-ujian').style.color = gradeConfig.theme.warning;
-                document.querySelector('#loginBtn').style.backgroundColor = gradeConfig.theme.accent;
-                document.querySelector('#loginBtn').onmouseover = () => document.querySelector('#loginBtn').style.backgroundColor = gradeConfig.theme.primary;
-                document.querySelector('#loginBtn').onmouseout = () => document.querySelector('#loginBtn').style.backgroundColor = gradeConfig.theme.accent;
-
-                document.querySelector('#countdownDisplay').style.backgroundColor = gradeConfig.theme.primary;
-                document.querySelector('#customMessageModalButton').style.backgroundColor = gradeConfig.theme.accent;
-                document.querySelector('#customConfirmModalConfirmBtn').style.backgroundColor = gradeConfig.theme.accent;
-                
-                const zoomButtons = document.querySelectorAll('#zoomControls button');
-                zoomButtons.forEach(btn => {
-                    btn.style.backgroundColor = gradeConfig.theme.accent;
-                    btn.onmouseover = (e) => e.target.style.backgroundColor = gradeConfig.theme.primary;
-                    btn.onmouseout = (e) => e.target.style.backgroundColor = gradeConfig.theme.accent;
-                });
-
-                document.querySelector('#fullscreenOverlay .overlay-content').style.background = `linear-gradient(135deg, ${gradeConfig.theme.primary} 0%, ${gradeConfig.theme.primary} 100%)`;
-                
-                document.querySelector('.custom-modal-content h4').style.color = gradeConfig.theme.primary;
-                document.querySelector('#confirmModal .modal-content h4').style.color = gradeConfig.theme.primary;
-                document.querySelector('#answerSelectionModal h4').style.color = gradeConfig.theme.primary;
-                document.querySelector('#submitAnswersButton').style.backgroundColor = gradeConfig.theme.accent;
-                document.querySelector('#submitAnswersButton').onmouseover = () => document.querySelector('#submitAnswersButton').style.backgroundColor = gradeConfig.theme.primary;
-                document.querySelector('#submitAnswersButton').onmouseout = () => document.querySelector('#submitAnswersButton').style.backgroundColor = gradeConfig.theme.accent;
-
-                const exitWarningButtons = document.querySelectorAll('.exit-warning-button');
-                exitWarningButtons.forEach(btn => {
-                    btn.style.backgroundColor = gradeConfig.theme.accent;
-                    btn.onmouseover = () => btn.style.backgroundColor = gradeConfig.theme.primary;
-                    btn.onmouseout = () => btn.style.backgroundColor = gradeConfig.theme.accent;
+                Object.keys(gradeConfig.theme).forEach(key => {
+                    document.documentElement.style.setProperty(`--${key}-color`, gradeConfig.theme[key]);
                 });
             }
 
@@ -3851,158 +3058,118 @@
         }
         
         function validateLocationKey() {
-            const locationKeyMessage = document.getElementById('locationKeyMessage');
             const enteredKey = document.getElementById('locationKeyInput').value;
-
             if (enteredKey && enteredKey === locationAccessKey) {
-                locationKeyMessage.textContent = '';
                 showMainLoginForm();
             } else {
-                locationKeyMessage.textContent = "Kunci Akses Lokasi salah.";
+                document.getElementById('locationKeyMessage').textContent = "Kunci Akses Lokasi salah.";
+            }
+        }
+        
+        function startSidebarCollapseTimer() {
+            clearTimeout(sidebarCollapseTimer);
+            if (window.innerWidth < 992 && !document.querySelector('.sidebar-content-wrapper').classList.contains('collapsed')) {
+                sidebarCollapseTimer = setTimeout(() => {
+                    const wrapper = document.querySelector('.sidebar-content-wrapper');
+                    const toggleBtn = document.getElementById('mobileSidebarToggle');
+                    wrapper.classList.add('collapsed');
+                    toggleBtn.classList.remove('up');
+                }, 60000);
+            }
+        }
+        
+        // [BARU] Fungsi untuk menampilkan identitas siswa di footer
+        function updateStudentIdentityPanel() {
+            const identityDisplay = document.getElementById('studentIdentityDisplay');
+            if (identityDisplay && selectedStudentData) {
+                let displayName = selectedStudentData.name;
+                // Potong nama jika terlalu panjang untuk tampilan
+                if (displayName.length > 25) { 
+                    displayName = displayName.substring(0, 22) + '...';
+                }
+                identityDisplay.textContent = `${displayName} | ${selectedStudentData.class}`;
+                // Tampilkan nama lengkap saat hover
+                identityDisplay.title = `${selectedStudentData.name} | ${selectedStudentData.class}`;
             }
         }
 
         async function initializeAppFlow() {
-            accessBlockedOverlay.style.display = 'none';
-            welcomeScreen.style.display = 'none';
-            loginContainer.style.display = 'none';
-            examContainer.style.display = 'none';
-            initialLoginScreen.style.display = 'none';
             loadingSpinner.style.display = 'flex';
-            loadingSpinner.style.opacity = 1;
-
+            
             async function fetchGlobalSettings() {
                 try {
                     const refs = getSetupDbRefs();
-                    const settingsPromises = [
-                        get(refs.settingsRef),
-                        get(refs.lockSettingsRef),
-                        get(refs.minDurationSettingsRef),
-                        get(refs.publicSettingsRef)
-                    ];
-                    const [locSnap, lockSnap, minDurSnap, pubSetSnap] = await Promise.all(settingsPromises);
-
+                    const [locSnap, lockSnap, minDurSnap, pubSetSnap] = await Promise.all([
+                        get(refs.settingsRef), get(refs.lockSettingsRef), get(refs.minDurationSettingsRef), get(refs.publicSettingsRef)
+                    ]);
                     if (locSnap.exists()) {
-                        const settings = locSnap.val();
-                        isLocationEnabled = settings.isLocationEnabled !== undefined ? settings.isLocationEnabled : true;
-                        firebaseAllowedRadiusKm = settings.allowedRadiusKm !== undefined ? settings.allowedRadiusKm : 0.075;
-                        locationAccessKey = settings.currentKey || "";
+                        const s = locSnap.val();
+                        isLocationEnabled = s.isLocationEnabled ?? true;
+                        firebaseAllowedRadiusKm = s.allowedRadiusKm ?? 0.075;
+                        locationAccessKey = s.currentKey || "";
                     }
                     if (lockSnap.exists()) {
-                        const settings = lockSnap.val();
-                        isLockEnabledGlobal = settings.isLockEnabled !== undefined ? settings.isLockEnabled : false;
-                        lockKeyGlobal = settings.lockKey !== undefined ? settings.lockKey : "";
-                        accessUnlockKey = lockKeyGlobal; 
-                        toleranceLimitGlobal = settings.toleranceLimit !== undefined ? settings.toleranceLimit : 3;
+                        const s = lockSnap.val();
+                        isLockEnabledGlobal = s.isLockEnabled ?? false;
+                        lockKeyGlobal = s.lockKey || "";
+                        accessUnlockKey = lockKeyGlobal;
+                        toleranceLimitGlobal = s.toleranceLimit ?? 3;
                     }
-                     if (minDurSnap.exists()) {
-                        const settings = minDurSnap.val();
-                        minDurationSettingsGlobal.isMinDurationEnabled = settings.isMinDurationEnabled !== undefined ? settings.isMinDurationEnabled : false;
-                        minDurationSettingsGlobal.minDurationSeconds = settings.minDurationSeconds !== undefined ? settings.minDurationSeconds : 1800;
+                    if (minDurSnap.exists()) {
+                        const s = minDurSnap.val();
+                        minDurationSettingsGlobal.isMinDurationEnabled = s.isMinDurationEnabled ?? false;
+                        minDurationSettingsGlobal.minDurationSeconds = s.minDurationSeconds ?? 1800;
                     }
-                    if (pubSetSnap.exists()) {
-                        publicSettings = pubSetSnap.val();
-                    }
-
+                    if (pubSetSnap.exists()) publicSettings = pubSetSnap.val();
                 } catch (error) {
-                    console.error("Gagal mengambil pengaturan global dari Firebase SETUP:", error);
+                    console.error("Gagal mengambil pengaturan global:", error);
                 }
             }
-            
-            async function showWelcomeScreenContent() {
-                await loadAndRenderWelcomeButtons();
-                loadingSpinner.style.opacity = 0;
-                setTimeout(() => {
-                    loadingSpinner.style.display = 'none';
-                    welcomeScreen.style.display = 'flex';
-                    welcomeScreen.style.opacity = 1;
-                    document.body.style.overflow = '';
-                }, 300);
-            }
 
-            async function showAccessBlockedScreen() {
-                loadingSpinner.style.opacity = 0;
-                setTimeout(() => {
-                    loadingSpinner.style.display = 'none';
-                    accessBlockedOverlay.style.display = 'flex';
-                    setTimeout(() => accessBlockedOverlay.style.opacity = 1, 10);
-                }, 300);
+            try {
+                await signInWithEmailAndPassword(setupAuth, "speropa@gmail.com", "Pajangan201184*");
+                globalUserEmail = "speropa@gmail.com";
+                globalUserPassword = "Pajangan201184*";
+                await fetchGlobalSettings();
 
-                const unlockHandler = async () => {
-                    const enteredKey = unlockKeyInput.value;
-                    if (enteredKey && enteredKey === accessUnlockKey) {
-                        accessBlockedOverlay.style.opacity = 0;
-                        setTimeout(async () => {
+                if (isAllowedEnvironment()) {
+                    const isRestored = await restoreExamState();
+                    if (!isRestored) {
+                       await loadAndRenderWelcomeButtons();
+                       loadingSpinner.style.display = 'none';
+                       welcomeScreen.style.display = 'flex';
+                    } else {
+                        loadingSpinner.style.display = 'none';
+                    }
+                } else {
+                    unlockAccessBtn.onclick = async () => {
+                        if (unlockKeyInput.value === accessUnlockKey) {
                             accessBlockedOverlay.style.display = 'none';
                             loadingSpinner.style.display = 'flex';
-                            loadingSpinner.style.opacity = 1;
-                            await showWelcomeScreenContent();
-                        }, 300);
-                    } else {
-                        unlockMessage.textContent = "Kunci yang dimasukkan salah.";
-                        unlockKeyInput.value = "";
-                    }
-                };
-                unlockAccessBtn.onclick = unlockHandler; 
-                unlockKeyInput.onkeydown = (e) => {
-                    if (e.key === 'Enter') unlockHandler();
-                };
-
-                togglePasswordVisibility.onclick = () => { 
-                    const isOpen = unlockKeyInput.type === 'text';
-                    unlockKeyInput.type = isOpen ? 'password' : 'text';
-                    document.getElementById('eye-open').style.display = isOpen ? 'block' : 'none';
-                    document.getElementById('eye-closed').style.display = isOpen ? 'none' : 'block';
+                            const isRestored = await restoreExamState();
+                             if (!isRestored) {
+                                await loadAndRenderWelcomeButtons();
+                                loadingSpinner.style.display = 'none';
+                                welcomeScreen.style.display = 'flex';
+                            } else {
+                                loadingSpinner.style.display = 'none';
+                            }
+                        } else {
+                            unlockMessage.textContent = "Kunci yang dimasukkan salah.";
+                        }
+                    };
+                    loadingSpinner.style.display = 'none';
+                    accessBlockedOverlay.style.display = 'flex';
+                }
+            } catch (error) {
+                console.error("Login otomatis gagal:", error);
+                loadingSpinner.style.display = 'none';
+                initialLoginScreen.style.display = 'flex';
+                loginMessage.textContent = "Login otomatis gagal. Silakan masuk secara manual.";
+                loginButton.onclick = async () => {
+                     window.showCustomMessageModal("Fitur Belum Tersedia", "Login manual saat ini tidak diaktifkan.", "warning");
                 };
             }
-
-            async function handleSuccessfulLogin() {
-                await fetchGlobalSettings();
-                if (isAllowedEnvironment()) {
-                    await showWelcomeScreenContent();
-                } else {
-                    await showAccessBlockedScreen();
-                }
-            }
-            
-            const performAutomaticLogin = async () => {
-                loginEmailInput.value = "speropa@gmail.com";
-                loginPasswordInput.value = "Pajangan201184*";
-                const email = loginEmailInput.value;
-                const password = loginPasswordInput.value;
-                
-                try {
-                    await signInWithEmailAndPassword(setupAuth, email, password);
-                    globalUserEmail = email;
-                    globalUserPassword = password;
-                    await handleSuccessfulLogin();
-                } catch (error) {
-                    console.error("Login gagal:", error.message);
-                    let errorMessage = "Login gagal. Periksa kembali email dan password Anda.";
-                    if (error.code === 'auth/user-not-found' || error.code === 'auth/wrong-password' || error.code === 'auth/invalid-credential') {
-                        errorMessage = "Email atau password salah.";
-                    } else if (error.code === 'auth/invalid-email') {
-                        errorMessage = "Format email tidak valid.";
-                    } else {
-                        errorMessage = `Terjadi kesalahan: ${error.message}`;
-                    }
-                    
-                    loadingSpinner.style.opacity = 0;
-                    setTimeout(() => {
-                        loadingSpinner.style.display = 'none';
-                        initialLoginScreen.style.display = 'flex';
-                        initialLoginScreen.style.opacity = 1;
-                        loginMessage.style.color = 'red';
-                        loginMessage.textContent = errorMessage;
-                        loginButton.disabled = false;
-                        loginButton.textContent = 'Login';
-                    }, 500);
-                }
-            };
-            
-            loginButton.addEventListener('click', performAutomaticLogin);
-            
-            setTimeout(performAutomaticLogin, 0);
         }
 
 
@@ -4011,561 +3178,159 @@
             
             customSelectKelasDisplay.addEventListener('click', openClassModal);
             customSelectNamaSiswaDisplay.addEventListener('click', openStudentModal);
-            
-            const validateLocationKeyBtn = document.getElementById('validateLocationKeyBtn');
-            const locationKeyInput = document.getElementById('locationKeyInput');
-            const toggleLocationKeyVisibility = document.getElementById('toggleLocationKeyVisibility');
+            document.getElementById('validateLocationKeyBtn').addEventListener('click', validateLocationKey);
 
-            validateLocationKeyBtn.addEventListener('click', validateLocationKey);
-            locationKeyInput.addEventListener('keydown', (e) => {
-                if (e.key === 'Enter') validateLocationKey();
-            });
-            toggleLocationKeyVisibility.addEventListener('click', () => {
-                const isOpen = locationKeyInput.type === 'text';
-                locationKeyInput.type = isOpen ? 'password' : 'text';
-                document.getElementById('loc-eye-open').style.display = isOpen ? 'block' : 'none';
-                document.getElementById('loc-eye-closed').style.display = isOpen ? 'none' : 'block';
-            });
-
-
-            classModal.addEventListener('click', (event) => {
-                if (event.target === classModal) {
-                    closeClassModal();
-                }
-            });
-            studentModal.addEventListener('click', (event) => {
-                if (event.target === studentModal) {
-                    closeStudentModal();
-                }
-            });
+            classModal.addEventListener('click', e => e.target === classModal && closeClassModal());
+            studentModal.addEventListener('click', e => e.target === studentModal && closeStudentModal());
 
             inputTokenPrefix.addEventListener('input', () => window.formatTokenPrefix(inputTokenPrefix));
-            inputTokenPrefix.addEventListener('input', updateLoginButtonStatus);
-
-            inputTokenPrefix.addEventListener('keydown', (event) => {
-                if (event.key === 'Enter' && !loginBtn.disabled) {
-                    event.preventDefault();
-                    window.cekToken();
-                }
-            });
+            inputTokenPrefix.addEventListener('keydown', e => e.key === 'Enter' && !loginBtn.disabled && window.cekToken());
 
             loginBtn.addEventListener('click', window.cekToken);
-            overlayUnderstandBtn.addEventListener('click', hideOverlay);
-            backToLoginFromSubmissionBtn.addEventListener('click', () => {
-                window.location.reload(true);
+            
+            backToLoginFromSubmissionBtn.addEventListener('click', () => window.location.reload(true));
+            
+            const backToWelcomeBtn = document.getElementById('backToWelcomeBtn');
+            backToWelcomeBtn.addEventListener('click', () => {
+                 loginContainer.classList.remove('show');
+                 welcomeScreen.style.display = 'flex';
+                 // Reset form
+                 customSelectKelasDisplay.textContent = customSelectKelasDisplay.dataset.placeholder;
+                 hiddenSelectKelas.value = '';
+                 customSelectNamaSiswaDisplay.textContent = customSelectNamaSiswaDisplay.dataset.placeholder;
+                 hiddenSelectNamaSiswa.value = '';
+                 inputTokenPrefix.value = '';
+                 displayStudentId.value = '';
+                 message.textContent = '';
             });
 
-            window.onpopstate = function(event) {
-                if (isInExamMode) {
-                    history.pushState(null, '', location.href);
-                }
-            };
+            window.onpopstate = e => isInExamMode && history.pushState(null, '', location.href);
 
-            document.addEventListener('fullscreenchange', handleFullscreenChange);
-            document.addEventListener('mozfullscreenchange', handleFullscreenChange);
-            document.addEventListener('webkitfullscreenchange', handleFullscreenChange);
-            document.addEventListener('msfullscreenchange', handleFullscreenChange);
+            ['fullscreenchange', 'mozfullscreenchange', 'webkitfullscreenchange', 'msfullscreenchange'].forEach(event => {
+                document.addEventListener(event, handleFullscreenChange);
+            });
 
             reEnterFullscreenBtn.addEventListener('click', attemptFullscreen);
             lockKeySubmitBtn.addEventListener('click', async () => {
-                const enteredKey = lockKeyInputEl.value;
-                lockKeyMessage.textContent = '';
-
-                if (enteredKey === lockKeyGlobal) {
+                if (lockKeyInputEl.value === lockKeyGlobal) {
                     currentAttemptsLeft = toleranceLimitGlobal;
                     sessionStorage.setItem('attemptsLeft', currentAttemptsLeft);
-                    
-                    const dbRefs = getDbRefs();
-                    if (dbRefs && foundTokenGlobal && selectedStudentData) {
-                        const studentId = padStudentId(selectedStudentData.id);
-                        const accessStatusRef = child(dbRefs.examAccessStatusRef, `${foundTokenGlobal.key}/${studentId}`);
-                        try {
-                            await update(accessStatusRef, { attemptsLeft: currentAttemptsLeft, studentId: studentId });
-                        } catch (error) {
-                            console.error("Gagal mereset attemptsLeft di Firebase:", error);
-                        }
-                    }
-
                     lockKeySection.style.display = 'none';
-                    attemptsLeftInfo.style.display = 'none';
                     reEnterFullscreenBtn.style.display = 'block';
-                    lockKeyInputEl.value = '';
-                    lockKeyMessage.textContent = '';
-
                     attemptFullscreen();
                 } else {
-                    lockKeyMessage.style.color = 'red';
-                    lockKeyMessage.textContent = 'Kunci salah. Silakan coba lagi.';
-                    lockKeyInputEl.value = '';
-                    lockKeyInputEl.focus();
-                }
-            });
-            lockKeyInputEl.addEventListener('keydown', (event) => {
-                if (event.key === 'Enter') {
-                    event.preventDefault();
-                    lockKeySubmitBtn.click();
+                    lockKeyMessage.textContent = 'Kunci salah.';
                 }
             });
 
-            sidebarToggle.addEventListener('click', toggleSidebar);
-            closeSidebarButton.addEventListener('click', toggleSidebar);
-            document.addEventListener('click', closeSidebarOnClickOutside);
-
-            answerSelectionModal.addEventListener('click', (event) => {
-                if (event.target === answerSelectionModal) {
-                    closeAnswerSelectionModal();
+            prevQuestionBtn.addEventListener('click', () => displayQuestion(currentQuestionIndex - 1));
+            nextQuestionBtn.addEventListener('click', () => {
+                if (currentQuestionIndex === currentExamQuestions.length - 1) {
+                    submitAnswers(false);
+                } else {
+                    displayQuestion(currentQuestionIndex + 1);
                 }
             });
-
-            answerOptionsContainer.addEventListener('click', (event) => {
-                event.stopPropagation();
-            });
-
-            answerOptionsContainer.querySelectorAll('button').forEach(button => {
-                button.addEventListener('click', () => selectAnswer(button.dataset.answer));
-            });
-            clearAnswerButton.addEventListener('click', clearAnswer);
+            raguRaguCheckbox.addEventListener('change', toggleRaguRagu);
             submitAnswersButton.addEventListener('click', () => submitAnswers(false));
+            
+            const mobileSidebarToggle = document.getElementById('mobileSidebarToggle');
+            const examSidePanel = document.getElementById('examSidePanel');
+            
+            mobileSidebarToggle.addEventListener('click', () => {
+                const wrapper = document.querySelector('.sidebar-content-wrapper');
+                wrapper.classList.toggle('collapsed');
+                mobileSidebarToggle.classList.toggle('up');
 
-            examIframe.addEventListener('wheel', (event) => {
-                if (event.ctrlKey) {
-                    event.preventDefault();
-                    resetAutoHideTimer();
-                    
-                    if (event.deltaY < 0) {
-                        currentZoom += ZOOM_STEP;
-                    } else {
-                        currentZoom -= ZOOM_STEP;
-                    }
-
-                    currentZoom = Math.max(MIN_ZOOM, Math.min(MAX_ZOOM, currentZoom));
-
-                    if (currentZoom <= MIN_ZOOM) {
-                        currentZoom = MIN_ZOOM;
-                        currentTranslateX = 0;
-                        currentTranslateY = 0;
-                    }
-                    applyIframeTransform();
-                    updateZoomButtonStates();
-                }
-            }, { passive: false });
-
-            zoomInBtn.addEventListener('click', () => {
-                resetAutoHideTimer();
-                currentZoom += ZOOM_STEP;
-                currentZoom = Math.min(MAX_ZOOM, currentZoom);
-                currentTranslateX = 0;
-                currentTranslateY = 0;
-                applyIframeTransform();
-                updateZoomButtonStates();
-            });
-
-            zoomOutBtn.addEventListener('click', () => {
-                resetAutoHideTimer();
-                currentZoom -= ZOOM_STEP;
-                currentZoom = Math.max(MIN_ZOOM, currentZoom);
-                if (currentZoom <= MIN_ZOOM) {
-                    currentZoom = MIN_ZOOM;
-                    currentTranslateX = 0;
-                    currentTranslateY = 0;
-                }
-                applyIframeTransform();
-                updateZoomButtonStates();
-            });
-
-            panLeftBtn.addEventListener('mousedown', (e) => {
-                if (e.button === 0) {
-                    resetAutoHideTimer();
-                    if (currentZoom > MIN_ZOOM) {
-                        if (panPressTimer) clearTimeout(panPressTimer);
-                        panPressTimer = setTimeout(() => {
-                            panDirection = PAN_STEP;
-                            startAutoPan();
-                        }, PAN_START_DELAY);
-                    }
-                }
-            });
-            panLeftBtn.addEventListener('click', () => {
-                if (currentZoom > MIN_ZOOM && panIntervalId === null) {
-                    currentTranslateX += PAN_STEP;
-                    const unscaledIframeWidth = examIframe.offsetWidth;
-                    const scaledIframeWidth = unscaledIframeWidth * currentZoom;
-                    const containerWidth = examContentWrapper.offsetWidth;
-                    const maxNegativeX = -(Math.max(0, scaledIframeWidth - containerWidth));
-                    currentTranslateX = Math.max(maxNegativeX, Math.min(0, currentTranslateX));
-                    applyIframeTransform();
-                    resetAutoHideTimer();
-                }
-            });
-            panLeftBtn.addEventListener('mouseup', () => {
-                stopAutoPan();
-                if (panPressTimer) clearTimeout(panPressTimer);
-            });
-            panLeftBtn.addEventListener('mouseleave', () => {
-                stopAutoPan();
-                if (panPressTimer) clearTimeout(panPressTimer);
-            });
-            panLeftBtn.addEventListener('touchstart', (e) => {
-                resetAutoHideTimer();
-                if (currentZoom > MIN_ZOOM && e.touches.length === 1) {
-                    if (panPressTimer) clearTimeout(panPressTimer);
-                    panPressTimer = setTimeout(() => {
-                        panDirection = PAN_STEP;
-                        startAutoPan();
-                    }, PAN_START_DELAY);
-                }
-            }, { passive: true });
-            panLeftBtn.addEventListener('touchend', () => {
-                stopAutoPan();
-                if (panPressTimer) clearTimeout(panPressTimer);
-            });
-
-            panRightBtn.addEventListener('mousedown', (e) => {
-                if (e.button === 0) {
-                    resetAutoHideTimer();
-                    if (currentZoom > MIN_ZOOM) {
-                        if (panPressTimer) clearTimeout(panPressTimer);
-                        panPressTimer = setTimeout(() => {
-                            panDirection = -PAN_STEP;
-                            startAutoPan();
-                        }, PAN_START_DELAY);
-                    }
-                }
-            });
-            panRightBtn.addEventListener('click', () => {
-                if (currentZoom > MIN_ZOOM && panIntervalId === null) {
-                    currentTranslateX -= PAN_STEP;
-                    const unscaledIframeWidth = examIframe.offsetWidth;
-                    const scaledIframeWidth = unscaledIframeWidth * currentZoom;
-                    const containerWidth = examContentWrapper.offsetWidth;
-                    const maxNegativeX = -(Math.max(0, scaledIframeWidth - containerWidth));
-                    currentTranslateX = Math.max(maxNegativeX, Math.min(0, currentTranslateX));
-                    applyIframeTransform();
-                    resetAutoHideTimer();
-                }
-            });
-            panRightBtn.addEventListener('mouseup', () => {
-                stopAutoPan();
-                if (panPressTimer) clearTimeout(panPressTimer);
-            });
-            panRightBtn.addEventListener('mouseleave', () => {
-                stopAutoPan();
-                if (panPressTimer) clearTimeout(panPressTimer);
-            });
-            panRightBtn.addEventListener('touchstart', (e) => {
-                resetAutoHideTimer();
-                if (currentZoom > MIN_ZOOM && e.touches.length === 1) {
-                    if (panPressTimer) clearTimeout(panPressTimer);
-                    panPressTimer = setTimeout(() => {
-                        panDirection = -PAN_STEP;
-                        startAutoPan();
-                    }, PAN_START_DELAY);
-                }
-            }, { passive: true });
-            panRightBtn.addEventListener('touchend', () => {
-                stopAutoPan();
-                if (panPressTimer) clearTimeout(panPressTimer);
-            });
-
-            refreshIframeBtn.addEventListener('click', () => {
-                resetAutoHideTimer();
-                const currentIframeSrc = examIframe.src;
-                examIframe.src = '';
-                setTimeout(() => {
-                    examIframe.src = currentIframeSrc;
-                }, 50);
-            });
-
-            examIframe.addEventListener('mousedown', (e) => {
-                e.stopPropagation();
-                resetAutoHideTimer();
-                if (currentZoom > MIN_ZOOM) {
-                    isDragging = true;
-                    startX = e.clientX;
-                    startY = e.clientY;
-                    const translate = getTranslateValues(examIframe);
-                    currentTranslateX = translate.x;
-                    currentTranslateY = translate.y;
-                    examIframe.classList.add('dragging');
+                if (wrapper.classList.contains('collapsed')) {
+                    clearTimeout(sidebarCollapseTimer);
+                } else {
+                    startSidebarCollapseTimer();
                 }
             });
 
-            document.addEventListener('mousemove', (e) => {
-                if (!isDragging) return;
-                e.preventDefault();
+            examSidePanel.addEventListener('click', startSidebarCollapseTimer);
+            examSidePanel.addEventListener('scroll', startSidebarCollapseTimer, true);
 
-                const dx = e.clientX - startX;
-                const dy = e.clientY - startY;
-
-                let newTranslateX = currentTranslateX + dx;
-                let newTranslateY = currentTranslateY + dy;
-
-                const unscaledIframeWidth = examIframe.offsetWidth;
-                const unscaledIframeHeight = examIframe.offsetHeight;
-
-                const scaledIframeWidth = unscaledIframeWidth * currentZoom;
-                const scaledIframeHeight = unscaledIframeHeight * currentZoom;
-
-                const containerWidth = examContentWrapper.offsetWidth;
-                const containerHeight = examContentWrapper.offsetHeight;
-
-                const maxNegativeX = -(Math.max(0, scaledIframeWidth - containerWidth));
-                const maxNegativeY = -(Math.max(0, scaledIframeHeight - containerHeight));
-
-                newTranslateX = Math.max(maxNegativeX, Math.min(0, newTranslateX));
-                newTranslateY = Math.max(maxNegativeY, Math.min(0, newTranslateY));
-
-                examIframe.style.transform = `translate(${newTranslateX}px, ${newTranslateY}px) scale(${currentZoom})`;
-            });
-
-            document.addEventListener('mouseup', () => {
-                if (isDragging) {
-                    isDragging = false;
-                    const translate = getTranslateValues(examIframe);
-                    currentTranslateX = translate.x;
-                    currentTranslateY = translate.y;
-                    examIframe.classList.remove('dragging');
-                }
-            });
-
-            examIframe.addEventListener('touchstart', (e) => {
-                e.stopPropagation();
-                resetAutoHideTimer();
-                if (currentZoom > MIN_ZOOM && e.touches.length === 1) {
-                    isDragging = true;
-                    startX = e.touches[0].clientX;
-                    startY = e.touches[0].clientY;
-                    const translate = getTranslateValues(examIframe);
-                    currentTranslateX = translate.x;
-                    currentTranslateY = translate.y;
-                    examIframe.classList.add('dragging');
-                }
-            });
-
-            document.addEventListener('touchmove', (e) => {
-                if (!isDragging || e.touches.length !== 1) return;
-                e.preventDefault();
-
-                const dx = e.touches[0].clientX - startX;
-                const dy = e.touches[0].clientY - startY;
-
-                let newTranslateX = currentTranslateX + dx;
-                let newTranslateY = currentTranslateY + dy;
-
-                const unscaledIframeWidth = examIframe.offsetWidth;
-                const unscaledIframeHeight = examIframe.offsetHeight;
-
-                const scaledIframeWidth = unscaledIframeWidth * currentZoom;
-                const scaledIframeHeight = unscaledIframeHeight * currentZoom;
-
-                const containerWidth = examContentWrapper.offsetWidth;
-                const containerHeight = examContentWrapper.offsetHeight;
-
-                const maxNegativeX = -(Math.max(0, scaledIframeWidth - containerWidth));
-                const maxNegativeY = -(Math.max(0, scaledIframeHeight - containerHeight));
-
-                newTranslateX = Math.max(maxNegativeX, Math.min(0, newTranslateX));
-                newTranslateY = Math.max(maxNegativeY, Math.min(0, newTranslateY));
-
-                examIframe.style.transform = `translate(${newTranslateX}px, ${newTranslateY}px) scale(${currentZoom})`;
-            });
-
-            document.addEventListener('touchend', () => {
-                if (isDragging) {
-                    isDragging = false;
-                    const translate = getTranslateValues(examIframe);
-                    currentTranslateX = translate.x;
-                    currentTranslateY = translate.y;
-                    examIframe.classList.remove('dragging');
-                }
-            });
-
-            zoomControls.addEventListener('mousemove', resetAutoHideTimer);
-            zoomControls.addEventListener('touchstart', resetAutoHideTimer);
-            zoomControls.addEventListener('click', resetAutoHideTimer);
-
-            applyIframeTransform();
-            updateZoomButtonStates();
-            resetAutoHideTimer();
-
-            toggleControlsBtn.addEventListener('click', toggleControlsPanel);
 
             updateDateTime();
             setInterval(updateDateTime, 1000);
-
-            await restoreExamState();
         });
 
         window.cekToken = async function() {
             const tokenPrefix = inputTokenPrefix.value.trim().toUpperCase();
             const studentId = displayStudentId.value.trim();
-            const fullInputToken = `${tokenPrefix}-${studentId}`;
-
-            const selectedClass = hiddenSelectKelas.value;
-            const selectedStudentId = hiddenSelectNamaSiswa.value;
-
-            if (!selectedClass || !selectedStudentId || tokenPrefix === "" || studentId === "") {
-                message.style.color = "red";
-                message.textContent = "Harap lengkapi semua pilihan (Kelas, Nama Siswa, dan Token).";
-                updateLoginButtonStatus();
-                return;
-            }
-
-            if (studentId !== padStudentId(selectedStudentId)) {
-                message.style.color = "red";
-                message.textContent = "ID Siswa tidak cocok dengan nama siswa yang dipilih.";
-                updateLoginButtonStatus();
-                return;
-            }
             
-            const tokenInputGroup = inputTokenPrefix.closest('.token-input-group');
-            if (tokenInputGroup) {
-                tokenInputGroup.classList.remove('is-valid', 'is-invalid');
+            if (!hiddenSelectKelas.value || !hiddenSelectNamaSiswa.value || !tokenPrefix) {
+                message.textContent = "Harap lengkapi semua pilihan.";
+                return;
             }
 
             loginBtn.disabled = true;
-            loginBtn.style.opacity = 0.6;
-            message.style.color = "black";
-            message.innerHTML = `Memproses data... <span class="spinner"></span>`;
+            message.innerHTML = `Memvalidasi data... <span class="spinner"></span>`;
 
-            if (!currentDb) {
-                message.style.color = "red";
-                message.textContent = "Database belum diinisialisasi. Pilih kelas terlebih dahulu.";
-                updateLoginButtonStatus();
+            const dbRefs = getDbRefs();
+            if (!dbRefs) {
+                message.textContent = "Database tidak siap.";
+                loginBtn.disabled = false;
                 return;
             }
-            const dbRefs = getDbRefs();
-            if (!dbRefs) return;
-
 
             try {
                 const tokensSnapshot = await get(dbRefs.tokensRef);
                 let foundToken = null;
-
                 tokensSnapshot.forEach(child => {
                     const data = child.val();
                     if (data.token.toUpperCase() === tokenPrefix) {
                         foundToken = { ...data, key: child.key };
-                        return true;
                     }
                 });
 
                 if (!foundToken) {
-                    message.style.color = "red";
-                    message.textContent = "Token ujian yang Anda masukkan tidak ditemukan. Mohon periksa kembali token Anda.";
-                    if (tokenInputGroup) tokenInputGroup.classList.add('is-invalid');
-                    updateLoginButtonStatus();
-                    return;
+                    throw new Error("Token ujian tidak ditemukan.");
                 }
-
                 foundTokenGlobal = foundToken;
 
-                const hasSubmittedSnapshot = await get(child(dbRefs.submittedExamsRef, `${foundTokenGlobal.key}/${studentId}`));
-                if (hasSubmittedSnapshot.exists() && hasSubmittedSnapshot.val().isSubmitted === true) {
-                    message.style.color = "red";
-                    message.textContent = "Anda sudah menyelesaikan ujian ini dan tidak dapat login kembali.";
-                    updateLoginButtonStatus();
-                    sessionStorage.clear();
-                    return;
+                const hasSubmitted = (await get(child(dbRefs.submittedExamsRef, `${foundToken.key}/${studentId}`))).exists();
+                if (hasSubmitted) {
+                    throw new Error("Anda sudah menyelesaikan ujian ini.");
                 }
 
-                const now = new Date();
-                const startTime = new Date(foundToken.startTime);
-                const endTime = new Date(foundToken.endTime);
-                let tokenStatus = '';
-
-                if (foundToken.isForceActive === true) {
-                    tokenStatus = 'valid';
-                } else if (foundToken.isActive === true) {
-                    if (now >= startTime && now <= endTime) {
-                        tokenStatus = 'valid';
-                    } else {
-                        tokenStatus = 'expired';
-                    }
-                } else {
-                    tokenStatus = 'inactive';
+                const now = Date.now();
+                const startTime = new Date(foundToken.startTime).getTime();
+                const endTime = new Date(foundToken.endTime).getTime();
+                if (!foundToken.isForceActive && (now < startTime || now > endTime)) {
+                    throw new Error("Token belum aktif atau sudah kadaluarsa.");
                 }
 
-                if (tokenStatus !== 'valid') {
-                    message.style.color = "red";
-                    if (tokenStatus === 'expired') {
-                        message.textContent = "Token belum aktif atau sudah kadaluarsa.";
-                    } else {
-                        message.textContent = "Token saat ini tidak aktif.";
-                    }
-                    if (tokenInputGroup) tokenInputGroup.classList.add('is-invalid');
-                    updateLoginButtonStatus();
-                    return;
+                const studentClassNum = selectedStudentData.class.match(/^\d+/)[0];
+                if (String(studentClassNum) !== String(foundToken.kelas)) {
+                    throw new Error(`Token ini bukan untuk kelas ${studentClassNum}.`);
                 }
                 
-                if (tokenInputGroup) tokenInputGroup.classList.add('is-valid');
-
-                const studentClassNumericMatch = selectedStudentData.class.match(/^\d+/);
-                const studentClassNumeric = studentClassNumericMatch ? studentClassNumericMatch[0] : null;
-
-                if (!studentClassNumeric || String(studentClassNumeric) !== String(foundToken.kelas)) {
-                    message.style.color = "red";
-                    message.textContent = `Siswa dari kelas ${selectedStudentData.class} tidak dapat mengakses token untuk kelas ${foundToken.kelas}.`;
-                    updateLoginButtonStatus();
-                    return;
-                }
-
-                let examDurationMinutes = foundToken.durationMinutes;
-                if (typeof examDurationMinutes !== 'number' || isNaN(examDurationMinutes) || examDurationMinutes <= 0) {
-                    message.style.color = "red";
-                    message.textContent = "Durasi ujian tidak valid. Harap hubungi administrator.";
-                    updateLoginButtonStatus();
-                    return;
+                const accessStatus = (await get(child(dbRefs.examAccessStatusRef, `${foundToken.key}/${studentId}`))).val();
+                if (accessStatus?.isLoggedIn) {
+                    throw new Error("Akun sedang login di perangkat lain.");
                 }
                 
-                const answerKeyArray = foundToken.answerKey ? foundToken.answerKey.split(',') : [];
-                const numQuestions = answerKeyArray.length;
-
-                const accessStatusRef = child(dbRefs.examAccessStatusRef, `${foundTokenGlobal.key}/${studentId}`);
-                const accessStatusSnapshot = await get(accessStatusRef);
-                let loadedAnswers = Array(numQuestions).fill('');
-                let examAccessData = accessStatusSnapshot.val();
+                message.textContent = "";
+                loginBtn.disabled = false;
                 
-                if (examAccessData && examAccessData.isLoggedIn === true) {
-                    message.style.color = "red";
-                    message.textContent = "Anda sudah Login di perangkat lain. Mohon hubungi admin untuk mereset akun Anda.";
-                    updateLoginButtonStatus();
-                    return;
-                }
-                else {
-                    message.innerHTML = `Memuat jawaban siswa... <span class="spinner"></span>`;
-                    const studentAnswersPath = child(dbRefs.studentAnswersRef, `${foundTokenGlobal.key}/${selectedStudentData.id}`);
-                    const answersSnapshot = await get(studentAnswersPath);
-                    if (answersSnapshot.exists()) {
-                        const savedAnswersData = answersSnapshot.val();
-                        loadedAnswers = savedAnswersData.answers ? savedAnswersData.answers.split(',') : Array(numQuestions).fill('');
-                    } else {
-                        console.warn("Tidak ada jawaban yang disimpan di Firebase pada jalur ini, dimulai dengan array kosong.");
-                    }
+                document.getElementById("modalIdSiswa").textContent = selectedStudentData.id;
+                document.getElementById("modalNamaLengkap").textContent = selectedStudentData.name;
+                document.getElementById("modalKelas").textContent = selectedStudentData.class;
+                document.getElementById("modalMapel").textContent = foundToken.subject;
+                modalExamDuration.textContent = `${foundToken.durationMinutes} Menit`;
+                
+                document.getElementById("btnLanjut").onclick = () => handleLanjutClick(foundToken);
 
-                    document.getElementById("modalIdSiswa").textContent = selectedStudentData.id || "-";
-                    document.getElementById("modalNamaLengkap").textContent = selectedStudentData.name || "-";
-                    document.getElementById("modalKelas").textContent = selectedClass || "-";
-                    document.getElementById("modalMapel").textContent = foundToken.subject || "-";
-                    modalExamDuration.textContent = `${examDurationMinutes} Menit`;
-
-                    confirmCheckbox.checked = false;
-                    modalMessage.style.display = 'none';
-                    modalMessage.textContent = '';
-
-                    confirmModal.classList.add('show');
-                    isAnyModalOpen = true;
-                    message.textContent = "";
-
-                    document.getElementById("btnLanjut").onclick = () => handleLanjutClick(fullInputToken, examDurationMinutes, numQuestions, loadedAnswers);
-                }
+                confirmModal.classList.add('show');
+                isAnyModalOpen = true;
 
             } catch (err) {
                 console.error("Error di cekToken:", err);
-                message.style.color = "red";
-                message.textContent = "Terjadi kesalahan saat memverifikasi token. Silakan coba lagi atau hubungi administrator.";
-                if (tokenInputGroup) tokenInputGroup.classList.add('is-invalid');
-                updateLoginButtonStatus();
+                message.textContent = err.message;
+                loginBtn.disabled = false;
             }
         };
     </script>
