@@ -440,6 +440,12 @@
             display: flex;
             opacity: 1;
         }
+        
+        /* [BARU] Gaya untuk modal yang tidak bisa ditutup (backdrop static) */
+        .custom-modal.static-backdrop {
+            background: rgba(0, 0, 0, 0.8);
+            pointer-events: all;
+        }
 
         .custom-modal-content {
             background: white;
@@ -1326,13 +1332,12 @@
     </style>
 </head>
 <body>
-    <!-- Loading Spinner -->
+    
     <div id="loadingSpinner">
         <div class="spinner-border"></div>
         <p>Memuat aplikasi...</p>
     </div>
-
-    <!-- Access Blocked Overlay -->
+    
     <div id="accessBlockedOverlay">
         <div class="blocked-content">
             <h1>AKSES DIBLOKIR</h1>
@@ -1349,8 +1354,7 @@
         </div>
     </div>
 
-
-    <!-- Initial Login Screen (hidden by default) -->
+    
     <div id="initialLoginScreen" class="initial-login-screen">
         <h2>LOGIN SISWA</h2>
         <p>Masukkan email dan password Anda untuk melanjutkan.</p>
@@ -1364,13 +1368,13 @@
         <h2 id="welcomeTitle">SELAMAT DATANG</h2>
         <p id="welcomeMessage">Memuat pilihan ujian...</p>
         <div id="welcomeButtonsContainer" style="display: flex; flex-direction: column; gap: 15px;">
-            <!-- Tombol akan dimuat di sini oleh JavaScript -->
+            
         </div>
     </div>
 
     <div id="loginContainer" class="container">
         <div class="header-box">
-            <!-- [BARU] Tombol Kembali -->
+            
             <div id="backToWelcomeBtn" class="back-button">
                 <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
             </div>
@@ -1380,9 +1384,9 @@
         <div class="card-body">
             <div class="judul-ujian" id="loginJudulUjian">UJIAN KELAS</div>
             
-             <!-- Pesan Blokir Lokasi -->
+             
             <div id="locationBlockedDiv" style="display: none; color: red; margin-bottom: 10px; font-weight: bold; text-align: center;"></div>
-             <!-- Kontainer untuk Kunci Akses Lokasi -->
+             
             <div id="locationKeyContainer" style="display: none;">
                 <p>Jika lokasi tetap tidak valid, silahkan hubungi pengawas untuk mendapatkan kunci akses lokasi.</p>
                 <div class="password-input-container">
@@ -1429,7 +1433,7 @@
         </div>
     </div>
 
-    <!-- [START] CONTAINER UJIAN BARU -->
+    
     <div id="examContainer" style="display: none;">
         <div id="examBody">
             <div id="examSidePanel">
@@ -1470,7 +1474,7 @@
             </div>
         </div>
         
-        <!-- Overlay yang sudah ada dipindahkan ke dalam examContainer -->
+        
         <div id="warningOverlay" style="display: none;">
             <div class="warning-content-box">
                 <div id="warningCountdown"></div>
@@ -1493,12 +1497,11 @@
             </div>
         </div>
         
-        <!-- [BARU] Footer Identitas Siswa -->
+        
         <div id="examFooter">
             <span id="studentIdentityDisplay"></span>
         </div>
     </div>
-    <!-- [END] CONTAINER UJIAN BARU -->
     
     <div id="confirmModal">
         <div class="modal-content">
@@ -1561,7 +1564,7 @@
             </ul>
         </div>
     </div>
-    <!-- Modal baru untuk daftar ujian susulan -->
+    
     <div id="susulanListModal" class="custom-modal">
         <div class="custom-modal-content">
             <h4 id="susulanModalTitle">Pilih Ujian Susulan</h4>
@@ -1587,6 +1590,15 @@
                 <button id="customConfirmModalConfirmBtn" style="background-color: #28a745; width: 45%;">Ya</button>
                 <button id="customConfirmModalCancelBtn" style="background-color: #dc3545; width: 45%;">Tidak</button>
             </div>
+        </div>
+    </div>
+
+    <!-- [BARU] Modal untuk notifikasi force logout -->
+    <div id="forceLogoutModal" class="custom-modal static-backdrop">
+        <div class="custom-modal-content" style="text-align: center;">
+            <h4 id="forceLogoutModalTitle" style="color: var(--danger-color);">Sesi Direset</h4>
+            <p id="forceLogoutModalText">Sesi ujian Anda telah direset oleh administrator. Silakan login kembali.</p>
+            <button id="forceLogoutModalButton" style="margin-top: 20px; background-color: var(--primary-color);">Logout</button>
         </div>
     </div>
 
@@ -1782,7 +1794,8 @@
                 settingsRef: ref(setupDb, 'setlokasi'),
                 lockSettingsRef: ref(setupDb, 'lock_settings'),
                 minDurationSettingsRef: ref(setupDb, 'min_duration_settings'),
-                publicSettingsRef: ref(setupDb, 'publicSettings')
+                publicSettingsRef: ref(setupDb, 'publicSettings'),
+                shuffleSettingsRef: ref(setupDb, 'acaksoalpilgan') // [BARU] Path untuk pengaturan acak
             };
         }
 
@@ -1795,6 +1808,8 @@
         let accessUnlockKey = ""; 
         let toleranceLimitGlobal = 0;
         let minDurationSettingsGlobal = { isMinDurationEnabled: false, minDurationSeconds: 1800 };
+        let isSoalAcakEnabled = true; // [BARU] Default true
+        let isPilganAcakEnabled = true; // [BARU] Default true
         let currentAttemptsLeft = 0;
         let publicSettings = null;
 
@@ -1848,6 +1863,9 @@
         const submissionOverlayTitle = document.getElementById('submissionOverlayTitle');
         const submissionOverlayMessage = document.getElementById('submissionOverlayMessage');
         const backToLoginFromSubmissionBtn = document.getElementById('backToLoginFromSubmissionBtn');
+        
+        const forceLogoutModal = document.getElementById('forceLogoutModal');
+        const forceLogoutModalButton = document.getElementById('forceLogoutModalButton');
 
         const fullscreenExitWarningOverlay = document.getElementById('fullscreenExitWarningOverlay');
         const exitWarningTitle = document.getElementById('exitWarningTitle');
@@ -1884,7 +1902,9 @@
         let foundTokenGlobal = null;
         let timerInterval;
         let remainingTime;
-        let submissionListenerRef = null;
+        
+        let accessStatusListenerRef = null; // [BARU] Untuk listener status login
+        let accessStatusListenerPath = null; // [BARU] Untuk menyimpan path listener
 
         let isInExamMode = false;
         let isAnyModalOpen = false;
@@ -2315,6 +2335,7 @@
 
         async function showSubmissionConfirmationOverlay(isAutoSubmit) {
             sessionStorage.clear();
+            stopAccessStatusListener(); // [DIUBAH] Hentikan listener
             loginContainer.style.display = 'none';
             examContainer.style.opacity = 0;
             setTimeout(async () => {
@@ -2322,11 +2343,7 @@
                 submissionConfirmationOverlay.classList.add('show');
                 document.body.style.overflow = 'hidden';
                 if (timerInterval) clearInterval(timerInterval);
-                if (submissionListenerRef) {
-                    const dbRefs = getDbRefs();
-                    if (dbRefs) off(dbRefs.submittedExamsRef);
-                    submissionListenerRef = null;
-                }
+                
                 isInExamMode = false;
                 toggleExamSecurityFeatures(false);
                 if (document.fullscreenElement) {
@@ -2346,16 +2363,12 @@
 
                 const tokenFirebaseKey = foundTokenGlobal?.key;
                 const studentId = selectedStudentData?.id ? padStudentId(selectedStudentData.id) : null;
-                const studentFirebaseKey = selectedStudentData?.key;
                 const dbRefs = getDbRefs();
 
-                if (dbRefs && tokenFirebaseKey && studentId && studentFirebaseKey) {
+                if (dbRefs && tokenFirebaseKey && studentId) {
                     const accessStatusRef = child(dbRefs.examAccessStatusRef, `${tokenFirebaseKey}/${studentId}`);
-                    const studentIsLoggedInRef = child(dbRefs.studentsRef, `${studentFirebaseKey}/isLoggedIn`);
                     try {
                         await update(accessStatusRef, { isLoggedIn: false, studentId: studentId });
-                        await set(studentIsLoggedInRef, false);
-
                     } catch (error) {
                         console.error("Gagal mengatur isLoggedIn ke false saat pengiriman:", error);
                     }
@@ -2465,33 +2478,32 @@
             }
         }
 
-        function startSubmissionStatusListener() {
-            if (!foundTokenGlobal || !selectedStudentData || !currentDb) return;
-            const dbRefs = getDbRefs();
-            if (!dbRefs) return;
-            const studentSubmissionRef = child(dbRefs.submittedExamsRef, `${foundTokenGlobal.key}/${padStudentId(selectedStudentData.id)}`);
-            if (submissionListenerRef) off(submissionListenerRef);
-            onValue(studentSubmissionRef, (snapshot) => {
-                if (snapshot.exists() && snapshot.val().isSubmitted === true && examContainer.style.display === 'flex') {
-                    showSubmissionConfirmationOverlay(true);
-                }
-            }, (error) => console.error("Gagal mendengarkan status pengiriman:", error));
-        }
+        // [DIUBAH] Fungsi startSubmissionStatusListener tidak lagi diperlukan
+        // karena fungsinya digantikan oleh startAccessStatusListener yang lebih umum.
 
         async function startExamProcess(examDurationMinutes, examStartTime, initialData) {
             
+            // [DIUBAH] Logika pengacakan menjadi kondisional
             if (initialData.shuffledQuestionIndices && initialData.shuffledOptionOrders) {
                 shuffledQuestionIndices = initialData.shuffledQuestionIndices;
                 shuffledOptionOrders = initialData.shuffledOptionOrders;
             } else {
+                // Inisialisasi urutan soal (1, 2, 3, ...)
                 shuffledQuestionIndices = Array.from({ length: currentExamQuestions.length }, (_, i) => i);
-                shuffleArray(shuffledQuestionIndices);
+                if (isSoalAcakEnabled) {
+                    shuffleArray(shuffledQuestionIndices); // Acak jika diaktifkan
+                }
+
+                // Inisialisasi urutan pilihan ganda (A, B, C, D)
                 shuffledOptionOrders = currentExamQuestions.map(() => {
                     const options = ['A', 'B', 'C', 'D'];
-                    shuffleArray(options);
+                    if (isPilganAcakEnabled) {
+                        shuffleArray(options); // Acak jika diaktifkan
+                    }
                     return options;
                 });
-                await saveStudentAnswersToFirebase(); 
+
+                await saveStudentAnswersToFirebase(); // Simpan urutan yang baru dibuat
             }
             
             sessionStorage.setItem('shuffledQuestionIndices', JSON.stringify(shuffledQuestionIndices));
@@ -2542,7 +2554,7 @@
 
             attemptFullscreen();
             history.pushState(null, '', location.href);
-            startSubmissionStatusListener();
+            startAccessStatusListener(); // [DIUBAH] Memulai listener status login
         }
 
         async function restoreExamState() {
@@ -2653,7 +2665,6 @@
 
                 const studentId = padStudentId(selectedStudentData.id);
                 const tokenFirebaseKey = foundToken.key;
-                const studentFirebaseKey = selectedStudentData.key;
                 const accessStatusRef = child(dbRefs.examAccessStatusRef, `${tokenFirebaseKey}/${studentId}`);
                 
                 const transactionResult = await runTransaction(accessStatusRef, (currentAccess) => {
@@ -2673,9 +2684,6 @@
                 });
 
                 if (transactionResult.committed) {
-                    if (studentFirebaseKey) {
-                        await set(child(dbRefs.studentsRef, `${studentFirebaseKey}/isLoggedIn`), true);
-                    }
                     
                     const examStartTime = Number(transactionResult.snapshot.val().examStartTime);
                     currentAttemptsLeft = toleranceLimitGlobal;
@@ -2867,8 +2875,7 @@
                 
                 await set(child(dbRefs.submittedExamsRef, `${tokenKey}/${studentId}`), { isSubmitted: true, timestamp: Date.now(), studentId });
                 await update(child(dbRefs.examAccessStatusRef, `${tokenKey}/${studentId}`), { isLoggedIn: false, studentId });
-                await set(child(dbRefs.studentsRef, `${selectedStudentData.key}/isLoggedIn`), false);
-
+                
                 showSubmissionConfirmationOverlay(isAutoSubmit);
             } catch (error) {
                 console.error("Gagal mengirimkan jawaban:", error);
@@ -3093,15 +3100,62 @@
             }
         }
 
+        // [BARU] Fungsi-fungsi untuk listener status login
+        function startAccessStatusListener() {
+            if (!foundTokenGlobal || !selectedStudentData || !currentDb) return;
+            const dbRefs = getDbRefs();
+            if (!dbRefs) return;
+
+            stopAccessStatusListener(); // Hentikan listener lama jika ada
+
+            accessStatusListenerPath = child(dbRefs.examAccessStatusRef, `${foundTokenGlobal.key}/${padStudentId(selectedStudentData.id)}`);
+            accessStatusListenerRef = onValue(accessStatusListenerPath, (snapshot) => {
+                if (isInExamMode && snapshot.exists()) {
+                    const data = snapshot.val();
+                    if (data.isLoggedIn === false) {
+                        showForceLogoutModal();
+                    }
+                }
+            }, (error) => {
+                console.error("Gagal mendengarkan status akses:", error);
+            });
+        }
+
+        function stopAccessStatusListener() {
+            if (accessStatusListenerRef && accessStatusListenerPath) {
+                off(accessStatusListenerPath, 'value', accessStatusListenerRef);
+                accessStatusListenerRef = null;
+                accessStatusListenerPath = null;
+            }
+        }
+
+        function showForceLogoutModal() {
+            stopAccessStatusListener();
+            if (timerInterval) clearInterval(timerInterval);
+            isInExamMode = false;
+
+            // Nonaktifkan semua kontrol ujian
+            document.querySelectorAll('#examContainer button, #examContainer input').forEach(el => el.disabled = true);
+            document.getElementById('examBody').style.filter = 'blur(5px)';
+
+            forceLogoutModal.classList.add('show');
+            isAnyModalOpen = true;
+        }
+
         async function initializeAppFlow() {
             loadingSpinner.style.display = 'flex';
             
             async function fetchGlobalSettings() {
                 try {
                     const refs = getSetupDbRefs();
-                    const [locSnap, lockSnap, minDurSnap, pubSetSnap] = await Promise.all([
-                        get(refs.settingsRef), get(refs.lockSettingsRef), get(refs.minDurationSettingsRef), get(refs.publicSettingsRef)
+                    const [locSnap, lockSnap, minDurSnap, pubSetSnap, shuffleSnap] = await Promise.all([
+                        get(refs.settingsRef), 
+                        get(refs.lockSettingsRef), 
+                        get(refs.minDurationSettingsRef), 
+                        get(refs.publicSettingsRef),
+                        get(refs.shuffleSettingsRef) // [BARU] Ambil data pengaturan acak
                     ]);
+
                     if (locSnap.exists()) {
                         const s = locSnap.val();
                         isLocationEnabled = s.isLocationEnabled ?? true;
@@ -3121,6 +3175,18 @@
                         minDurationSettingsGlobal.minDurationSeconds = s.minDurationSeconds ?? 1800;
                     }
                     if (pubSetSnap.exists()) publicSettings = pubSetSnap.val();
+
+                    // [BARU] Proses data pengaturan acak
+                    if (shuffleSnap.exists()) {
+                        const s = shuffleSnap.val();
+                        isSoalAcakEnabled = s.soal ?? true;
+                        isPilganAcakEnabled = s.pilgan ?? true;
+                    } else {
+                        // Jika path tidak ada, gunakan default (acak)
+                        isSoalAcakEnabled = true;
+                        isPilganAcakEnabled = true;
+                    }
+
                 } catch (error) {
                     console.error("Gagal mengambil pengaturan global:", error);
                 }
@@ -3189,6 +3255,7 @@
             loginBtn.addEventListener('click', window.cekToken);
             
             backToLoginFromSubmissionBtn.addEventListener('click', () => window.location.reload(true));
+            forceLogoutModalButton.addEventListener('click', () => window.location.reload(true));
             
             const backToWelcomeBtn = document.getElementById('backToWelcomeBtn');
             backToWelcomeBtn.addEventListener('click', () => {
@@ -3336,3 +3403,4 @@
     </script>
 </body>
 </html>
+
