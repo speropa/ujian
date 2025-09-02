@@ -1117,63 +1117,7 @@
             transform: translateY(0);
             box-shadow: 0 2px 5px rgba(0,128,0,0.4);
         }
-
-        #fullscreenExitWarningOverlay {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            background: rgba(0, 0, 0, 0.6);
-            z-index: 10000;
-            justify-content: center;
-            align-items: center;
-            overflow: hidden;
-            pointer-events: auto;
-            opacity: 0;
-            transition: opacity 0.3s ease-in-out;
-            flex-direction: column;
-        }
-        #fullscreenExitWarningOverlay.show {
-            display: flex;
-            opacity: 1;
-        }
-        .exit-warning-content {
-            background: white;
-            padding: 30px;
-            border-radius: 10px;
-            max-width: 400px;
-            width: 90%;
-            box-shadow: 0 8px 16px rgba(0,0,0,0.5);
-            text-align: center;
-            box-sizing: border-box;
-        }
-        .exit-warning-content h2 {
-            font-size: 2.2em;
-            color: #dc3545;
-            margin-bottom: 15px;
-        }
-        .exit-warning-content p {
-            font-size: 1.1em;
-            color: #333;
-            margin-bottom: 20px;
-        }
-        .exit-warning-button {
-            padding: 12px 25px;
-            font-size: 1.2em;
-            background-color: var(--accent-color); /* Warna dinamis */
-            color: white;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: background-color 0.3s ease, transform 0.2s ease;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-        }
-        .exit-warning-button:hover {
-            background-color: var(--primary-color); /* Warna dinamis */
-        }
-
+        
         .no-select {
             -webkit-touch-callout: none;
             -webkit-user-select: none;
@@ -1316,7 +1260,7 @@
             .initial-login-screen, .welcome-screen, .container {
                 margin-top: 0; margin-bottom: 0; border-radius: 0; box-shadow: none; width: 100%; height: 100%; justify-content: center;
             }
-            #confirmModal .modal-content, .custom-modal-content, .exit-warning-content, .submission-content, .blocked-content {
+            #confirmModal .modal-content, .custom-modal-content, .submission-content, .blocked-content {
                 max-width: 95%; width: 95%;
             }
             #examBody {
@@ -1481,22 +1425,6 @@
                 <div id="warningMessage">SEGERA KIRIMKAN JAWABAN, JANGAN SAMPAI KEHABISAN WAKTU!</div>
             </div>
         </div>
-
-        <div id="fullscreenExitWarningOverlay" style="display: none;">
-            <div class="exit-warning-content">
-                <h2 id="exitWarningTitle">PERINGATAN!</h2>
-                <p id="exitWarningMessage">Anda telah keluar dari mode layar penuh. Mohon kembali ke mode layar penuh untuk melanjutkan ujian.</p>
-                <p id="attemptsLeftInfo" style="font-size: 1.1em; color: #0066cc; font-weight: bold; margin-top: 10px; display: none;"></p>
-                <div id="lockKeySection" style="margin-top: 20px; display: none;">
-                    <p style="font-size: 1.1em; color: #333; margin-bottom: 10px;">Masukkan kunci untuk melanjutkan:</p>
-                    <input type="password" id="lockKeyInput" placeholder="Kunci..." style="width: calc(100% - 20px); padding: 10px; border: 1px solid #ccc; border-radius: 5px; text-align: center; margin-bottom: 10px;">
-                    <p id="lockKeyMessage" style="color: red; font-size: 0.9em; min-height: 1.2em;"></p>
-                    <button id="lockKeySubmitBtn" class="exit-warning-button" style="background-color: #28a745;">Masuk dengan Kunci</button>
-                </div>
-                <button id="reEnterFullscreenBtn" class="exit-warning-button">Kembali ke Layar Penuh</button>
-            </div>
-        </div>
-        
         
         <div id="examFooter">
             <span id="studentIdentityDisplay"></span>
@@ -1792,25 +1720,24 @@
         function getSetupDbRefs() {
              return {
                 settingsRef: ref(setupDb, 'setlokasi'),
-                lockSettingsRef: ref(setupDb, 'lock_settings'),
                 minDurationSettingsRef: ref(setupDb, 'min_duration_settings'),
                 publicSettingsRef: ref(setupDb, 'publicSettings'),
-                shuffleSettingsRef: ref(setupDb, 'acaksoalpilgan') // [BARU] Path untuk pengaturan acak
+                shuffleSettingsRef: ref(setupDb, 'acaksoalpilgan'),
+                blockKeySettingsRef: ref(setupDb, 'block_key_settings')
             };
         }
 
         let isLocationEnabled = true;
         let firebaseAllowedRadiusKm = 0.075;
-        let locationAccessKey = ""; // Kunci untuk validasi lokasi
+        let locationAccessKey = "";
 
-        let isLockEnabledGlobal = false;
-        let lockKeyGlobal = "";
-        let accessUnlockKey = ""; 
-        let toleranceLimitGlobal = 0;
+        // Variabel untuk blokir akses
+        let isBlockEnabled = false;
+        let blockAccessKey = "";
+
         let minDurationSettingsGlobal = { isMinDurationEnabled: false, minDurationSeconds: 1800 };
-        let isSoalAcakEnabled = true; // [BARU] Default true
-        let isPilganAcakEnabled = true; // [BARU] Default true
-        let currentAttemptsLeft = 0;
+        let isSoalAcakEnabled = true;
+        let isPilganAcakEnabled = true;
         let publicSettings = null;
 
         const allowedLatitude = -7.8589546;
@@ -1867,16 +1794,6 @@
         const forceLogoutModal = document.getElementById('forceLogoutModal');
         const forceLogoutModalButton = document.getElementById('forceLogoutModalButton');
 
-        const fullscreenExitWarningOverlay = document.getElementById('fullscreenExitWarningOverlay');
-        const exitWarningTitle = document.getElementById('exitWarningTitle');
-        const exitWarningMessage = document.getElementById('exitWarningMessage');
-        const attemptsLeftInfo = document.getElementById('attemptsLeftInfo');
-        const lockKeySection = document.getElementById('lockKeySection');
-        const lockKeyInputEl = document.getElementById('lockKeyInput');
-        const lockKeyMessage = document.getElementById('lockKeyMessage');
-        const lockKeySubmitBtn = document.getElementById('lockKeySubmitBtn');
-        const reEnterFullscreenBtn = document.getElementById('reEnterFullscreenBtn');
-
         const classModal = document.getElementById('classModal');
         const classModalList = document.getElementById('classModalList');
         const studentModal = document.getElementById('studentModal');
@@ -1903,8 +1820,8 @@
         let timerInterval;
         let remainingTime;
         
-        let accessStatusListenerRef = null; // [BARU] Untuk listener status login
-        let accessStatusListenerPath = null; // [BARU] Untuk menyimpan path listener
+        let accessStatusListenerRef = null;
+        let accessStatusListenerPath = null;
 
         let isInExamMode = false;
         let isAnyModalOpen = false;
@@ -1912,9 +1829,8 @@
         let currentExamQuestions = [];
         let studentAnswers = [];
         let raguRaguStatus = [];
-        let currentQuestionIndex = 0; // Gunakan 0-based index untuk *shuffled* view
+        let currentQuestionIndex = 0;
 
-        // [BARU] Variabel untuk menyimpan peta acak
         let shuffledQuestionIndices = [];
         let shuffledOptionOrders = [];
 
@@ -2090,7 +2006,7 @@
                 switch (error.code) {
                     case 1: // PERMISSION_DENIED
                         errorMessage = "Aktifkan lokasi di perangkat Anda! keluar aplikasi, hidupkan mode pesawat dan matikan lokasi. Kemudian matikan mode pesawat, hidupkan lokasi dan coba akses ujian kembali";
-                        showKey = false; // Jangan tampilkan kunci jika izin ditolak, paksa pengguna untuk memperbaiki izin
+                        showKey = false;
                         break;
                     case 2: // POSITION_UNAVAILABLE
                         errorMessage = "Informasi lokasi tidak tersedia saat ini. Pastikan GPS aktif dan sinyal memadai.";
@@ -2248,7 +2164,7 @@
                 return;
             }
             currentDb = instances.db;
-            currentAuth = instances.auth; // Set currentAuth di sini
+            currentAuth = instances.auth;
 
             await loadStudentsAndFilterByClass();
             updateLoginButtonStatus();
@@ -2275,7 +2191,6 @@
             updateLoginButtonStatus();
         }
         
-        // [DIPERBAIKI] Logika untuk mengaktifkan tombol kirim
         function updateSubmissionButtonState() {
             if (!submitAnswersButton || !nextQuestionBtn) return;
 
@@ -2283,10 +2198,8 @@
             const allAnswered = !studentAnswers.includes(null);
 
             if (minDurationSettingsGlobal.isMinDurationEnabled) {
-                // Tombol non-aktif jika durasi minimum belum terpenuhi ATAU jika belum semua soal dijawab
                 isDisabled = (remainingTime > minDurationSettingsGlobal.minDurationSeconds) || !allAnswered;
             } else {
-                // Tombol non-aktif jika belum semua soal dijawab
                 isDisabled = !allAnswered;
             }
 
@@ -2335,7 +2248,7 @@
 
         async function showSubmissionConfirmationOverlay(isAutoSubmit) {
             sessionStorage.clear();
-            stopAccessStatusListener(); // [DIUBAH] Hentikan listener
+            stopAccessStatusListener();
             loginContainer.style.display = 'none';
             examContainer.style.opacity = 0;
             setTimeout(async () => {
@@ -2346,9 +2259,6 @@
                 
                 isInExamMode = false;
                 toggleExamSecurityFeatures(false);
-                if (document.fullscreenElement) {
-                    document.exitFullscreen();
-                }
                 isAnyModalOpen = true;
 
                 if (isAutoSubmit) {
@@ -2407,103 +2317,27 @@
             e.preventDefault();
             return false;
         }
-
-        function attemptFullscreen() {
-            if (document.fullscreenElement) return;
-            const element = document.documentElement;
-            if (element.requestFullscreen) {
-                element.requestFullscreen().catch(err => console.warn(`Gagal masuk layar penuh: ${err.message}`));
-            } else if (element.mozRequestFullScreen) {
-                element.mozRequestFullScreen();
-            } else if (element.webkitRequestFullscreen) {
-                element.webkitRequestFullscreen();
-            } else if (element.msRequestFullscreen) {
-                element.msRequestFullscreen();
-            }
-        }
-
-        async function handleFullscreenChange() {
-            const dbRefs = getDbRefs();
-            if (!dbRefs || !foundTokenGlobal || !selectedStudentData) return;
-
-            const studentId = padStudentId(selectedStudentData.id);
-            const accessStatusRef = child(dbRefs.examAccessStatusRef, `${foundTokenGlobal.key}/${studentId}`);
-
-            if (!document.fullscreenElement && isInExamMode) {
-                document.getElementById('examBody').style.filter = 'blur(5px)';
-                isAnyModalOpen = true;
-
-                if (isLockEnabledGlobal) {
-                    let currentAttempts = parseInt(sessionStorage.getItem('attemptsLeft')) || toleranceLimitGlobal;
-                    if (currentAttempts > 0) {
-                        currentAttempts--;
-                        sessionStorage.setItem('attemptsLeft', currentAttempts);
-                        try {
-                            await update(accessStatusRef, { attemptsLeft: currentAttempts, studentId: studentId });
-                        } catch (error) {
-                            console.error("Gagal memperbarui attemptsLeft di Firebase:", error);
-                        }
-                    }
-                    currentAttemptsLeft = currentAttempts;
-
-                    attemptsLeftInfo.style.display = 'block';
-                    lockKeySection.style.display = 'none';
-                    lockKeyInputEl.value = '';
-                    lockKeyMessage.textContent = '';
-
-                    if (currentAttemptsLeft > 0) {
-                        exitWarningMessage.textContent = "Anda telah keluar dari mode layar penuh. Mohon kembali ke mode layar penuh untuk melanjutkan ujian.";
-                        attemptsLeftInfo.textContent = `Anda memiliki ${currentAttemptsLeft} kesempatan tersisa.`;
-                        reEnterFullscreenBtn.style.display = 'block';
-                    } else {
-                        exitWarningMessage.textContent = "Anda telah melebihi batas toleransi. Masukkan kunci untuk melanjutkan.";
-                        attemptsLeftInfo.textContent = "Kesempatan keluar sudah habis.";
-                        reEnterFullscreenBtn.style.display = 'none';
-                        lockKeySection.style.display = 'block';
-                        lockKeyInputEl.focus();
-                    }
-                } else {
-                    exitWarningMessage.textContent = "Anda telah keluar dari mode layar penuh. Mohon kembali ke mode layar penuh untuk melanjutkan ujian.";
-                    attemptsLeftInfo.style.display = 'none';
-                    lockKeySection.style.display = 'none';
-                    reEnterFullscreenBtn.style.display = 'block';
-                }
-
-                fullscreenExitWarningOverlay.classList.add('show');
-
-            } else if (document.fullscreenElement) {
-                fullscreenExitWarningOverlay.classList.remove('show');
-                document.getElementById('examBody').style.filter = 'none';
-                isAnyModalOpen = false;
-            }
-        }
-
-        // [DIUBAH] Fungsi startSubmissionStatusListener tidak lagi diperlukan
-        // karena fungsinya digantikan oleh startAccessStatusListener yang lebih umum.
-
+        
         async function startExamProcess(examDurationMinutes, examStartTime, initialData) {
             
-            // [DIUBAH] Logika pengacakan menjadi kondisional
             if (initialData.shuffledQuestionIndices && initialData.shuffledOptionOrders) {
                 shuffledQuestionIndices = initialData.shuffledQuestionIndices;
                 shuffledOptionOrders = initialData.shuffledOptionOrders;
             } else {
-                // Inisialisasi urutan soal (1, 2, 3, ...)
                 shuffledQuestionIndices = Array.from({ length: currentExamQuestions.length }, (_, i) => i);
                 if (isSoalAcakEnabled) {
-                    shuffleArray(shuffledQuestionIndices); // Acak jika diaktifkan
+                    shuffleArray(shuffledQuestionIndices);
                 }
 
-                // Inisialisasi urutan pilihan ganda (A, B, C, D)
                 shuffledOptionOrders = currentExamQuestions.map(() => {
                     const options = ['A', 'B', 'C', 'D'];
                     if (isPilganAcakEnabled) {
-                        shuffleArray(options); // Acak jika diaktifkan
+                        shuffleArray(options);
                     }
                     return options;
                 });
 
-                await saveStudentAnswersToFirebase(); // Simpan urutan yang baru dibuat
+                await saveStudentAnswersToFirebase();
             }
             
             sessionStorage.setItem('shuffledQuestionIndices', JSON.stringify(shuffledQuestionIndices));
@@ -2535,7 +2369,7 @@
                     examContainer.style.opacity = 1;
                     isInExamMode = true;
                     toggleExamSecurityFeatures(true);
-                    updateStudentIdentityPanel(); // [BARU] Panggil fungsi untuk menampilkan identitas
+                    updateStudentIdentityPanel();
                     currentQuestionIndex = lastQuestionIndex;
                     displayQuestion(currentQuestionIndex);
                     renderQuestionGrid();
@@ -2552,9 +2386,8 @@
             timerInterval = setInterval(updateTimerDisplay, 1000);
             updateTimerDisplay();
 
-            attemptFullscreen();
             history.pushState(null, '', location.href);
-            startAccessStatusListener(); // [DIUBAH] Memulai listener status login
+            startAccessStatusListener();
         }
 
         async function restoreExamState() {
@@ -2677,7 +2510,6 @@
                             isLoggedIn: true,
                             examStartTime: currentAccess?.examStartTime || now,
                             studentId: studentId,
-                            attemptsLeft: toleranceLimitGlobal
                         };
                     }
                     return;
@@ -2686,8 +2518,6 @@
                 if (transactionResult.committed) {
                     
                     const examStartTime = Number(transactionResult.snapshot.val().examStartTime);
-                    currentAttemptsLeft = toleranceLimitGlobal;
-                    sessionStorage.setItem('attemptsLeft', currentAttemptsLeft);
                     
                     const savedAnswersSnapshot = await get(child(dbRefs.studentAnswersRef, `${tokenFirebaseKey}/${studentId}`));
                     const initialData = {};
@@ -2716,7 +2546,7 @@
         function displayQuestion(shuffledIndex) {
             if (shuffledIndex < 0 || shuffledIndex >= currentExamQuestions.length) return;
             currentQuestionIndex = shuffledIndex;
-            sessionStorage.setItem('lastQuestionIndex', shuffledIndex); // Simpan posisi acak
+            sessionStorage.setItem('lastQuestionIndex', shuffledIndex);
 
             const originalIndex = shuffledQuestionIndices[shuffledIndex];
             const question = currentExamQuestions[originalIndex];
@@ -2735,7 +2565,7 @@
                     
                     const radio = document.createElement('input');
                     radio.type = 'radio';
-                    radio.name = `question_${shuffledIndex}`; // Gunakan shuffledIndex untuk grup radio
+                    radio.name = `question_${shuffledIndex}`;
                     radio.value = opt;
                     radio.onchange = () => selectAnswer(originalIndex, opt);
 
@@ -2775,7 +2605,6 @@
             sessionStorage.setItem('studentAnswers', JSON.stringify(studentAnswers));
             saveStudentAnswersToFirebase();
             
-            // Perbarui tampilan radio button yang dipilih
             const shuffledIndex = shuffledQuestionIndices.indexOf(originalIndex);
             if (shuffledIndex === currentQuestionIndex) {
                 document.querySelectorAll('.cbt-option-label').forEach(label => label.classList.remove('selected'));
@@ -2803,7 +2632,7 @@
                 const originalIndex = shuffledQuestionIndices[i];
                 const box = document.createElement('div');
                 box.className = 'question-nav-box';
-                box.textContent = i + 1; // Tampilkan nomor urut acak
+                box.textContent = i + 1;
                 if (studentAnswers[originalIndex]) {
                     box.classList.add('answered');
                 }
@@ -3085,28 +2914,24 @@
             }
         }
         
-        // [BARU] Fungsi untuk menampilkan identitas siswa di footer
         function updateStudentIdentityPanel() {
             const identityDisplay = document.getElementById('studentIdentityDisplay');
             if (identityDisplay && selectedStudentData) {
                 let displayName = selectedStudentData.name;
-                // Potong nama jika terlalu panjang untuk tampilan
                 if (displayName.length > 25) { 
                     displayName = displayName.substring(0, 22) + '...';
                 }
                 identityDisplay.textContent = `${displayName} | ${selectedStudentData.class}`;
-                // Tampilkan nama lengkap saat hover
                 identityDisplay.title = `${selectedStudentData.name} | ${selectedStudentData.class}`;
             }
         }
 
-        // [BARU] Fungsi-fungsi untuk listener status login
         function startAccessStatusListener() {
             if (!foundTokenGlobal || !selectedStudentData || !currentDb) return;
             const dbRefs = getDbRefs();
             if (!dbRefs) return;
 
-            stopAccessStatusListener(); // Hentikan listener lama jika ada
+            stopAccessStatusListener();
 
             accessStatusListenerPath = child(dbRefs.examAccessStatusRef, `${foundTokenGlobal.key}/${padStudentId(selectedStudentData.id)}`);
             accessStatusListenerRef = onValue(accessStatusListenerPath, (snapshot) => {
@@ -3134,7 +2959,6 @@
             if (timerInterval) clearInterval(timerInterval);
             isInExamMode = false;
 
-            // Nonaktifkan semua kontrol ujian
             document.querySelectorAll('#examContainer button, #examContainer input').forEach(el => el.disabled = true);
             document.getElementById('examBody').style.filter = 'blur(5px)';
 
@@ -3148,12 +2972,12 @@
             async function fetchGlobalSettings() {
                 try {
                     const refs = getSetupDbRefs();
-                    const [locSnap, lockSnap, minDurSnap, pubSetSnap, shuffleSnap] = await Promise.all([
+                    const [locSnap, minDurSnap, pubSetSnap, shuffleSnap, blockKeySnap] = await Promise.all([
                         get(refs.settingsRef), 
-                        get(refs.lockSettingsRef), 
                         get(refs.minDurationSettingsRef), 
                         get(refs.publicSettingsRef),
-                        get(refs.shuffleSettingsRef) // [BARU] Ambil data pengaturan acak
+                        get(refs.shuffleSettingsRef),
+                        get(refs.blockKeySettingsRef)
                     ]);
 
                     if (locSnap.exists()) {
@@ -3162,12 +2986,10 @@
                         firebaseAllowedRadiusKm = s.allowedRadiusKm ?? 0.075;
                         locationAccessKey = s.currentKey || "";
                     }
-                    if (lockSnap.exists()) {
-                        const s = lockSnap.val();
-                        isLockEnabledGlobal = s.isLockEnabled ?? false;
-                        lockKeyGlobal = s.lockKey || "";
-                        accessUnlockKey = lockKeyGlobal;
-                        toleranceLimitGlobal = s.toleranceLimit ?? 3;
+                    if (blockKeySnap.exists()) {
+                        const s = blockKeySnap.val();
+                        isBlockEnabled = s.isEnabled ?? false;
+                        blockAccessKey = s.key || "";
                     }
                     if (minDurSnap.exists()) {
                         const s = minDurSnap.val();
@@ -3175,14 +2997,11 @@
                         minDurationSettingsGlobal.minDurationSeconds = s.minDurationSeconds ?? 1800;
                     }
                     if (pubSetSnap.exists()) publicSettings = pubSetSnap.val();
-
-                    // [BARU] Proses data pengaturan acak
                     if (shuffleSnap.exists()) {
                         const s = shuffleSnap.val();
                         isSoalAcakEnabled = s.soal ?? true;
                         isPilganAcakEnabled = s.pilgan ?? true;
                     } else {
-                        // Jika path tidak ada, gunakan default (acak)
                         isSoalAcakEnabled = true;
                         isPilganAcakEnabled = true;
                     }
@@ -3198,18 +3017,9 @@
                 globalUserPassword = "Pajangan201184*";
                 await fetchGlobalSettings();
 
-                if (isAllowedEnvironment()) {
-                    const isRestored = await restoreExamState();
-                    if (!isRestored) {
-                       await loadAndRenderWelcomeButtons();
-                       loadingSpinner.style.display = 'none';
-                       welcomeScreen.style.display = 'flex';
-                    } else {
-                        loadingSpinner.style.display = 'none';
-                    }
-                } else {
+                if (isBlockEnabled && !isAllowedEnvironment()) {
                     unlockAccessBtn.onclick = async () => {
-                        if (unlockKeyInput.value === accessUnlockKey) {
+                        if (unlockKeyInput.value === blockAccessKey) {
                             accessBlockedOverlay.style.display = 'none';
                             loadingSpinner.style.display = 'flex';
                             const isRestored = await restoreExamState();
@@ -3226,6 +3036,15 @@
                     };
                     loadingSpinner.style.display = 'none';
                     accessBlockedOverlay.style.display = 'flex';
+                } else {
+                    const isRestored = await restoreExamState();
+                    if (!isRestored) {
+                       await loadAndRenderWelcomeButtons();
+                       loadingSpinner.style.display = 'none';
+                       welcomeScreen.style.display = 'flex';
+                    } else {
+                        loadingSpinner.style.display = 'none';
+                    }
                 }
             } catch (error) {
                 console.error("Login otomatis gagal:", error);
@@ -3261,7 +3080,6 @@
             backToWelcomeBtn.addEventListener('click', () => {
                  loginContainer.classList.remove('show');
                  welcomeScreen.style.display = 'flex';
-                 // Reset form
                  customSelectKelasDisplay.textContent = customSelectKelasDisplay.dataset.placeholder;
                  hiddenSelectKelas.value = '';
                  customSelectNamaSiswaDisplay.textContent = customSelectNamaSiswaDisplay.dataset.placeholder;
@@ -3272,23 +3090,6 @@
             });
 
             window.onpopstate = e => isInExamMode && history.pushState(null, '', location.href);
-
-            ['fullscreenchange', 'mozfullscreenchange', 'webkitfullscreenchange', 'msfullscreenchange'].forEach(event => {
-                document.addEventListener(event, handleFullscreenChange);
-            });
-
-            reEnterFullscreenBtn.addEventListener('click', attemptFullscreen);
-            lockKeySubmitBtn.addEventListener('click', async () => {
-                if (lockKeyInputEl.value === lockKeyGlobal) {
-                    currentAttemptsLeft = toleranceLimitGlobal;
-                    sessionStorage.setItem('attemptsLeft', currentAttemptsLeft);
-                    lockKeySection.style.display = 'none';
-                    reEnterFullscreenBtn.style.display = 'block';
-                    attemptFullscreen();
-                } else {
-                    lockKeyMessage.textContent = 'Kunci salah.';
-                }
-            });
 
             prevQuestionBtn.addEventListener('click', () => displayQuestion(currentQuestionIndex - 1));
             nextQuestionBtn.addEventListener('click', () => {
