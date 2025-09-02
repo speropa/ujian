@@ -1798,7 +1798,7 @@
         const classModalList = document.getElementById('classModalList');
         const studentModal = document.getElementById('studentModal');
         const studentModalList = document.getElementById('studentModalList');
-
+        
         const susulanListModal = document.getElementById('susulanListModal');
         
         const questionGridContainer = document.getElementById('questionGridContainer');
@@ -1845,6 +1845,10 @@
         const customConfirmModalText = document.getElementById('customConfirmModalText');
         const customConfirmModalConfirmBtn = document.getElementById('customConfirmModalConfirmBtn');
         const customConfirmModalCancelBtn = document.getElementById('customConfirmModalCancelBtn');
+
+        let manualSubmissionInProgress = false;
+        let submissionStatusListenerRef = null;
+        let submissionStatusListenerPath = null;
 
         function padStudentId(id) {
             return String(id).padStart(3, '0');
@@ -2249,6 +2253,7 @@
         async function showSubmissionConfirmationOverlay(isAutoSubmit) {
             sessionStorage.clear();
             stopAccessStatusListener();
+            stopSubmissionStatusListener();
             loginContainer.style.display = 'none';
             examContainer.style.opacity = 0;
             setTimeout(async () => {
@@ -2278,7 +2283,9 @@
                 if (dbRefs && tokenFirebaseKey && studentId) {
                     const accessStatusRef = child(dbRefs.examAccessStatusRef, `${tokenFirebaseKey}/${studentId}`);
                     try {
+                        manualSubmissionInProgress = true;
                         await update(accessStatusRef, { isLoggedIn: false, studentId: studentId });
+                        manualSubmissionInProgress = false;
                     } catch (error) {
                         console.error("Gagal mengatur isLoggedIn ke false saat pengiriman:", error);
                     }
@@ -2388,6 +2395,7 @@
 
             history.pushState(null, '', location.href);
             startAccessStatusListener();
+            startSubmissionStatusListener();
         }
 
         async function restoreExamState() {
@@ -2698,6 +2706,7 @@
             if (!dbRefs) return;
             
             try {
+                manualSubmissionInProgress = true;
                 await saveStudentAnswersToFirebase();
                 const studentId = padStudentId(selectedStudentData.id);
                 const tokenKey = foundTokenGlobal.key;
@@ -2711,6 +2720,8 @@
                 submissionWarningMessage.textContent = 'Gagal mengirim. Coba lagi.';
                 submitAnswersButton.disabled = false;
                 submitAnswersButton.textContent = 'KIRIM JAWABAN';
+            } finally {
+                manualSubmissionInProgress = false;
             }
         }
 
@@ -2937,7 +2948,7 @@
             accessStatusListenerRef = onValue(accessStatusListenerPath, (snapshot) => {
                 if (isInExamMode && snapshot.exists()) {
                     const data = snapshot.val();
-                    if (data.isLoggedIn === false) {
+                    if (data.isLoggedIn === false && !manualSubmissionInProgress) {
                         showForceLogoutModal();
                     }
                 }
@@ -2956,6 +2967,7 @@
 
         function showForceLogoutModal() {
             stopAccessStatusListener();
+            stopSubmissionStatusListener();
             if (timerInterval) clearInterval(timerInterval);
             isInExamMode = false;
 
@@ -3074,7 +3086,10 @@
             loginBtn.addEventListener('click', window.cekToken);
             
             backToLoginFromSubmissionBtn.addEventListener('click', () => window.location.reload(true));
-            forceLogoutModalButton.addEventListener('click', () => window.location.reload(true));
+            forceLogoutModalButton.addEventListener('click', () => {
+                sessionStorage.clear();
+                window.location.reload(true);
+            });
             
             const backToWelcomeBtn = document.getElementById('backToWelcomeBtn');
             backToWelcomeBtn.addEventListener('click', () => {
@@ -3124,6 +3139,41 @@
             updateDateTime();
             setInterval(updateDateTime, 1000);
         });
+
+        function startSubmissionStatusListener() {
+            if (!foundTokenGlobal || !selectedStudentData || !currentDb) return;
+            const dbRefs = getDbRefs();
+            if (!dbRefs) return;
+
+            stopSubmissionStatusListener();
+
+            submissionStatusListenerPath = child(dbRefs.submittedExamsRef, `${foundTokenGlobal.key}/${padStudentId(selectedStudentData.id)}`);
+            submissionStatusListenerRef = onValue(submissionStatusListenerPath, (snapshot) => {
+                if (isInExamMode && snapshot.exists() && snapshot.val().isSubmitted) {
+                    stopAccessStatusListener();
+                    stopSubmissionStatusListener();
+                    if (timerInterval) clearInterval(timerInterval);
+                    isInExamMode = false;
+                    
+                    document.querySelectorAll('#examContainer button, #examContainer input').forEach(el => el.disabled = true);
+                    document.getElementById('examBody').style.filter = 'blur(5px)';
+
+                    submissionOverlayTitle.innerText = 'Ujian Telah Dikirim';
+                    submissionOverlayMessage.innerText = 'Jawaban Anda telah dikirim oleh administrator.';
+                    backToLoginFromSubmissionBtn.innerText = 'Logout';
+                    submissionConfirmationOverlay.classList.add('show');
+                    isAnyModalOpen = true;
+                }
+            });
+        }
+
+        function stopSubmissionStatusListener() {
+            if (submissionStatusListenerRef && submissionStatusListenerPath) {
+                off(submissionStatusListenerPath, 'value', submissionStatusListenerRef);
+                submissionStatusListenerRef = null;
+                submissionStatusListenerPath = null;
+            }
+        }
 
         window.cekToken = async function() {
             const tokenPrefix = inputTokenPrefix.value.trim().toUpperCase();
