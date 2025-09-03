@@ -441,7 +441,6 @@
             opacity: 1;
         }
         
-        /* [BARU] Gaya untuk modal yang tidak bisa ditutup (backdrop static) */
         .custom-modal.static-backdrop {
             background: rgba(0, 0, 0, 0.8);
             pointer-events: all;
@@ -647,15 +646,14 @@
             padding: 15px;
             gap: 15px;
             flex-grow: 1;
-            overflow: hidden;
-            padding-bottom: 40px; /* DITAMBAHKAN: Ruang untuk footer */
+            overflow-y: auto; 
+            padding-bottom: 70px; 
         }
 
         #examMainContent {
             order: 2;
             display: flex;
             flex-direction: column;
-            overflow-y: auto;
             flex-grow: 1;
         }
 
@@ -689,7 +687,7 @@
         }
         
         #mobileSidebarToggle {
-            display: block; /* Selalu tampil di mobile */
+            display: block; 
             background: none;
             border: none;
             cursor: pointer;
@@ -712,10 +710,9 @@
             transform: rotate(180deg);
         }
 
-        /* [DIUBAH] Logika transisi untuk penutupan panel yang lebih mulus */
         .sidebar-content-wrapper {
             transition: max-height 0.4s ease-in-out;
-            max-height: 500px; /* Nilai yang cukup besar untuk konten */
+            max-height: 500px; 
             overflow: hidden;
         }
         .sidebar-content-wrapper > * {
@@ -732,16 +729,27 @@
             pointer-events: none;
         }
 
+        #questionGridContainer {
+            flex-grow: 1;
+            overflow-y: auto;
+            padding: 15px;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(45px, 1fr)); 
+            gap: 10px;
+            align-content: flex-start;
+        }
+
         @media (min-width: 992px) {
             #examBody {
                 display: grid;
-                grid-template-columns: 1fr 2.5fr; /* Side panel on left */
+                grid-template-columns: 1fr 2.5fr; 
                 padding: 25px;
                 gap: 25px;
-                padding-bottom: 50px; /* DITAMBAHKAN: Ruang untuk footer */
+                padding-bottom: 50px;
             }
             #examMainContent {
                 order: 2;
+                overflow-y: auto; 
             }
             #examSidePanel {
                 order: 1;
@@ -831,8 +839,8 @@
         .cbt-option-label {
             display: flex;
             align-items: center;
-            justify-content: flex-start; /* DIUBAH */
-            gap: 15px; /* DITAMBAHKAN */
+            justify-content: flex-start; 
+            gap: 15px; 
             padding: 15px;
             border: 1px solid var(--border-color);
             border-radius: 8px;
@@ -848,7 +856,7 @@
             border-color: var(--primary-color);
         }
         .cbt-option-label input[type="radio"] {
-            margin: 0; /* DIUBAH */
+            margin: 0; 
             flex-shrink: 0;
             width: 18px;
             height: 18px;
@@ -879,7 +887,6 @@
             background-color: var(--primary-color);
         }
         
-        /* DITAMBAHKAN: Gaya untuk tombol Berikutnya saat menjadi tombol kirim */
         #nextQuestionBtn.submit-mode {
             background-color: var(--danger-color);
         }
@@ -892,16 +899,6 @@
             border-color: #ccc;
             cursor: not-allowed;
             opacity: 0.7;
-        }
-
-        #questionGridContainer {
-            flex-grow: 1;
-            overflow-y: auto;
-            padding: 15px;
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(45px, 1fr));
-            gap: 10px;
-            align-content: flex-start;
         }
 
         .question-nav-box {
@@ -959,10 +956,10 @@
             width: 100%;
             padding: 12px;
             font-size: 1.1em;
-            background-color: var(--danger-color); /* DIUBAH */
+            background-color: var(--danger-color);
         }
         #submitAnswersButton:hover {
-            background-color: #c82333; /* DIUBAH */
+            background-color: #c82333;
         }
         #submitAnswersButton:disabled {
              background-color: #cccccc;
@@ -970,7 +967,6 @@
         }
         /* === [END] GAYA TAMPILAN UJIAN BARU === */
 
-        /* [BARU] Gaya untuk footer identitas siswa */
         #examFooter {
             position: fixed;
             bottom: 0;
@@ -980,7 +976,7 @@
             color: white;
             padding: 8px 15px;
             box-sizing: border-box;
-            z-index: 501; /* Di atas konten, di bawah overlay */
+            z-index: 501; 
             text-align: center;
             font-size: 0.9em;
             display: flex;
@@ -1246,6 +1242,7 @@
             #examMainContent {
                 order: 2;
                 flex-grow: 1;
+                overflow: visible; 
             }
             #examSidePanel {
                 order: 1;
@@ -1253,6 +1250,23 @@
             }
             #mobileSidebarToggle {
                 display: block;
+            }
+            #questionGridContainer {
+                grid-template-columns: repeat(10, 1fr);
+                gap: 5px; 
+            }
+            .question-nav-box {
+                font-size: 0.9em; 
+            }
+            .sidebar-footer {
+                padding: 10px;
+            }
+            #submitAnswersButton {
+                font-size: 1em;
+                padding: 10px;
+            }
+            #submissionWarningMessage {
+                margin-bottom: 5px;
             }
         }
 
@@ -2606,6 +2620,16 @@
             
             renderQuestionGrid();
             updateSubmissionButtonState();
+
+            if (window.innerWidth < 992) {
+                const wrapper = document.querySelector('.sidebar-content-wrapper');
+                const toggleBtn = document.getElementById('mobileSidebarToggle');
+                if (wrapper.classList.contains('collapsed')) {
+                    wrapper.classList.remove('collapsed');
+                    toggleBtn.classList.add('up');
+                }
+            }
+            startSidebarCollapseTimer(); 
         }
         
         function selectAnswer(originalIndex, choice) {
@@ -2913,6 +2937,7 @@
             }
         }
         
+        // [PERBAIKAN] Memindahkan definisi fungsi ke atas
         function startSidebarCollapseTimer() {
             clearTimeout(sidebarCollapseTimer);
             if (window.innerWidth < 992 && !document.querySelector('.sidebar-content-wrapper').classList.contains('collapsed')) {
@@ -2921,7 +2946,7 @@
                     const toggleBtn = document.getElementById('mobileSidebarToggle');
                     wrapper.classList.add('collapsed');
                     toggleBtn.classList.remove('up');
-                }, 60000);
+                }, 6000); // 6 detik
             }
         }
         
@@ -3124,12 +3149,7 @@
                 const wrapper = document.querySelector('.sidebar-content-wrapper');
                 wrapper.classList.toggle('collapsed');
                 mobileSidebarToggle.classList.toggle('up');
-
-                if (wrapper.classList.contains('collapsed')) {
-                    clearTimeout(sidebarCollapseTimer);
-                } else {
-                    startSidebarCollapseTimer();
-                }
+                clearTimeout(sidebarCollapseTimer);
             });
 
             examSidePanel.addEventListener('click', startSidebarCollapseTimer);
