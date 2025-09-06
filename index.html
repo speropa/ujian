@@ -1882,7 +1882,7 @@
                     const toggleBtn = document.getElementById('mobileSidebarToggle');
                     wrapper.classList.add('collapsed');
                     toggleBtn.classList.remove('up');
-                }, 6000); // 6 detik
+                }, 10000); // 10 detik
             }
         }
 
@@ -2652,14 +2652,6 @@
             renderQuestionGrid();
             updateSubmissionButtonState();
 
-            if (window.innerWidth < 992) {
-                const wrapper = document.querySelector('.sidebar-content-wrapper');
-                const toggleBtn = document.getElementById('mobileSidebarToggle');
-                if (wrapper.classList.contains('collapsed')) {
-                    wrapper.classList.remove('collapsed');
-                    toggleBtn.classList.add('up');
-                }
-            }
             startSidebarCollapseTimer(); 
         }
         
@@ -3180,7 +3172,14 @@
                 const wrapper = document.querySelector('.sidebar-content-wrapper');
                 wrapper.classList.toggle('collapsed');
                 mobileSidebarToggle.classList.toggle('up');
-                clearTimeout(sidebarCollapseTimer);
+                
+                if (!wrapper.classList.contains('collapsed')) {
+                    // Jika panel baru saja dibuka, mulai timer
+                    startSidebarCollapseTimer();
+                } else {
+                    // Jika panel baru saja ditutup, hentikan timer
+                    clearTimeout(sidebarCollapseTimer);
+                }
             });
 
             examSidePanel.addEventListener('click', startSidebarCollapseTimer);
