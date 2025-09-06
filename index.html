@@ -3189,15 +3189,16 @@
             updateDateTime();
             setInterval(updateDateTime, 1000);
         });
-
+        
         function startSubmissionStatusListener() {
             if (!foundTokenGlobal || !selectedStudentData || !currentDb) return;
             const dbRefs = getDbRefs();
             if (!dbRefs) return;
+            const selectedStudentId = selectedStudentData.id;
 
             stopSubmissionStatusListener();
 
-            submissionStatusListenerPath = child(dbRefs.submittedExamsRef, `${foundTokenGlobal.key}/${padStudentId(selectedStudentData.id)}`);
+            submissionStatusListenerPath = child(dbRefs.submittedExamsRef, `${foundTokenGlobal.key}/${padStudentId(selectedStudentId)}`);
             submissionStatusListenerRef = onValue(submissionStatusListenerPath, (snapshot) => {
                 if (isInExamMode && snapshot.exists() && snapshot.val().isSubmitted) {
                     stopAccessStatusListener();
@@ -3213,6 +3214,13 @@
                     backToLoginFromSubmissionBtn.innerText = 'Logout';
                     submissionConfirmationOverlay.classList.add('show');
                     isAnyModalOpen = true;
+
+                    const backBtn = document.getElementById('backToLoginFromSubmissionBtn');
+                    backBtn.onclick = () => {
+                        backBtn.disabled = true;
+                        backBtn.textContent = 'MEMUAT...';
+                        window.location.reload(true);
+                    };
                 }
             });
         }
@@ -3304,3 +3312,4 @@
     </script>
 </body>
 </html>
+
