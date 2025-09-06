@@ -1864,6 +1864,28 @@
         let submissionStatusListenerRef = null;
         let submissionStatusListenerPath = null;
 
+        function setupPasswordToggle(toggleEl, inputEl, openIcon, closedIcon) {
+            if (!toggleEl || !inputEl || !openIcon || !closedIcon) return;
+            toggleEl.addEventListener('click', () => {
+                const isPassword = inputEl.type === 'password';
+                inputEl.type = isPassword ? 'text' : 'password';
+                openIcon.style.display = isPassword ? 'none' : 'block';
+                closedIcon.style.display = isPassword ? 'block' : 'none';
+            });
+        }
+
+        function startSidebarCollapseTimer() {
+            clearTimeout(sidebarCollapseTimer);
+            if (window.innerWidth < 992 && !document.querySelector('.sidebar-content-wrapper').classList.contains('collapsed')) {
+                sidebarCollapseTimer = setTimeout(() => {
+                    const wrapper = document.querySelector('.sidebar-content-wrapper');
+                    const toggleBtn = document.getElementById('mobileSidebarToggle');
+                    wrapper.classList.add('collapsed');
+                    toggleBtn.classList.remove('up');
+                }, 6000); // 6 detik
+            }
+        }
+
         function padStudentId(id) {
             return String(id).padStart(3, '0');
         }
@@ -2265,12 +2287,18 @@
         }
 
         async function showSubmissionConfirmationOverlay(isAutoSubmit) {
+            // [PERBAIKAN] Ambil data sebelum session storage dihapus
+            const tokenFirebaseKey = foundTokenGlobal?.key;
+            const studentId = selectedStudentData?.id ? padStudentId(selectedStudentData.id) : null;
+            const dbRefs = getDbRefs();
+            
             sessionStorage.clear();
             stopAccessStatusListener();
             stopSubmissionStatusListener();
             loginContainer.style.display = 'none';
             examContainer.style.opacity = 0;
-            setTimeout(async () => {
+
+            setTimeout(() => {
                 examContainer.style.display = 'none';
                 submissionConfirmationOverlay.classList.add('show');
                 document.body.style.overflow = 'hidden';
@@ -2288,25 +2316,28 @@
                     submissionOverlayTitle.style.color = '#4CAF50';
                     submissionOverlayMessage.innerText = 'JAWABAN ANDA BERHASIL TERKIRIM!';
                 }
-                backToLoginFromSubmissionBtn.innerText = 'KEMBALI';
 
-                const tokenFirebaseKey = foundTokenGlobal?.key;
-                const studentId = selectedStudentData?.id ? padStudentId(selectedStudentData.id) : null;
-                const dbRefs = getDbRefs();
-
-                if (dbRefs && tokenFirebaseKey && studentId) {
-                    const accessStatusRef = child(dbRefs.examAccessStatusRef, `${tokenFirebaseKey}/${studentId}`);
-                    try {
-                        manualSubmissionInProgress = true;
-                        await update(accessStatusRef, { isLoggedIn: false, studentId: studentId });
-                        manualSubmissionInProgress = false;
-                    } catch (error) {
-                        console.error("Gagal mengatur isLoggedIn ke false saat pengiriman:", error);
+                const backBtn = document.getElementById('backToLoginFromSubmissionBtn');
+                backBtn.innerText = 'KEMBALI';
+                
+                // [PERBAIKAN] Tambahkan event listener baru yang dinamis
+                backBtn.onclick = async () => {
+                    backBtn.disabled = true;
+                    backBtn.textContent = 'MEMUAT...';
+                    if (dbRefs && tokenFirebaseKey && studentId) {
+                        try {
+                            const accessStatusRef = child(dbRefs.examAccessStatusRef, `${tokenFirebaseKey}/${studentId}`);
+                            await update(accessStatusRef, { isLoggedIn: false });
+                        } catch (err) {
+                            console.error("Gagal saat failsafe logout:", err);
+                        }
                     }
-                }
+                    window.location.reload(true);
+                };
 
             }, 500);
         }
+
 
         function hideSubmissionConfirmationOverlay() {
             submissionConfirmationOverlay.classList.remove('show');
@@ -2937,19 +2968,6 @@
             }
         }
         
-        // [PERBAIKAN] Memindahkan definisi fungsi ke atas
-        function startSidebarCollapseTimer() {
-            clearTimeout(sidebarCollapseTimer);
-            if (window.innerWidth < 992 && !document.querySelector('.sidebar-content-wrapper').classList.contains('collapsed')) {
-                sidebarCollapseTimer = setTimeout(() => {
-                    const wrapper = document.querySelector('.sidebar-content-wrapper');
-                    const toggleBtn = document.getElementById('mobileSidebarToggle');
-                    wrapper.classList.add('collapsed');
-                    toggleBtn.classList.remove('up');
-                }, 6000); // 6 detik
-            }
-        }
-        
         function updateStudentIdentityPanel() {
             const identityDisplay = document.getElementById('studentIdentityDisplay');
             if (identityDisplay && selectedStudentData) {
@@ -3098,6 +3116,20 @@
         document.addEventListener('DOMContentLoaded', async () => {
             await initializeAppFlow();
             
+            setupPasswordToggle(
+                document.getElementById('togglePasswordVisibility'),
+                document.getElementById('unlockKeyInput'),
+                document.getElementById('eye-open'),
+                document.getElementById('eye-closed')
+            );
+
+            setupPasswordToggle(
+                document.getElementById('toggleLocationKeyVisibility'),
+                document.getElementById('locationKeyInput'),
+                document.getElementById('loc-eye-open'),
+                document.getElementById('loc-eye-closed')
+            );
+            
             customSelectKelasDisplay.addEventListener('click', openClassModal);
             customSelectNamaSiswaDisplay.addEventListener('click', openStudentModal);
             document.getElementById('validateLocationKeyBtn').addEventListener('click', validateLocationKey);
@@ -3110,7 +3142,6 @@
 
             loginBtn.addEventListener('click', window.cekToken);
             
-            backToLoginFromSubmissionBtn.addEventListener('click', () => window.location.reload(true));
             forceLogoutModalButton.addEventListener('click', () => {
                 sessionStorage.clear();
                 window.location.reload(true);
@@ -3274,4 +3305,3 @@
     </script>
 </body>
 </html>
-
