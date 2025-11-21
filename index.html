@@ -1546,7 +1546,7 @@
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-app.js";
-        import { getDatabase, ref, get, child, runTransaction, set, onValue, off, update, remove } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-database.js";
+        import { getDatabase, ref, get, child, runTransaction, set, onValue, off, update, remove, query, orderByChild, equalTo } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-database.js";
         import { getAuth, signInWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-auth.js";
 
         // Konfigurasi Firebase untuk SETUP (login utama dan pengaturan global)
@@ -2123,29 +2123,49 @@
             const dbRefs = getDbRefs();
             if (!dbRefs) return;
 
+            // Pastikan UI terkunci saat proses query
             customSelectNamaSiswaDisplay.classList.add('disabled');
             inputTokenPrefix.disabled = true;
             displayStudentId.value = "";
-            message.innerHTML = `Memuat data siswa untuk kelas ${hiddenSelectKelas.value}... <span class="spinner"></span>`;
+            
+            const selectedClass = hiddenSelectKelas.value;
+            message.innerHTML = `Mengunduh data ${selectedClass}... <span class="spinner"></span>`;
 
             try {
+                // [REVISI] Kembali menggunakan get() biasa tanpa query index
+                // karena rule .indexOn tidak tersedia di server.
+                // Kita ambil semua data, tapi filter manual di sini untuk efisiensi memori variabel.
                 const snapshot = await get(dbRefs.studentsRef);
+
                 if (snapshot.exists()) {
                     allStudentsData = [];
                     snapshot.forEach(childSnapshot => {
-                        allStudentsData.push({ ...childSnapshot.val(), key: childSnapshot.key });
+                        const studentData = childSnapshot.val();
+                        // Filter manual di sini: hanya masukkan ke array jika kelasnya cocok
+                        if (studentData.class === selectedClass) {
+                            allStudentsData.push({ ...studentData, key: childSnapshot.key });
+                        }
                     });
 
-                    filterStudentsByClass();
-                    message.textContent = "";
+                    if (allStudentsData.length > 0) {
+                        filterStudentsByClass();
+                        message.textContent = "";
+                    } else {
+                         message.style.color = "orange";
+                         message.textContent = "Tidak ada data siswa ditemukan untuk kelas ini.";
+                         studentModalList.innerHTML = '';
+                         customSelectNamaSiswaDisplay.textContent = customSelectNamaSiswaDisplay.dataset.placeholder;
+                    }
                 } else {
                     message.style.color = "orange";
-                    message.textContent = "Tidak ada data siswa ditemukan di database ini untuk kelas yang dipilih.";
+                    message.textContent = "Tidak ada data siswa ditemukan di database.";
+                    studentModalList.innerHTML = '';
+                    customSelectNamaSiswaDisplay.textContent = customSelectNamaSiswaDisplay.dataset.placeholder;
                 }
             } catch (error) {
                 console.error("Gagal memuat data siswa:", error);
                 message.style.color = "red";
-                message.textContent = "Gagal memuat data siswa dari database yang dipilih.";
+                message.textContent = "Gagal memuat data. Periksa koneksi internet.";
             }
         }
 
@@ -2164,7 +2184,10 @@
             }
 
             if (selectedClass) {
-                const filteredStudents = allStudentsData.filter(student => student.class === selectedClass);
+                // Data di allStudentsData sekarang sudah pasti hanya kelas yang dipilih (karena filter di atas)
+                // Kita urutkan saja berdasarkan nama
+                const filteredStudents = allStudentsData; 
+                
                 filteredStudents.sort((a, b) => String(a.name || '').localeCompare(String(b.name || ''))).forEach(student => {
                     const listItem = document.createElement('li');
                     listItem.textContent = student.name;
@@ -2191,15 +2214,29 @@
         }
 
         async function selectClass(className) {
+            // 1. UPDATE UI SEKETIKA (Instant Feedback)
+            // Ini mencegah user merasa 'tidak terjadi apa-apa'
             hiddenSelectKelas.value = className;
             customSelectKelasDisplay.textContent = className;
             customSelectKelasDisplay.classList.add('selected');
             closeClassModal();
 
+            // Langsung matikan dropdown siswa dan tampilkan status loading
+            customSelectNamaSiswaDisplay.classList.add('disabled');
+            customSelectNamaSiswaDisplay.innerHTML = 'Memuat... <span class="spinner" style="width:12px;height:12px;border-width:2px;"></span>';
+            
+            // Reset input token
+            inputTokenPrefix.disabled = true;
+            displayStudentId.value = "";
+            
+            message.innerHTML = `Menyiapkan data kelas ${className}... <span class="spinner"></span>`;
+
+            // 2. BARU JALANKAN PROSES DB (Asynchronous)
             const instances = await getFirebaseInstanceForClass(className);
             if (!instances) {
                 message.style.color = "red";
-                message.textContent = "Gagal memuat konfigurasi database untuk kelas ini.";
+                message.textContent = "Gagal memuat konfigurasi database.";
+                customSelectNamaSiswaDisplay.textContent = customSelectNamaSiswaDisplay.dataset.placeholder;
                 updateLoginButtonStatus();
                 return;
             }
@@ -3312,4 +3349,3 @@
     </script>
 </body>
 </html>
-
