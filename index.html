@@ -330,7 +330,8 @@
             justify-content: center;
             align-items: center;
             min-height: 40px;
-            color: #555;
+            color: #333; 
+            font-weight: 500; 
             transition: border-color 0.3s ease, box-shadow 0.3s ease;
         }
 
@@ -341,6 +342,7 @@
         .custom-dropdown-display.disabled {
             background-color: #f0f0f0;
             cursor: not-allowed;
+            color: #999; 
         }
 
         .custom-dropdown-display::after {
@@ -348,7 +350,7 @@
             position: absolute;
             right: 15px;
             font-size: 0.8em;
-            color: #888;
+            color: #555; 
         }
 
         .token-input-group.is-valid {
@@ -484,19 +486,23 @@
             transition: background-color 0.2s ease;
         }
 
+        /* UBAH: Warna ganjil tetap putih */
         .custom-modal-list li:nth-child(odd) {
             background-color: white;
         }
+        
+        /* UBAH: Warna genap menjadi abu-abu lebih gelap */
         .custom-modal-list li:nth-child(even) {
-            background-color: #f9f9f9;
+            background-color: #e0e0e0; /* Abu-abu lebih gelap dan jelas */
         }
 
         .custom-modal-list li:last-child {
             border-bottom: none;
         }
 
+        /* UBAH: Warna hover menjadi lebih gelap lagi */
         .custom-modal-list li:hover {
-            background-color: #e0e0e0;
+            background-color: #d0d0d0;
         }
 
         #susulanListModal .custom-modal-content {
@@ -1932,6 +1938,12 @@
             const isSEB = ua.includes('seb/');
             const isAndroidWebView = ua.includes('wv') || (ua.includes('android') && !ua.includes('chrome') && !ua.includes('firefox'));
             const isIOSWebView = (ua.includes('iphone') || ua.includes('ipad')) && !ua.includes('safari');
+            
+            // [MODIFIED]: SEB is allowed ONLY if NOT on iPhone/iPad. 
+            // This blocks SEB on iOS but allows SEB on Windows/macOS.
+            const isSEBonMobile = isSEB && (ua.includes('iphone') || ua.includes('ipad'));
+            if (isSEBonMobile) return false; 
+
             return isSEB || isAndroidWebView || isIOSWebView;
         }
 
