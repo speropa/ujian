@@ -330,8 +330,7 @@
             justify-content: center;
             align-items: center;
             min-height: 40px;
-            color: #333; 
-            font-weight: 500; 
+            color: #555;
             transition: border-color 0.3s ease, box-shadow 0.3s ease;
         }
 
@@ -342,7 +341,6 @@
         .custom-dropdown-display.disabled {
             background-color: #f0f0f0;
             cursor: not-allowed;
-            color: #999; 
         }
 
         .custom-dropdown-display::after {
@@ -350,7 +348,7 @@
             position: absolute;
             right: 15px;
             font-size: 0.8em;
-            color: #555; 
+            color: #888;
         }
 
         .token-input-group.is-valid {
@@ -486,23 +484,19 @@
             transition: background-color 0.2s ease;
         }
 
-        /* UBAH: Warna ganjil tetap putih */
         .custom-modal-list li:nth-child(odd) {
             background-color: white;
         }
-        
-        /* UBAH: Warna genap menjadi abu-abu lebih gelap */
         .custom-modal-list li:nth-child(even) {
-            background-color: #e0e0e0; /* Abu-abu lebih gelap dan jelas */
+            background-color: #e0e0e0; /* Diubah lebih gelap agar terlihat jelas */
         }
 
         .custom-modal-list li:last-child {
             border-bottom: none;
         }
 
-        /* UBAH: Warna hover menjadi lebih gelap lagi */
         .custom-modal-list li:hover {
-            background-color: #d0d0d0;
+            background-color: #c0c0c0; /* Hover juga dipergelap agar tetap kontras */
         }
 
         #susulanListModal .custom-modal-content {
@@ -950,7 +944,7 @@
         }
 
         .sidebar-footer {
-            padding: 10px;
+            padding: 10px; /* REDUCED from 15px to 10px */
             border-top: 1px solid var(--border-color);
         }
         #submissionWarningMessage {
@@ -959,14 +953,14 @@
             text-align: center;
             font-size: 0.9em;
             min-height: 1.2em;
-            margin-bottom: 0;
+            margin-bottom: 0; /* REDUCED from 10px to 0 */
         }
         #submitAnswersButton {
             width: 100%;
             padding: 12px;
             font-size: 1.1em;
             background-color: var(--danger-color);
-            margin-bottom: 5px;
+            margin-bottom: 5px; /* ADDED to give a little space before warning message */
         }
         #submitAnswersButton:hover {
             background-color: #c82333;
@@ -1197,6 +1191,7 @@
             color: #dc3545; /* Merah */
             font-weight: bold;
             margin-bottom: 15px;
+            cursor: default; /* Kursor standar agar tidak ketahuan bisa diklik */
         }
 
         .blocked-content p {
@@ -1204,6 +1199,17 @@
             color: #333;
             margin-bottom: 25px;
             line-height: 1.5;
+        }
+
+        /* Container kontrol akses admin yang tersembunyi */
+        #adminAccessControls {
+            display: none;
+            animation: fadeIn 0.5s;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
         .password-input-container {
@@ -1310,9 +1316,12 @@
     
     <div id="accessBlockedOverlay">
         <div class="blocked-content">
-            <h1 id="blockedTitle" style="cursor: pointer; user-select: none;">AKSES DIBLOKIR</h1>
+            <!-- Tambahkan ID untuk target long-press dan kelas no-select -->
+            <h1 id="blockedTitle" class="no-select">AKSES DIBLOKIR</h1>
             <p>Ujian hanya bisa diakses melalui aplikasi yang sudah disosialisasikan. Silahkan hubungi Admin jika terdapat kendala.</p>
-            <div id="adminUnlockContainer" style="display: none;">
+            
+            <!-- Bungkus kontrol akses dalam div tersembunyi -->
+            <div id="adminAccessControls">
                 <div class="password-input-container">
                     <input type="password" id="unlockKeyInput" placeholder="Masukkan Kunci Akses">
                     <span class="password-toggle-icon" id="togglePasswordVisibility">
@@ -1321,8 +1330,9 @@
                     </span>
                 </div>
                 <button id="unlockAccessBtn">BUKA AKSES</button>
-                <p id="unlockMessage"></p>
             </div>
+            
+            <p id="unlockMessage"></p>
         </div>
     </div>
 
@@ -1779,6 +1789,8 @@
         const unlockAccessBtn = document.getElementById('unlockAccessBtn');
         const unlockMessage = document.getElementById('unlockMessage');
         const togglePasswordVisibility = document.getElementById('togglePasswordVisibility');
+        const blockedTitle = document.getElementById('blockedTitle'); // Target long-press
+        const adminAccessControls = document.getElementById('adminAccessControls'); // Target display
 
         const initialLoginScreen = document.getElementById('initialLoginScreen');
         const loginEmailInput = document.getElementById('loginEmail');
@@ -1865,6 +1877,9 @@
         let shuffledOptionOrders = [];
 
         let sidebarCollapseTimer = null;
+        
+        // Timer variable untuk long-press
+        let longPressTimer;
 
         const customMessageModal = document.getElementById('customMessageModal');
         const customMessageModalTitle = document.getElementById('customMessageModalTitle');
@@ -1938,12 +1953,6 @@
             const isSEB = ua.includes('seb/');
             const isAndroidWebView = ua.includes('wv') || (ua.includes('android') && !ua.includes('chrome') && !ua.includes('firefox'));
             const isIOSWebView = (ua.includes('iphone') || ua.includes('ipad')) && !ua.includes('safari');
-            
-            // [MODIFIED]: SEB is allowed ONLY if NOT on iPhone/iPad. 
-            // This blocks SEB on iOS but allows SEB on Windows/macOS.
-            const isSEBonMobile = isSEB && (ua.includes('iphone') || ua.includes('ipad'));
-            if (isSEBonMobile) return false; 
-
             return isSEB || isAndroidWebView || isIOSWebView;
         }
 
@@ -3141,28 +3150,6 @@
                 await fetchGlobalSettings();
 
                 if (isBlockEnabled && !isAllowedEnvironment()) {
-                    const blockedTitle = document.getElementById('blockedTitle');
-                    const adminUnlockContainer = document.getElementById('adminUnlockContainer');
-                    let pressTimer;
-
-                    function startPress() {
-                        pressTimer = setTimeout(() => {
-                            adminUnlockContainer.style.display = 'block';
-                        }, 3000);
-                    }
-
-                    function cancelPress() {
-                        clearTimeout(pressTimer);
-                    }
-
-                    if (blockedTitle) {
-                        blockedTitle.addEventListener('mousedown', startPress);
-                        blockedTitle.addEventListener('touchstart', startPress);
-                        blockedTitle.addEventListener('mouseup', cancelPress);
-                        blockedTitle.addEventListener('mouseleave', cancelPress);
-                        blockedTitle.addEventListener('touchend', cancelPress);
-                    }
-
                     unlockAccessBtn.onclick = async () => {
                         if (unlockKeyInput.value === blockAccessKey) {
                             accessBlockedOverlay.style.display = 'none';
@@ -3286,6 +3273,37 @@
 
             updateDateTime();
             setInterval(updateDateTime, 1000);
+            
+            // --- LOGIKA LONG PRESS UNTUK ADMIN ---
+            function startLongPress() {
+                // Jangan lakukan apa-apa jika sudah visible
+                if (adminAccessControls.style.display === 'block') return;
+
+                longPressTimer = setTimeout(() => {
+                    adminAccessControls.style.display = 'block';
+                }, 3000); // 3 detik
+            }
+
+            function cancelLongPress() {
+                if (longPressTimer) {
+                    clearTimeout(longPressTimer);
+                    longPressTimer = null;
+                }
+            }
+
+            // Mouse events
+            blockedTitle.addEventListener('mousedown', startLongPress);
+            blockedTitle.addEventListener('mouseup', cancelLongPress);
+            blockedTitle.addEventListener('mouseleave', cancelLongPress);
+
+            // Touch events
+            blockedTitle.addEventListener('touchstart', (e) => {
+                // e.preventDefault(); // Opsional: mencegah scrolling/selection saat touch
+                startLongPress();
+            });
+            blockedTitle.addEventListener('touchend', cancelLongPress);
+            blockedTitle.addEventListener('touchcancel', cancelLongPress);
+            // ------------------------------------
         });
         
         function startSubmissionStatusListener() {
