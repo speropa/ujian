@@ -734,9 +734,11 @@
             overflow-y: auto;
             padding: 15px;
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(45px, 1fr)); 
-            gap: 10px;
+            /* UBAH: Menggunakan ukuran fix 38px (sekitar 1cm) agar rapi dan tidak melebar */
+            grid-template-columns: repeat(auto-fill, 38px);
+            gap: 8px;
             align-content: flex-start;
+            justify-content: center; /* Agar grid berada di tengah panel */
         }
 
         @media (min-width: 1200px) {
@@ -909,9 +911,10 @@
             align-items: center;
             justify-content: center;
             border: 1px solid #ccc;
-            border-radius: 5px;
+            border-radius: 4px; /* Sedikit mengurangi radius agar terlihat lebih tegas/profesional */
             cursor: pointer;
             font-weight: bold;
+            font-size: 14px; /* Ukuran font disesuaikan agar pas di kotak kecil */
             transition: all 0.2s ease;
         }
         .question-nav-box:hover {
@@ -941,7 +944,7 @@
         }
 
         .sidebar-footer {
-            padding: 15px;
+            padding: 10px; /* REDUCED from 15px to 10px */
             border-top: 1px solid var(--border-color);
         }
         #submissionWarningMessage {
@@ -950,13 +953,14 @@
             text-align: center;
             font-size: 0.9em;
             min-height: 1.2em;
-            margin-bottom: 10px;
+            margin-bottom: 0; /* REDUCED from 10px to 0 */
         }
         #submitAnswersButton {
             width: 100%;
             padding: 12px;
             font-size: 1.1em;
             background-color: var(--danger-color);
+            margin-bottom: 5px; /* ADDED to give a little space before warning message */
         }
         #submitAnswersButton:hover {
             background-color: #c82333;
@@ -1252,11 +1256,13 @@
                 display: block;
             }
             #questionGridContainer {
-                grid-template-columns: repeat(10, 1fr);
-                gap: 5px; 
+                /* UBAH: Menyesuaikan mobile juga agar konsisten, tidak dipaksa 10 kolom */
+                grid-template-columns: repeat(auto-fill, 38px);
+                gap: 6px; 
+                justify-content: center;
             }
             .question-nav-box {
-                font-size: 0.9em; 
+                font-size: 0.85em; 
             }
             .sidebar-footer {
                 padding: 10px;
@@ -1404,6 +1410,8 @@
                 <div class="sidebar-content-wrapper">
                     <div id="questionGridContainer"></div>
                     <div class="sidebar-footer">
+                        <!-- ADDED: Pesan info waktu -->
+                        <p id="submissionInfoMessage" style="font-size: 0.85em; color: var(--warning-color); margin-bottom: 8px; text-align: center; display: none;"></p>
                         <button id="submitAnswersButton" disabled>KIRIM JAWABAN</button>
                         <p id="submissionWarningMessage"></p>
                     </div>
@@ -2151,10 +2159,10 @@
                         filterStudentsByClass();
                         message.textContent = "";
                     } else {
-                         message.style.color = "orange";
-                         message.textContent = "Tidak ada data siswa ditemukan untuk kelas ini.";
-                         studentModalList.innerHTML = '';
-                         customSelectNamaSiswaDisplay.textContent = customSelectNamaSiswaDisplay.dataset.placeholder;
+                          message.style.color = "orange";
+                          message.textContent = "Tidak ada data siswa ditemukan untuk kelas ini.";
+                          studentModalList.innerHTML = '';
+                          customSelectNamaSiswaDisplay.textContent = customSelectNamaSiswaDisplay.dataset.placeholder;
                     }
                 } else {
                     message.style.color = "orange";
@@ -2274,10 +2282,27 @@
             let isDisabled = true;
             const allAnswered = !studentAnswers.includes(null);
 
+            // [MODIFIKASI] Logika pesan info waktu
+            const infoEl = document.getElementById('submissionInfoMessage');
+            let timeConstraintActive = false;
+
             if (minDurationSettingsGlobal.isMinDurationEnabled) {
-                isDisabled = (remainingTime > minDurationSettingsGlobal.minDurationSeconds) || !allAnswered;
+                if (remainingTime > minDurationSettingsGlobal.minDurationSeconds) {
+                    isDisabled = true;
+                    timeConstraintActive = true;
+                    if (infoEl) {
+                        const thresholdMins = Math.ceil(minDurationSettingsGlobal.minDurationSeconds / 60);
+                        infoEl.textContent = `TOMBOL KIRIM AKAN AKTIF JIKA SISA WAKTU KURANG DARI ${thresholdMins} MENIT`;
+                        infoEl.style.display = 'block';
+                    }
+                } else {
+                    // Waktu sudah aman
+                    isDisabled = !allAnswered;
+                    if (infoEl) infoEl.style.display = 'none';
+                }
             } else {
                 isDisabled = !allAnswered;
+                if (infoEl) infoEl.style.display = 'none';
             }
 
             submitAnswersButton.disabled = isDisabled;
@@ -3136,7 +3161,7 @@
                 initialLoginScreen.style.display = 'flex';
                 loginMessage.textContent = "Login otomatis gagal. Silakan masuk secara manual.";
                 loginButton.onclick = async () => {
-                     window.showCustomMessageModal("Fitur Belum Tersedia", "Login manual saat ini tidak diaktifkan.", "warning");
+                      window.showCustomMessageModal("Fitur Belum Tersedia", "Login manual saat ini tidak diaktifkan.", "warning");
                 };
             }
         }
