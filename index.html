@@ -1309,6 +1309,58 @@
             #warningCountdown { font-size: 3em; }
             #warningMessage { font-size: 1.2em; }
         }
+
+        /* === GAYA TOMBOL UPDATE SOAL (FLOATING) === */
+        #updateSoalBtn {
+            display: none; /* Hidden by default */
+            position: fixed;
+            top: 70px; /* Di bawah header sedikit */
+            right: 20px;
+            background-color: #ff9800; /* Warna Oranye Peringatan */
+            color: white;
+            padding: 10px 20px;
+            border-radius: 50px;
+            font-weight: bold;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+            z-index: 1000;
+            cursor: pointer;
+            border: 2px solid white;
+            animation: pulseBtn 2s infinite;
+            align-items: center;
+            gap: 8px;
+            width: auto;
+            font-size: 0.9em;
+        }
+
+        #updateSoalBtn:hover {
+            background-color: #f57c00;
+            transform: scale(1.05);
+        }
+
+        #updateSoalBtn svg {
+            width: 20px;
+            height: 20px;
+        }
+
+        @keyframes pulseBtn {
+            0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(255, 152, 0, 0.7); }
+            70% { transform: scale(1.05); box-shadow: 0 0 0 10px rgba(255, 152, 0, 0); }
+            100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(255, 152, 0, 0); }
+        }
+
+        /* Overlay Spinner khusus Update */
+        #updateSpinnerOverlay {
+            display: none;
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.7);
+            z-index: 2000;
+            justify-content: center; align-items: center; flex-direction: column;
+            color: white;
+        }
+        #updateSpinnerOverlay .spinner-border {
+            width: 40px; height: 40px; border: 4px solid #fff; border-top: 4px solid transparent; border-radius: 50%;
+            animation: spin 1s linear infinite; margin-bottom: 15px;
+        }
     </style>
 </head>
 <body>
@@ -1317,14 +1369,20 @@
         <div class="spinner-border"></div>
         <p>Memuat aplikasi...</p>
     </div>
+
+    <!-- Spinner Khusus Update Soal -->
+    <div id="updateSpinnerOverlay">
+        <div class="spinner-border"></div>
+        <p>Mengunduh soal terbaru...</p>
+    </div>
     
     <div id="accessBlockedOverlay">
         <div class="blocked-content">
-            <!-- Tambahkan ID untuk target long-press dan kelas no-select -->
+            <!-- Menambahkan ID untuk judul agar bisa dideteksi long-press -->
             <h1 id="blockedTitle" class="no-select">AKSES DIBLOKIR</h1>
             <p>Ujian hanya bisa diakses melalui aplikasi yang sudah disosialisasikan. Silahkan hubungi Admin jika terdapat kendala.</p>
             
-            <!-- Bungkus kontrol akses dalam div tersembunyi -->
+            <!-- Kontrol admin tersembunyi -->
             <div id="adminAccessControls">
                 <div class="password-input-container">
                     <input type="password" id="unlockKeyInput" placeholder="Masukkan Kunci Akses">
@@ -1354,13 +1412,13 @@
         <h2 id="welcomeTitle">SELAMAT DATANG</h2>
         <p id="welcomeMessage">Memuat pilihan ujian...</p>
         <div id="welcomeButtonsContainer" style="display: flex; flex-direction: column; gap: 15px;">
-            
+            <!-- Tombol dinamis akan dimuat di sini -->
         </div>
     </div>
 
     <div id="loginContainer" class="container">
         <div class="header-box">
-            
+            <!-- Tombol Kembali -->
             <div id="backToWelcomeBtn" class="back-button">
                 <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
             </div>
@@ -1370,9 +1428,10 @@
         <div class="card-body">
             <div class="judul-ujian" id="loginJudulUjian">UJIAN KELAS</div>
             
-             
+             <!-- Pesan Blokir Lokasi -->
             <div id="locationBlockedDiv" style="display: none; color: red; margin-bottom: 10px; font-weight: bold; text-align: center;"></div>
              
+            <!-- Form Kunci Lokasi (Default Hidden) -->
             <div id="locationKeyContainer" style="display: none;">
                 <p>Jika lokasi tetap tidak valid, silahkan hubungi pengawas untuk mendapatkan kunci akses lokasi.</p>
                 <div class="password-input-container">
@@ -1421,6 +1480,14 @@
 
     
     <div id="examContainer" style="display: none;">
+        <!-- Tombol Update Soal Melayang -->
+        <button id="updateSoalBtn">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+            </svg>
+            UPDATE SOAL
+        </button>
+
         <div id="examBody">
             <div id="examSidePanel">
                 <div class="sidebar-header">
@@ -1432,7 +1499,7 @@
                 <div class="sidebar-content-wrapper">
                     <div id="questionGridContainer"></div>
                     <div class="sidebar-footer">
-                        <!-- ADDED: Pesan info waktu -->
+                        <!-- Pesan Info Waktu -->
                         <p id="submissionInfoMessage" style="font-size: 0.85em; color: var(--warning-color); margin-bottom: 8px; text-align: center; display: none;"></p>
                         <button id="submitAnswersButton" disabled>KIRIM JAWABAN</button>
                         <p id="submissionWarningMessage"></p>
@@ -1565,7 +1632,7 @@
         </div>
     </div>
 
-    <!-- [BARU] Modal untuk notifikasi force logout -->
+    <!-- Modal Force Logout -->
     <div id="forceLogoutModal" class="custom-modal static-backdrop">
         <div class="custom-modal-content" style="text-align: center;">
             <h4 id="forceLogoutModalTitle" style="color: var(--danger-color);">Sesi Direset</h4>
@@ -1839,6 +1906,10 @@
         
         const forceLogoutModal = document.getElementById('forceLogoutModal');
         const forceLogoutModalButton = document.getElementById('forceLogoutModalButton');
+        
+        // Element Update Soal
+        const updateSoalBtn = document.getElementById('updateSoalBtn');
+        const updateSpinnerOverlay = document.getElementById('updateSpinnerOverlay');
 
         const classModal = document.getElementById('classModal');
         const classModalList = document.getElementById('classModalList');
@@ -1868,6 +1939,11 @@
         
         let accessStatusListenerRef = null;
         let accessStatusListenerPath = null;
+        
+        // Listener Update Soal
+        let examUpdateListenerRef = null;
+        let examUpdateListenerPath = null;
+        let localTerakhirUpdate = "";
 
         let isInExamMode = false;
         let isAnyModalOpen = false;
@@ -2384,6 +2460,7 @@
             sessionStorage.clear();
             stopAccessStatusListener();
             stopSubmissionStatusListener();
+            stopExamUpdateListener(); // STOP Update Listener
             loginContainer.style.display = 'none';
             examContainer.style.opacity = 0;
 
@@ -2492,6 +2569,12 @@
             sessionStorage.setItem('examDurationMinutes', examDurationMinutes);
             sessionStorage.setItem('selectedClass', hiddenSelectKelas.value);
             sessionStorage.setItem('selectedGrade', currentSelectedGrade);
+            
+            // Simpan Terakhir Update di Session
+            if (!localTerakhirUpdate && foundTokenGlobal && foundTokenGlobal.terakhirUpdate) {
+                localTerakhirUpdate = foundTokenGlobal.terakhirUpdate;
+            }
+            sessionStorage.setItem('localTerakhirUpdate', localTerakhirUpdate);
 
             const numQuestions = currentExamQuestions.length;
             studentAnswers = (initialData.answers && initialData.answers.length === numQuestions) ? initialData.answers : Array(numQuestions).fill(null);
@@ -2530,6 +2613,12 @@
             history.pushState(null, '', location.href);
             startAccessStatusListener();
             startSubmissionStatusListener();
+            
+            // [BARU] Start Listening for Updates
+            const storedExamPath = sessionStorage.getItem('currentExamPath');
+            if (storedExamPath) {
+                startExamUpdateListener(storedExamPath);
+            }
         }
 
         async function restoreExamState() {
@@ -2543,6 +2632,8 @@
             const selectedGrade = sessionStorage.getItem('selectedGrade');
             let examStartTime = Number(sessionStorage.getItem('examStartTime'));
             
+            localTerakhirUpdate = sessionStorage.getItem('localTerakhirUpdate');
+
             const initialData = {
                 answers: JSON.parse(sessionStorage.getItem('studentAnswers')),
                 ragu: JSON.parse(sessionStorage.getItem('raguRaguStatus')),
@@ -2624,6 +2715,9 @@
                 const subjectPath = foundToken.subject.replace(/\s+/g, '-').trim();
                 const examPath = `ujian/${tahunAjaranPath}/${ujianNamePath}/${kelasPath}/${subjectPath}`;
                 
+                // [PENTING] Simpan path ujian untuk listener nanti
+                sessionStorage.setItem('currentExamPath', examPath);
+
                 const examSnapshot = await get(ref(currentDb, examPath));
                 
                 if (!examSnapshot.exists()) {
@@ -2635,6 +2729,9 @@
                 }
                 
                 currentExamQuestions = examData.soal.slice(1);
+                
+                // Simpan tanggal update lokal
+                localTerakhirUpdate = examData.terakhirUpdate || "";
                 
                 loadingSpinner.querySelector('p').textContent = 'Mempersiapkan sesi ujian...';
 
@@ -2684,6 +2781,80 @@
                 loginBtn.disabled = false;
             }
         }
+        
+        // --- LOGIKA UPDATE SOAL REAL-TIME ---
+        
+        function startExamUpdateListener(examPath) {
+            stopExamUpdateListener();
+            if (!currentDb) return;
+            
+            // [OPTIMASI] Hanya listen ke path '/terakhirUpdate', bukan seluruh soal
+            // Ini membuat beban koneksi sangat-sangat ringan (hanya string pendek)
+            examUpdateListenerPath = child(ref(currentDb, examPath), 'terakhirUpdate');
+            
+            examUpdateListenerRef = onValue(examUpdateListenerPath, (snapshot) => {
+                const serverUpdate = snapshot.val();
+                
+                // Hanya munculkan tombol jika ada data DAN berbeda dengan data lokal
+                if (serverUpdate && localTerakhirUpdate && serverUpdate !== localTerakhirUpdate) {
+                    console.log("Update soal terdeteksi!");
+                    updateSoalBtn.style.display = 'flex'; // Munculkan tombol
+                } else {
+                    updateSoalBtn.style.display = 'none';
+                }
+            });
+        }
+        
+        function stopExamUpdateListener() {
+            if (examUpdateListenerRef && examUpdateListenerPath) {
+                off(examUpdateListenerPath, 'value', examUpdateListenerRef);
+                examUpdateListenerRef = null;
+                examUpdateListenerPath = null;
+            }
+        }
+        
+        async function handleUpdateSoalClick() {
+            const storedExamPath = sessionStorage.getItem('currentExamPath');
+            if (!storedExamPath || !currentDb) return;
+
+            // Tampilkan Spinner Khusus
+            updateSpinnerOverlay.style.display = 'flex';
+            updateSoalBtn.style.display = 'none'; // Sembunyikan tombol sementara
+
+            try {
+                // Download seluruh data soal baru
+                const snapshot = await get(ref(currentDb, storedExamPath));
+                if (!snapshot.exists()) throw new Error("Gagal mengambil data update.");
+                
+                const newData = snapshot.val();
+                if (!newData.soal || !Array.isArray(newData.soal)) throw new Error("Format soal rusak.");
+                
+                // Update variabel lokal
+                currentExamQuestions = newData.soal.slice(1);
+                localTerakhirUpdate = newData.terakhirUpdate;
+                
+                // Simpan ke Session Storage agar kalau refresh tetap pakai yang baru
+                sessionStorage.setItem('examData', JSON.stringify(currentExamQuestions));
+                sessionStorage.setItem('localTerakhirUpdate', localTerakhirUpdate);
+                
+                // Refresh Tampilan Soal Saat Ini
+                displayQuestion(currentQuestionIndex);
+                
+                // Beri notifikasi kecil (opsional) atau matikan spinner
+                setTimeout(() => {
+                    updateSpinnerOverlay.style.display = 'none';
+                    window.showCustomMessageModal("Update Berhasil", "Soal ujian berhasil diperbarui ke versi terbaru.", "success");
+                }, 500);
+
+            } catch (error) {
+                console.error("Gagal update soal:", error);
+                updateSpinnerOverlay.style.display = 'none';
+                updateSoalBtn.style.display = 'flex'; // Munculkan tombol lagi kalau gagal
+                window.showCustomMessageModal("Update Gagal", "Gagal mengunduh soal terbaru. Periksa koneksi internet.", "error");
+            }
+        }
+        
+        // --- AKHIR LOGIKA UPDATE SOAL ---
 
         function displayQuestion(shuffledIndex) {
             if (shuffledIndex < 0 || shuffledIndex >= currentExamQuestions.length) return;
@@ -3092,6 +3263,7 @@
         function showForceLogoutModal() {
             stopAccessStatusListener();
             stopSubmissionStatusListener();
+            stopExamUpdateListener(); // STOP Update Listener
             if (timerInterval) clearInterval(timerInterval);
             isInExamMode = false;
 
@@ -3240,6 +3412,11 @@
                  displayStudentId.value = '';
                  message.textContent = '';
             });
+            
+            // Tambah event untuk tombol update soal
+            if(updateSoalBtn) {
+                updateSoalBtn.addEventListener('click', handleUpdateSoalClick);
+            }
 
             window.onpopstate = e => isInExamMode && history.pushState(null, '', location.href);
 
@@ -3323,6 +3500,7 @@
                 if (isInExamMode && snapshot.exists() && snapshot.val().isSubmitted) {
                     stopAccessStatusListener();
                     stopSubmissionStatusListener();
+                    stopExamUpdateListener(); // STOP Update Listener
                     if (timerInterval) clearInterval(timerInterval);
                     isInExamMode = false;
                     
