@@ -1288,12 +1288,16 @@
             }
         }
 
+        /* REVISI: Menghapus aturan layout fullscreen untuk .initial-login-screen, .welcome-screen, dan .container agar tetap melayang */
         @media (max-width: 580px) {
-            .initial-login-screen, .welcome-screen, .container {
+            /* Bagian ini dihapus/diubah agar tidak fullscreen */
+            /* .initial-login-screen, .welcome-screen, .container {
                 margin-top: 0; margin-bottom: 0; border-radius: 0; box-shadow: none; width: 100%; height: 100%; justify-content: center;
-            }
+            } */
+            
+            /* Kita hanya sesuaikan elemen internal jika perlu, tapi biarkan containernya tetap default (melayang) */
             #confirmModal .modal-content, .custom-modal-content, .submission-content, .blocked-content {
-                max-width: 100%; width: 100%;
+                max-width: 95%; width: 95%; /* Sedikit penyesuaian agar tidak terlalu mepet tepi layar */
             }
             #examBody {
                 padding: 15px;
