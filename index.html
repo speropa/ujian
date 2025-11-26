@@ -13,9 +13,9 @@
             width: 100%;
             margin: 0;
             padding: 0;
-            --primary-color: #0066cc; /* Default untuk Kelas 7 */
-            --accent-color: #007bff; /* Warna tombol default */
-            --warning-color: #ea4b16; /* Default untuk Judul Ujian */
+            --primary-color: #0066cc;
+            --accent-color: #007bff;
+            --warning-color: #ea4b16;
             --light-bg: #f4f7f9;
             --border-color: #e0e0e0;
             --danger-color: #dc3545;
@@ -32,77 +32,11 @@
             min-height: 100vh;
             box-sizing: border-box;
             -webkit-user-select: none;
-            -moz-user-select: none;
-            -ms-user-select: none;
             user-select: none;
             overflow: hidden;
         }
 
-        /* Gaya untuk layar login baru */
-        .initial-login-screen {
-            max-width: 380px;
-            width: 90%;
-            margin: 20px auto;
-            background: white;
-            border-radius: 10px;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-            overflow: hidden;
-            padding: 30px 20px;
-            display: none; /* Awalnya tersembunyi */
-            flex-direction: column;
-            gap: 15px;
-            opacity: 1;
-            transition: opacity 0.5s ease-in-out;
-        }
-
-        .initial-login-screen h2 {
-            font-size: 2em;
-            font-weight: bold;
-            color: var(--primary-color);
-            margin-bottom: 10px;
-        }
-
-        .initial-login-screen p {
-            font-size: 1em;
-            color: #666;
-            margin-bottom: 20px;
-        }
-
-        .initial-login-screen input[type="email"],
-        .initial-login-screen input[type="password"] {
-            padding: 12px 15px;
-            font-size: 1.1em;
-            border: 1px solid #ccc;
-            border-radius: 8px;
-            width: 100%;
-            box-sizing: border-box;
-            margin-bottom: 10px;
-        }
-
-        .initial-login-screen button {
-            padding: 15px 25px;
-            font-size: 1.2em;
-            font-weight: bold;
-            color: white;
-            background-color: var(--accent-color);
-            border: none;
-            border-radius: 9999px;
-            cursor: pointer;
-            transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-            width: 100%;
-        }
-
-        .initial-login-screen button:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 6px 12px rgba(0,0,0,0.3);
-            background-color: var(--primary-color);
-        }
-
-        .initial-login-screen button:active {
-            transform: translateY(0);
-            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-        }
+        /* -- Halaman Login Email/Password LAMA DIHAPUS -- */
 
         .welcome-screen {
             max-width: 400px;
@@ -113,7 +47,7 @@
             box-shadow: 0 4px 8px rgba(0,0,0,0.1);
             overflow: hidden;
             padding: 30px 20px;
-            display: none; /* Awalnya tersembunyi */
+            display: none; /* Awalnya tersembunyi sampai setup selesai */
             flex-direction: column;
             gap: 15px;
             opacity: 1;
@@ -139,7 +73,7 @@
             font-weight: bold;
             color: white;
             border: none;
-            border-radius: 9999px; /* Lebih oval */
+            border-radius: 9999px;
             cursor: pointer;
             transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
             box-shadow: 0 4px 8px rgba(0,0,0,0.2);
@@ -155,33 +89,17 @@
             box-shadow: 0 2px 5px rgba(0,0,0,0.2);
         }
 
-        .btn-kelas7 {
-            background-color: #007bff; /* Biru */
-        }
-        .btn-kelas7:hover {
-            background-color: #0056b3;
-        }
+        .btn-kelas7 { background-color: #007bff; }
+        .btn-kelas7:hover { background-color: #0056b3; }
 
-        .btn-kelas8 {
-            background-color: #ff9900; /* Oranye */
-        }
-        .btn-kelas8:hover {
-            background-color: #cc7a00;
-        }
+        .btn-kelas8 { background-color: #ff9900; }
+        .btn-kelas8:hover { background-color: #cc7a00; }
 
-        .btn-kelas9 {
-            background-color: #800000; /* Merah Marun */
-        }
-        .btn-kelas9:hover {
-            background-color: #5a0000;
-        }
+        .btn-kelas9 { background-color: #800000; }
+        .btn-kelas9:hover { background-color: #5a0000; }
 
-        .btn-susulan {
-            background-color: #28a745; /* Hijau */
-        }
-        .btn-susulan:hover {
-            background-color: #218838;
-        }
+        .btn-susulan { background-color: #28a745; }
+        .btn-susulan:hover { background-color: #218838; }
 
         .container {
             max-width: 400px;
@@ -195,7 +113,7 @@
             flex-shrink: 0;
             opacity: 0;
             transition: opacity 0.5s ease-in-out;
-            display: none; /* Awalnya tersembunyi */
+            display: none;
         }
         .container.show {
             display: block;
@@ -243,7 +161,7 @@
         }
 
         .judul-ujian {
-            color: var(--warning-color); /* Warna dinamis */
+            color: var(--warning-color);
             font-size: 22px;
             font-weight: bold;
             margin: 10px 0;
@@ -365,7 +283,7 @@
             padding: 10px 20px;
             font-size: 16px;
             width: 100%;
-            background-color: var(--accent-color); /* Warna dinamis */
+            background-color: var(--accent-color);
             color: white;
             border: none;
             border-radius: 5px;
@@ -376,7 +294,7 @@
         }
 
         button:hover {
-            background-color: var(--primary-color); /* Warna sedikit lebih gelap dari primer untuk hover */
+            background-color: var(--primary-color);
         }
 
         button:active {
@@ -462,7 +380,7 @@
         .custom-modal-content h4 {
             font-size: 1.5em;
             font-weight: bold;
-            color: var(--primary-color); /* Warna dinamis */
+            color: var(--primary-color);
             margin-bottom: 15px;
             text-align: center;
             flex-shrink: 0;
@@ -488,7 +406,7 @@
             background-color: white;
         }
         .custom-modal-list li:nth-child(even) {
-            background-color: #e0e0e0; /* Diubah lebih gelap agar terlihat jelas */
+            background-color: #e0e0e0;
         }
 
         .custom-modal-list li:last-child {
@@ -496,7 +414,7 @@
         }
 
         .custom-modal-list li:hover {
-            background-color: #c0c0c0; /* Hover juga dipergelap agar tetap kontras */
+            background-color: #c0c0c0;
         }
 
         #susulanListModal .custom-modal-content {
@@ -554,7 +472,7 @@
         #confirmModal .modal-content h4 {
             font-size: 1.8em;
             font-weight: bold;
-            color: var(--primary-color); /* Warna dinamis */
+            color: var(--primary-color);
             margin-bottom: 15px;
             text-align: center;
         }
@@ -734,11 +652,10 @@
             overflow-y: auto;
             padding: 15px;
             display: grid;
-            /* UBAH: Menggunakan ukuran fix 38px (sekitar 1cm) agar rapi dan tidak melebar */
             grid-template-columns: repeat(auto-fill, 38px);
             gap: 8px;
             align-content: flex-start;
-            justify-content: center; /* Agar grid berada di tengah panel */
+            justify-content: center;
         }
 
         @media (min-width: 1200px) {
@@ -911,10 +828,10 @@
             align-items: center;
             justify-content: center;
             border: 1px solid #ccc;
-            border-radius: 4px; /* Sedikit mengurangi radius agar terlihat lebih tegas/profesional */
+            border-radius: 4px;
             cursor: pointer;
             font-weight: bold;
-            font-size: 14px; /* Ukuran font disesuaikan agar pas di kotak kecil */
+            font-size: 14px;
             transition: all 0.2s ease;
         }
         .question-nav-box:hover {
@@ -944,7 +861,7 @@
         }
 
         .sidebar-footer {
-            padding: 10px; /* REDUCED from 15px to 10px */
+            padding: 10px;
             border-top: 1px solid var(--border-color);
         }
         #submissionWarningMessage {
@@ -953,14 +870,14 @@
             text-align: center;
             font-size: 0.9em;
             min-height: 1.2em;
-            margin-bottom: 0; /* REDUCED from 10px to 0 */
+            margin-bottom: 0;
         }
         #submitAnswersButton {
             width: 100%;
             padding: 12px;
             font-size: 1.1em;
             background-color: var(--danger-color);
-            margin-bottom: 5px; /* ADDED to give a little space before warning message */
+            margin-bottom: 5px;
         }
         #submitAnswersButton:hover {
             background-color: #c82333;
@@ -1129,7 +1046,7 @@
 
         /* Gaya Spinner */
         #loadingSpinner {
-            display: none; /* Awalnya tersembunyi */
+            display: none;
             flex-direction: column;
             align-items: center;
             justify-content: center;
@@ -1138,8 +1055,8 @@
             position: fixed;
             top: 0;
             left: 0;
-            background-color: rgba(224, 224, 224, 0.8); /* Latar belakang semi-transparan */
-            z-index: 10000; /* Pastikan di atas */
+            background-color: rgba(224, 224, 224, 0.8);
+            z-index: 10000;
             transition: opacity 0.3s ease-in-out;
         }
 
@@ -1191,7 +1108,7 @@
             color: #dc3545; /* Merah */
             font-weight: bold;
             margin-bottom: 15px;
-            cursor: default; /* Kursor standar agar tidak ketahuan bisa diklik */
+            cursor: default;
         }
 
         .blocked-content p {
@@ -1218,7 +1135,7 @@
         }
 
         .password-input-container input {
-            padding-right: 45px; /* Ruang untuk ikon mata */
+            padding-right: 45px;
         }
         
         .password-toggle-icon {
@@ -1268,7 +1185,6 @@
                 display: block;
             }
             #questionGridContainer {
-                /* UBAH: Menyesuaikan mobile juga agar konsisten, tidak dipaksa 10 kolom */
                 grid-template-columns: repeat(auto-fill, 38px);
                 gap: 6px; 
                 justify-content: center;
@@ -1288,16 +1204,9 @@
             }
         }
 
-        /* REVISI: Menghapus aturan layout fullscreen untuk .initial-login-screen, .welcome-screen, dan .container agar tetap melayang */
         @media (max-width: 580px) {
-            /* Bagian ini dihapus/diubah agar tidak fullscreen */
-            /* .initial-login-screen, .welcome-screen, .container {
-                margin-top: 0; margin-bottom: 0; border-radius: 0; box-shadow: none; width: 100%; height: 100%; justify-content: center;
-            } */
-            
-            /* Kita hanya sesuaikan elemen internal jika perlu, tapi biarkan containernya tetap default (melayang) */
             #confirmModal .modal-content, .custom-modal-content, .submission-content, .blocked-content {
-                max-width: 95%; width: 95%; /* Sedikit penyesuaian agar tidak terlalu mepet tepi layar */
+                max-width: 95%; width: 95%;
             }
             #examBody {
                 padding: 15px;
@@ -1312,11 +1221,11 @@
 
         /* === GAYA TOMBOL UPDATE SOAL (FLOATING) === */
         #updateSoalBtn {
-            display: none; /* Hidden by default */
+            display: none;
             position: fixed;
-            top: 70px; /* Di bawah header sedikit */
+            top: 70px;
             right: 20px;
-            background-color: #ff9800; /* Warna Oranye Peringatan */
+            background-color: #ff9800;
             color: white;
             padding: 10px 20px;
             border-radius: 50px;
@@ -1348,7 +1257,61 @@
             100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(255, 152, 0, 0); }
         }
 
-        /* Overlay Spinner khusus Update */
+        /* === GAYA TOMBOL REFRESH SOAL (FLOATING - TANPA ANIMASI) === */
+        #refreshSoalBtn {
+            display: flex; /* Tampil jika ujian berlangsung */
+            position: fixed;
+            top: 120px; /* Di bawah update soal */
+            right: 20px;
+            background-color: #17a2b8; /* Warna Cyan/Info */
+            color: white;
+            padding: 8px 15px; /* Ukuran Desktop sedikit lebih kecil */
+            border-radius: 50px;
+            font-weight: bold;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+            z-index: 1000;
+            cursor: pointer;
+            border: 2px solid white;
+            align-items: center;
+            gap: 8px;
+            width: auto;
+            font-size: 0.85em;
+            transition: transform 0.2s;
+        }
+
+        #refreshSoalBtn:hover {
+            background-color: #138496;
+            transform: scale(1.05);
+        }
+
+        #refreshSoalBtn svg {
+            width: 18px;
+            height: 18px;
+        }
+
+        /* MEDIA QUERY KHUSUS UNTUK TOMBOL REFRESH DI HP (Ukuran 2x lebih kecil) */
+        @media (max-width: 768px) {
+            #refreshSoalBtn {
+                padding: 4px 8px; /* Padding separuh dari desktop */
+                font-size: 0.7em; /* Font lebih kecil */
+                top: 80px; /* Sesuaikan posisi jika perlu */
+                right: 10px; /* Lebih mepet ke kanan */
+                border-width: 1px; /* Border lebih tipis */
+                gap: 4px;
+            }
+            #refreshSoalBtn svg {
+                width: 14px; /* Ikon lebih kecil */
+                height: 14px;
+            }
+            /* Sesuaikan juga posisi Update Soal agar tidak tumpang tindih */
+            #updateSoalBtn {
+                top: 40px; /* Naikkan sedikit di mobile */
+                padding: 5px 10px;
+                font-size: 0.75em;
+            }
+        }
+
+        /* Overlay Spinner khusus Update/Refresh */
         #updateSpinnerOverlay {
             display: none;
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
@@ -1360,6 +1323,37 @@
         #updateSpinnerOverlay .spinner-border {
             width: 40px; height: 40px; border: 4px solid #fff; border-top: 4px solid transparent; border-radius: 50%;
             animation: spin 1s linear infinite; margin-bottom: 15px;
+        }
+
+        /* === TOAST NOTIFIKASI === */
+        #toastNotification {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 12px 25px;
+            border-radius: 50px;
+            color: white;
+            font-weight: bold;
+            z-index: 3000;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.5s ease, transform 0.5s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.95em;
+        }
+        .toast-show {
+            opacity: 1 !important;
+            transform: translateX(-50%) translateY(10px) !important;
+        }
+        .toast-success {
+            background-color: #28a745;
+        }
+        .toast-error {
+            background-color: #dc3545;
         }
     </style>
 </head>
@@ -1375,14 +1369,15 @@
         <div class="spinner-border"></div>
         <p>Mengunduh soal terbaru...</p>
     </div>
+
+    <!-- Toast Notification -->
+    <div id="toastNotification"></div>
     
     <div id="accessBlockedOverlay">
         <div class="blocked-content">
-            <!-- Menambahkan ID untuk judul agar bisa dideteksi long-press -->
             <h1 id="blockedTitle" class="no-select">AKSES DIBLOKIR</h1>
             <p>Ujian hanya bisa diakses melalui aplikasi yang sudah disosialisasikan. Silahkan hubungi Admin jika terdapat kendala.</p>
             
-            <!-- Kontrol admin tersembunyi -->
             <div id="adminAccessControls">
                 <div class="password-input-container">
                     <input type="password" id="unlockKeyInput" placeholder="Masukkan Kunci Akses">
@@ -1398,16 +1393,6 @@
         </div>
     </div>
 
-    
-    <div id="initialLoginScreen" class="initial-login-screen">
-        <h2>LOGIN SISWA</h2>
-        <p>Masukkan email dan password Anda untuk melanjutkan.</p>
-        <input type="email" id="loginEmail" placeholder="Email" />
-        <input type="password" id="loginPassword" placeholder="Password" />
-        <p class="message" id="loginMessage"></p>
-        <button id="loginButton">Login</button>
-    </div>
-
     <div id="welcomeScreen" class="welcome-screen">
         <h2 id="welcomeTitle">SELAMAT DATANG</h2>
         <p id="welcomeMessage">Memuat pilihan ujian...</p>
@@ -1418,7 +1403,6 @@
 
     <div id="loginContainer" class="container">
         <div class="header-box">
-            <!-- Tombol Kembali -->
             <div id="backToWelcomeBtn" class="back-button">
                 <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
             </div>
@@ -1428,10 +1412,8 @@
         <div class="card-body">
             <div class="judul-ujian" id="loginJudulUjian">UJIAN KELAS</div>
             
-             <!-- Pesan Blokir Lokasi -->
             <div id="locationBlockedDiv" style="display: none; color: red; margin-bottom: 10px; font-weight: bold; text-align: center;"></div>
              
-            <!-- Form Kunci Lokasi (Default Hidden) -->
             <div id="locationKeyContainer" style="display: none;">
                 <p>Jika lokasi tetap tidak valid, silahkan hubungi pengawas untuk mendapatkan kunci akses lokasi.</p>
                 <div class="password-input-container">
@@ -1480,12 +1462,18 @@
 
     
     <div id="examContainer" style="display: none;">
-        <!-- Tombol Update Soal Melayang -->
         <button id="updateSoalBtn">
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
             </svg>
             UPDATE SOAL
+        </button>
+
+        <button id="refreshSoalBtn">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+            </svg>
+            REFRESH
         </button>
 
         <div id="examBody">
@@ -1499,7 +1487,6 @@
                 <div class="sidebar-content-wrapper">
                     <div id="questionGridContainer"></div>
                     <div class="sidebar-footer">
-                        <!-- Pesan Info Waktu -->
                         <p id="submissionInfoMessage" style="font-size: 0.85em; color: var(--warning-color); margin-bottom: 8px; text-align: center; display: none;"></p>
                         <button id="submitAnswersButton" disabled>KIRIM JAWABAN</button>
                         <p id="submissionWarningMessage"></p>
@@ -1632,7 +1619,6 @@
         </div>
     </div>
 
-    <!-- Modal Force Logout -->
     <div id="forceLogoutModal" class="custom-modal static-backdrop">
         <div class="custom-modal-content" style="text-align: center;">
             <h4 id="forceLogoutModalTitle" style="color: var(--danger-color);">Sesi Direset</h4>
@@ -1641,12 +1627,20 @@
         </div>
     </div>
 
+    <!-- Modal Baru: Setup Failed / Fail Safe Trigger -->
+    <div id="setupFailedModal" class="custom-modal static-backdrop">
+        <div class="custom-modal-content" style="text-align: center;">
+            <h4 style="color: var(--danger-color); margin-bottom: 15px;">APLIKASI GAGAL LOGIN KE SERVER SETTING UJIAN</h4>
+            <p style="margin-bottom: 20px;">Jika ingin melanjutkan dengan setting ujian default klik lanjut.</p>
+            <button id="setupFailedBtn" style="background-color: var(--primary-color); width: 100%;">LANJUT</button>
+        </div>
+    </div>
+
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-app.js";
         import { getDatabase, ref, get, child, runTransaction, set, onValue, off, update, remove, query, orderByChild, equalTo } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-database.js";
         import { getAuth, signInWithEmailAndPassword, signInAnonymously, signOut } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-auth.js";
 
-        // Konfigurasi Firebase untuk SETUP (login utama dan pengaturan global)
         const setupFirebaseConfig = {
             apiKey: "AIzaSyBbXJ4VuACXyHJhl2eVSB2vHiT6hrx-XnE",
             authDomain: "setup-73809.firebaseapp.com",
@@ -1660,12 +1654,6 @@
         const setupAuth = getAuth(setupApp);
         const setupDb = getDatabase(setupApp);
 
-
-        // Global variables for authenticated user credentials (REMOVED - NO LONGER NEEDED)
-        // let globalUserEmail = ''; 
-        // let globalUserPassword = '';
-
-        // Konfigurasi Firebase untuk setiap grup kelas (3 Angkatan)
         const allFirebaseConfigs = {
             'kelas7-group1': { /* 7ABC */
                 apiKey: "AIzaSyBAKwT7JY_HGnvK6h3u30-dfgRPXfef8l8",
@@ -1675,11 +1663,7 @@
                 storageBucket: "abc-a13ea.firebasestorage.app",
                 messagingSenderId: "1052966795599",
                 appId: "1:1052966795599:web:d4d331199ca9081321ed3a",
-                theme: {
-                    primary: '#0066cc',
-                    accent: '#007bff',
-                    warning: '#0066cc'
-                },
+                theme: { primary: '#0066cc', accent: '#007bff', warning: '#0066cc' },
                 allowedClasses: ['7A', '7B', '7C']
             },
             'kelas7-group2': { /* 7DEF */
@@ -1690,11 +1674,7 @@
                 storageBucket: "def-ab5ee.firebasestorage.app",
                 messagingSenderId: "129712840107",
                 appId: "1:129712840107:web:ab10576fed95f735dd46ee",
-                 theme: {
-                    primary: '#0066cc',
-                    accent: '#007bff',
-                    warning: '#0066cc'
-                },
+                 theme: { primary: '#0066cc', accent: '#007bff', warning: '#0066cc' },
                 allowedClasses: ['7D', '7E', '7F']
             },
             'kelas8-group1': { /* 8ABC */
@@ -1705,11 +1685,7 @@
                 storageBucket: "abc-43e73.firebasestorage.app",
                 messagingSenderId: "1043754727577",
                 appId: "1:1043754727577:web:56c3732bf2a6ac900c2008",
-                theme: {
-                    primary: '#cc7a00',
-                    accent: '#ff9900',
-                    warning: '#ff9900'
-                },
+                theme: { primary: '#cc7a00', accent: '#ff9900', warning: '#ff9900' },
                 allowedClasses: ['8A', '8B', '8C']
             },
             'kelas8-group2': { /* 8DEF */
@@ -1720,11 +1696,7 @@
                 storageBucket: "def-efcb2.firebasestorage.app",
                 messagingSenderId: "12569956361",
                 appId: "1:12569956361:web:fea36c4e034e65f33ba8d8",
-                theme: {
-                    primary: '#cc7a00',
-                    accent: '#ff9900',
-                    warning: '#ff9900'
-                },
+                theme: { primary: '#cc7a00', accent: '#ff9900', warning: '#ff9900' },
                 allowedClasses: ['8D', '8E', '8F']
             },
             'kelas9-group1': { /* 9ABC */
@@ -1735,11 +1707,7 @@
                 storageBucket: "abc-d272a.firebasestorage.app",
                 messagingSenderId: "1036605132828",
                 appId: "1:1036605132828:web:2b59f91290d50afe304fd9",
-                theme: {
-                    primary: '#5a0000',
-                    accent: '#800000',
-                    warning: '#800000'
-                },
+                theme: { primary: '#5a0000', accent: '#800000', warning: '#800000' },
                 allowedClasses: ['9A', '9B', '9C']
             },
             'kelas9-group2': { /* 9DEF */
@@ -1750,11 +1718,7 @@
                 storageBucket: "def-85f32.firebasestorage.app",
                 messagingSenderId: "82670626048",
                 appId: "1:82670626048:web:f5fdfda8fe078245b6bfe5",
-                theme: {
-                    primary: '#5a0000',
-                    accent: '#800000',
-                    warning: '#800000'
-                },
+                theme: { primary: '#5a0000', accent: '#800000', warning: '#800000' },
                 allowedClasses: ['9D', '9E', '9F']
             }
         };
@@ -1799,7 +1763,6 @@
                 firebaseAuths[classGroupKey] = getAuth(appInstance);
 
                 try {
-                    // REVISI: Gunakan Anonymous Auth agar tidak kena limit quota password
                     await signInAnonymously(firebaseAuths[classGroupKey]);
                 } catch (error) {
                     console.error(`Gagal login anonim ke database kelas ${classGroupKey}:`, error);
@@ -1838,11 +1801,8 @@
         let isLocationEnabled = true;
         let firebaseAllowedRadiusKm = 0.075;
         let locationAccessKey = "";
-
-        // Variabel untuk blokir akses
         let isBlockEnabled = false;
         let blockAccessKey = "";
-
         let minDurationSettingsGlobal = { isMinDurationEnabled: false, minDurationSeconds: 1800 };
         let isSoalAcakEnabled = true;
         let isPilganAcakEnabled = true;
@@ -1857,14 +1817,8 @@
         const unlockAccessBtn = document.getElementById('unlockAccessBtn');
         const unlockMessage = document.getElementById('unlockMessage');
         const togglePasswordVisibility = document.getElementById('togglePasswordVisibility');
-        const blockedTitle = document.getElementById('blockedTitle'); // Target long-press
-        const adminAccessControls = document.getElementById('adminAccessControls'); // Target display
-
-        const initialLoginScreen = document.getElementById('initialLoginScreen');
-        const loginEmailInput = document.getElementById('loginEmail');
-        const loginPasswordInput = document.getElementById('loginPassword');
-        const loginMessage = document.getElementById('loginMessage');
-        const loginButton = document.getElementById('loginButton');
+        const blockedTitle = document.getElementById('blockedTitle'); 
+        const adminAccessControls = document.getElementById('adminAccessControls'); 
 
         const welcomeScreen = document.getElementById('welcomeScreen');
         const welcomeTitle = document.getElementById('welcomeTitle');
@@ -1904,15 +1858,15 @@
         const forceLogoutModal = document.getElementById('forceLogoutModal');
         const forceLogoutModalButton = document.getElementById('forceLogoutModalButton');
         
-        // Element Update Soal
         const updateSoalBtn = document.getElementById('updateSoalBtn');
+        const refreshSoalBtn = document.getElementById('refreshSoalBtn');
         const updateSpinnerOverlay = document.getElementById('updateSpinnerOverlay');
+        const toastNotification = document.getElementById('toastNotification');
 
         const classModal = document.getElementById('classModal');
         const classModalList = document.getElementById('classModalList');
         const studentModal = document.getElementById('studentModal');
         const studentModalList = document.getElementById('studentModalList');
-        
         const susulanListModal = document.getElementById('susulanListModal');
         
         const questionGridContainer = document.getElementById('questionGridContainer');
@@ -1933,29 +1887,20 @@
         let foundTokenGlobal = null;
         let timerInterval;
         let remainingTime;
-        
         let accessStatusListenerRef = null;
         let accessStatusListenerPath = null;
-        
-        // Listener Update Soal
         let examUpdateListenerRef = null;
         let examUpdateListenerPath = null;
         let localTerakhirUpdate = "";
-
         let isInExamMode = false;
         let isAnyModalOpen = false;
-
         let currentExamQuestions = [];
         let studentAnswers = [];
         let raguRaguStatus = [];
         let currentQuestionIndex = 0;
-
         let shuffledQuestionIndices = [];
         let shuffledOptionOrders = [];
-
         let sidebarCollapseTimer = null;
-        
-        // Timer variable untuk long-press
         let longPressTimer;
 
         const customMessageModal = document.getElementById('customMessageModal');
@@ -1971,6 +1916,19 @@
         let manualSubmissionInProgress = false;
         let submissionStatusListenerRef = null;
         let submissionStatusListenerPath = null;
+
+        // Fungsi Notifikasi Toast
+        function showToast(message, type) {
+            toastNotification.textContent = message;
+            toastNotification.className = ''; // Reset class
+            toastNotification.classList.add(type === 'success' ? 'toast-success' : 'toast-error');
+            toastNotification.classList.add('toast-show');
+
+            // Hide after 1.5 seconds
+            setTimeout(() => {
+                toastNotification.classList.remove('toast-show');
+            }, 1500);
+        }
 
         function setupPasswordToggle(toggleEl, inputEl, openIcon, closedIcon) {
             if (!toggleEl || !inputEl || !openIcon || !closedIcon) return;
@@ -1990,7 +1948,7 @@
                     const toggleBtn = document.getElementById('mobileSidebarToggle');
                     wrapper.classList.add('collapsed');
                     toggleBtn.classList.remove('up');
-                }, 10000); // 10 detik
+                }, 10000);
             }
         }
 
@@ -2042,18 +2000,14 @@
 
         window.formatTokenPrefix = function (inputElement) {
             if (!inputElement || typeof inputElement.value === 'undefined') {
-                console.error("Error: inputElement atau nilainya tidak terdefinisi dalam formatTokenPrefix.");
                 return;
             }
-
             const tokenInputGroup = inputElement.closest('.token-input-group');
             if (tokenInputGroup) {
                 tokenInputGroup.classList.remove('is-valid', 'is-invalid');
             }
-
             let value = inputElement.value.toUpperCase().replace(/[^A-Z0-9]/g, '');
             inputElement.value = value;
-
             if (value.length > 0) {
                 if (tokenInputGroup) tokenInputGroup.classList.add('is-valid');
             } else {
@@ -2074,9 +2028,7 @@
                 inputTokenPrefix.disabled = true;
                 inputTokenPrefix.value = "";
                 const tokenInputGroup = inputTokenPrefix.closest('.token-input-group');
-                if (tokenInputGroup) {
-                    tokenInputGroup.classList.remove('is-valid', 'is-invalid');
-                }
+                if (tokenInputGroup) tokenInputGroup.classList.remove('is-valid', 'is-invalid');
             }
 
             if (hiddenSelectKelas.value === "") {
@@ -2101,7 +2053,6 @@
             modalMessage.textContent = "";
             confirmCheckbox.checked = false;
             updateLoginButtonStatus();
-
             sessionStorage.clear();
         };
         
@@ -2145,21 +2096,18 @@
         }
 
         function handleLocationError(error) {
-            console.error("Gagal mendapatkan lokasi. Objek error mentah:", JSON.stringify(error, Object.getOwnPropertyNames(error)));
-
             let errorMessage;
             let showKey = true;
-
             if (error && typeof error.code === 'number') {
                 switch (error.code) {
-                    case 1: // PERMISSION_DENIED
+                    case 1: 
                         errorMessage = "Aktifkan lokasi di perangkat Anda! keluar aplikasi, hidupkan mode pesawat dan matikan lokasi. Kemudian matikan mode pesawat, hidupkan lokasi dan coba akses ujian kembali";
                         showKey = false;
                         break;
-                    case 2: // POSITION_UNAVAILABLE
+                    case 2: 
                         errorMessage = "Informasi lokasi tidak tersedia saat ini. Pastikan GPS aktif dan sinyal memadai.";
                         break;
-                    case 3: // TIMEOUT
+                    case 3: 
                         errorMessage = "Waktu permintaan lokasi habis. Mohon coba refresh halaman.";
                         break;
                     default:
@@ -2172,10 +2120,8 @@
                 errorMessage = "Gagal mengakses layanan lokasi. Pastikan GPS dan izin lokasi untuk aplikasi ini telah diaktifkan.";
                 showKey = false;
             }
-            
             showLocationFailureScreen(errorMessage, showKey);
         }
-
 
         function getLocation() {
             if (isLocationEnabled && isTouchDevice()) {
@@ -2227,11 +2173,9 @@
                 message.textContent = "Database belum diinisialisasi. Pilih kelas terlebih dahulu.";
                 return;
             }
-
             const dbRefs = getDbRefs();
             if (!dbRefs) return;
 
-            // Pastikan UI terkunci saat proses query
             customSelectNamaSiswaDisplay.classList.add('disabled');
             inputTokenPrefix.disabled = true;
             displayStudentId.value = "";
@@ -2240,16 +2184,11 @@
             message.innerHTML = `Mengunduh data ${selectedClass}... <span class="spinner"></span>`;
 
             try {
-                // [REVISI] Kembali menggunakan get() biasa tanpa query index
-                // karena rule .indexOn tidak tersedia di server.
-                // Kita ambil semua data, tapi filter manual di sini untuk efisiensi memori variabel.
                 const snapshot = await get(dbRefs.studentsRef);
-
                 if (snapshot.exists()) {
                     allStudentsData = [];
                     snapshot.forEach(childSnapshot => {
                         const studentData = childSnapshot.val();
-                        // Filter manual di sini: hanya masukkan ke array jika kelasnya cocok
                         if (studentData.class === selectedClass) {
                             allStudentsData.push({ ...studentData, key: childSnapshot.key });
                         }
@@ -2287,15 +2226,10 @@
             displayStudentId.value = "";
             inputTokenPrefix.value = "";
             const tokenInputGroup = inputTokenPrefix.closest('.token-input-group');
-            if (tokenInputGroup) {
-                tokenInputGroup.classList.remove('is-valid', 'is-invalid');
-            }
+            if (tokenInputGroup) tokenInputGroup.classList.remove('is-valid', 'is-invalid');
 
             if (selectedClass) {
-                // Data di allStudentsData sekarang sudah pasti hanya kelas yang dipilih (karena filter di atas)
-                // Kita urutkan saja berdasarkan nama
                 const filteredStudents = allStudentsData; 
-                
                 filteredStudents.sort((a, b) => String(a.name || '').localeCompare(String(b.name || ''))).forEach(student => {
                     const listItem = document.createElement('li');
                     listItem.textContent = student.name;
@@ -2322,24 +2256,19 @@
         }
 
         async function selectClass(className) {
-            // 1. UPDATE UI SEKETIKA (Instant Feedback)
-            // Ini mencegah user merasa 'tidak terjadi apa-apa'
             hiddenSelectKelas.value = className;
             customSelectKelasDisplay.textContent = className;
             customSelectKelasDisplay.classList.add('selected');
             closeClassModal();
 
-            // Langsung matikan dropdown siswa dan tampilkan status loading
             customSelectNamaSiswaDisplay.classList.add('disabled');
             customSelectNamaSiswaDisplay.innerHTML = 'Memuat... <span class="spinner" style="width:12px;height:12px;border-width:2px;"></span>';
             
-            // Reset input token
             inputTokenPrefix.disabled = true;
             displayStudentId.value = "";
             
             message.innerHTML = `Menyiapkan data kelas ${className}... <span class="spinner"></span>`;
 
-            // 2. BARU JALANKAN PROSES DB (Asynchronous)
             const instances = await getFirebaseInstanceForClass(className);
             if (!instances) {
                 message.style.color = "red";
@@ -2381,8 +2310,6 @@
 
             let isDisabled = true;
             const allAnswered = !studentAnswers.includes(null);
-
-            // [MODIFIKASI] Logika pesan info waktu
             const infoEl = document.getElementById('submissionInfoMessage');
             let timeConstraintActive = false;
 
@@ -2396,7 +2323,6 @@
                         infoEl.style.display = 'block';
                     }
                 } else {
-                    // Waktu sudah aman
                     isDisabled = !allAnswered;
                     if (infoEl) infoEl.style.display = 'none';
                 }
@@ -2406,7 +2332,6 @@
             }
 
             submitAnswersButton.disabled = isDisabled;
-            
             if (currentQuestionIndex === currentExamQuestions.length - 1) {
                 nextQuestionBtn.disabled = isDisabled;
             }
@@ -2414,13 +2339,10 @@
 
         function updateTimerDisplay() {
             if (!timerText) return;
-
             const minutes = Math.floor(remainingTime / 60);
             const seconds = remainingTime % 60;
-
             const formattedTime = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
             timerText.textContent = formattedTime;
-
             updateSubmissionButtonState();
 
             if (remainingTime <= 300 && remainingTime > 0) {
@@ -2436,20 +2358,14 @@
                 clearInterval(timerInterval);
                 timerText.textContent = "00:00";
                 warningOverlay.classList.remove('show');
-
-                if (submitAnswersButton) {
-                    submitAnswersButton.disabled = true;
-                }
-
+                if (submitAnswersButton) submitAnswersButton.disabled = true;
                 submitAnswers(true);
                 return;
             }
-
             remainingTime--;
         }
 
         async function showSubmissionConfirmationOverlay(isAutoSubmit) {
-            // [PERBAIKAN] Ambil data sebelum session storage dihapus
             const tokenFirebaseKey = foundTokenGlobal?.key;
             const studentId = selectedStudentData?.id ? padStudentId(selectedStudentData.id) : null;
             const dbRefs = getDbRefs();
@@ -2457,7 +2373,7 @@
             sessionStorage.clear();
             stopAccessStatusListener();
             stopSubmissionStatusListener();
-            stopExamUpdateListener(); // STOP Update Listener
+            stopExamUpdateListener(); 
             loginContainer.style.display = 'none';
             examContainer.style.opacity = 0;
 
@@ -2483,7 +2399,6 @@
                 const backBtn = document.getElementById('backToLoginFromSubmissionBtn');
                 backBtn.innerText = 'KEMBALI';
                 
-                // [PERBAIKAN] Tambahkan event listener baru yang dinamis
                 backBtn.onclick = async () => {
                     backBtn.disabled = true;
                     backBtn.textContent = 'MEMUAT...';
@@ -2497,10 +2412,8 @@
                     }
                     window.location.reload(true);
                 };
-
             }, 500);
         }
-
 
         function hideSubmissionConfirmationOverlay() {
             submissionConfirmationOverlay.classList.remove('show');
@@ -2534,30 +2447,23 @@
         }
         
         async function startExamProcess(examDurationMinutes, examStartTime, initialData) {
-            
             if (initialData.shuffledQuestionIndices && initialData.shuffledOptionOrders) {
                 shuffledQuestionIndices = initialData.shuffledQuestionIndices;
                 shuffledOptionOrders = initialData.shuffledOptionOrders;
             } else {
                 shuffledQuestionIndices = Array.from({ length: currentExamQuestions.length }, (_, i) => i);
-                if (isSoalAcakEnabled) {
-                    shuffleArray(shuffledQuestionIndices);
-                }
+                if (isSoalAcakEnabled) shuffleArray(shuffledQuestionIndices);
 
                 shuffledOptionOrders = currentExamQuestions.map(() => {
                     const options = ['A', 'B', 'C', 'D'];
-                    if (isPilganAcakEnabled) {
-                        shuffleArray(options);
-                    }
+                    if (isPilganAcakEnabled) shuffleArray(options);
                     return options;
                 });
-
                 await saveStudentAnswersToFirebase();
             }
             
             sessionStorage.setItem('shuffledQuestionIndices', JSON.stringify(shuffledQuestionIndices));
             sessionStorage.setItem('shuffledOptionOrders', JSON.stringify(shuffledOptionOrders));
-
             sessionStorage.setItem('isInExamMode', 'true');
             sessionStorage.setItem('selectedStudentData', JSON.stringify(selectedStudentData));
             sessionStorage.setItem('foundTokenGlobal', JSON.stringify(foundTokenGlobal));
@@ -2567,7 +2473,6 @@
             sessionStorage.setItem('selectedClass', hiddenSelectKelas.value);
             sessionStorage.setItem('selectedGrade', currentSelectedGrade);
             
-            // Simpan Terakhir Update di Session
             if (!localTerakhirUpdate && foundTokenGlobal && foundTokenGlobal.terakhirUpdate) {
                 localTerakhirUpdate = foundTokenGlobal.terakhirUpdate;
             }
@@ -2611,7 +2516,6 @@
             startAccessStatusListener();
             startSubmissionStatusListener();
             
-            // [BARU] Start Listening for Updates
             const storedExamPath = sessionStorage.getItem('currentExamPath');
             if (storedExamPath) {
                 startExamUpdateListener(storedExamPath);
@@ -2628,7 +2532,6 @@
             const selectedClass = sessionStorage.getItem('selectedClass');
             const selectedGrade = sessionStorage.getItem('selectedGrade');
             let examStartTime = Number(sessionStorage.getItem('examStartTime'));
-            
             localTerakhirUpdate = sessionStorage.getItem('localTerakhirUpdate');
 
             const initialData = {
@@ -2665,12 +2568,10 @@
             remainingTime = totalDurationSeconds - elapsedSeconds;
 
             if (remainingTime > 0) {
-                initialLoginScreen.style.display = 'none';
                 welcomeScreen.style.display = 'none';
                 loginContainer.style.display = 'none';
                 examContainer.style.display = 'flex';
                 examContainer.style.opacity = 1;
-                
                 await startExamProcess(examDurationMinutes, examStartTime, initialData);
                 return true;
             } else {
@@ -2712,22 +2613,17 @@
                 const subjectPath = foundToken.subject.replace(/\s+/g, '-').trim();
                 const examPath = `ujian/${tahunAjaranPath}/${ujianNamePath}/${kelasPath}/${subjectPath}`;
                 
-                // [PENTING] Simpan path ujian untuk listener nanti
                 sessionStorage.setItem('currentExamPath', examPath);
 
                 const examSnapshot = await get(ref(currentDb, examPath));
+                if (!examSnapshot.exists()) throw new Error(`Bank soal tidak ditemukan.`);
                 
-                if (!examSnapshot.exists()) {
-                    throw new Error(`Bank soal tidak ditemukan.`);
-                }
                 const examData = examSnapshot.val();
                 if (!examData || !Array.isArray(examData.soal) || examData.soal.length <= 1) {
                     throw new Error("Struktur bank soal tidak valid atau kosong.");
                 }
                 
                 currentExamQuestions = examData.soal.slice(1);
-                
-                // Simpan tanggal update lokal
                 localTerakhirUpdate = examData.terakhirUpdate || "";
                 
                 loadingSpinner.querySelector('p').textContent = 'Mempersiapkan sesi ujian...';
@@ -2752,9 +2648,7 @@
                 });
 
                 if (transactionResult.committed) {
-                    
                     const examStartTime = Number(transactionResult.snapshot.val().examStartTime);
-                    
                     const savedAnswersSnapshot = await get(child(dbRefs.studentAnswersRef, `${tokenFirebaseKey}/${studentId}`));
                     const initialData = {};
                     if (savedAnswersSnapshot.exists()) {
@@ -2764,10 +2658,8 @@
                         if (savedData.shuffledQuestionIndices) initialData.shuffledQuestionIndices = JSON.parse(savedData.shuffledQuestionIndices);
                         if (savedData.shuffledOptionOrders) initialData.shuffledOptionOrders = JSON.parse(savedData.shuffledOptionOrders);
                     }
-                    
                     await startExamProcess(foundToken.durationMinutes, examStartTime, initialData);
                     loadingSpinner.style.display = 'none';
-
                 } else {
                     throw new Error("Gagal memulai sesi. Akun mungkin sedang digunakan di perangkat lain.");
                 }
@@ -2779,23 +2671,16 @@
             }
         }
         
-        // --- LOGIKA UPDATE SOAL REAL-TIME ---
-        
         function startExamUpdateListener(examPath) {
             stopExamUpdateListener();
             if (!currentDb) return;
-            
-            // [OPTIMASI] Hanya listen ke path '/terakhirUpdate', bukan seluruh soal
-            // Ini membuat beban koneksi sangat-sangat ringan (hanya string pendek)
             examUpdateListenerPath = child(ref(currentDb, examPath), 'terakhirUpdate');
             
             examUpdateListenerRef = onValue(examUpdateListenerPath, (snapshot) => {
                 const serverUpdate = snapshot.val();
-                
-                // Hanya munculkan tombol jika ada data DAN berbeda dengan data lokal
                 if (serverUpdate && localTerakhirUpdate && serverUpdate !== localTerakhirUpdate) {
                     console.log("Update soal terdeteksi!");
-                    updateSoalBtn.style.display = 'flex'; // Munculkan tombol
+                    updateSoalBtn.style.display = 'flex';
                 } else {
                     updateSoalBtn.style.display = 'none';
                 }
@@ -2814,30 +2699,24 @@
             const storedExamPath = sessionStorage.getItem('currentExamPath');
             if (!storedExamPath || !currentDb) return;
 
-            // Tampilkan Spinner Khusus
             updateSpinnerOverlay.style.display = 'flex';
-            updateSoalBtn.style.display = 'none'; // Sembunyikan tombol sementara
+            updateSoalBtn.style.display = 'none'; 
 
             try {
-                // Download seluruh data soal baru
                 const snapshot = await get(ref(currentDb, storedExamPath));
                 if (!snapshot.exists()) throw new Error("Gagal mengambil data update.");
                 
                 const newData = snapshot.val();
                 if (!newData.soal || !Array.isArray(newData.soal)) throw new Error("Format soal rusak.");
                 
-                // Update variabel lokal
                 currentExamQuestions = newData.soal.slice(1);
                 localTerakhirUpdate = newData.terakhirUpdate;
                 
-                // Simpan ke Session Storage agar kalau refresh tetap pakai yang baru
                 sessionStorage.setItem('examData', JSON.stringify(currentExamQuestions));
                 sessionStorage.setItem('localTerakhirUpdate', localTerakhirUpdate);
                 
-                // Refresh Tampilan Soal Saat Ini
                 displayQuestion(currentQuestionIndex);
                 
-                // Beri notifikasi kecil (opsional) atau matikan spinner
                 setTimeout(() => {
                     updateSpinnerOverlay.style.display = 'none';
                     window.showCustomMessageModal("Update Berhasil", "Soal ujian berhasil diperbarui ke versi terbaru.", "success");
@@ -2846,13 +2725,62 @@
             } catch (error) {
                 console.error("Gagal update soal:", error);
                 updateSpinnerOverlay.style.display = 'none';
-                updateSoalBtn.style.display = 'flex'; // Munculkan tombol lagi kalau gagal
+                updateSoalBtn.style.display = 'flex';
                 window.showCustomMessageModal("Update Gagal", "Gagal mengunduh soal terbaru. Periksa koneksi internet.", "error");
             }
         }
-        
-        // --- AKHIR LOGIKA UPDATE SOAL ---
 
+        // --- LOGIKA BARU: TOMBOL REFRESH SOAL ---
+        async function handleRefreshSoalClick() {
+            if (!navigator.onLine) {
+                showToast("Tidak ada koneksi internet, refresh gagal", "error");
+                return;
+            }
+
+            const storedExamPath = sessionStorage.getItem('currentExamPath');
+            if (!storedExamPath || !currentDb) return;
+
+            // Tampilkan Spinner
+            updateSpinnerOverlay.querySelector('p').textContent = 'Merefresh Data...';
+            updateSpinnerOverlay.style.display = 'flex';
+
+            try {
+                // Paksa download ulang dari Firebase
+                const snapshot = await get(ref(currentDb, storedExamPath));
+                
+                if (!snapshot.exists()) throw new Error("Data tidak ditemukan");
+                
+                const newData = snapshot.val();
+                if (!newData.soal || !Array.isArray(newData.soal)) throw new Error("Format data rusak");
+
+                // Update data di memori & storage
+                currentExamQuestions = newData.soal.slice(1);
+                localTerakhirUpdate = newData.terakhirUpdate;
+                
+                sessionStorage.setItem('examData', JSON.stringify(currentExamQuestions));
+                if (localTerakhirUpdate) {
+                    sessionStorage.setItem('localTerakhirUpdate', localTerakhirUpdate);
+                }
+
+                // Render ulang soal saat ini (ini akan memaksa browser memuat ulang gambar)
+                displayQuestion(currentQuestionIndex);
+
+                setTimeout(() => {
+                    updateSpinnerOverlay.style.display = 'none';
+                    showToast("Refresh data soal berhasil", "success");
+                }, 500);
+
+            } catch (error) {
+                console.error("Gagal refresh soal:", error);
+                updateSpinnerOverlay.style.display = 'none';
+                showToast("Sinyal lemah, refresh gagal", "error");
+            }
+        }
+
+        if (refreshSoalBtn) {
+            refreshSoalBtn.addEventListener('click', handleRefreshSoalClick);
+        }
+        
         function displayQuestion(shuffledIndex) {
             if (shuffledIndex < 0 || shuffledIndex >= currentExamQuestions.length) return;
             currentQuestionIndex = shuffledIndex;
@@ -2905,10 +2833,8 @@
                 nextQuestionBtn.classList.remove('submit-mode');
             }
             prevQuestionBtn.disabled = shuffledIndex === 0;
-            
             renderQuestionGrid();
             updateSubmissionButtonState();
-
             startSidebarCollapseTimer(); 
         }
         
@@ -3066,10 +2992,7 @@
             welcomeButtonsContainer.innerHTML = '';
             welcomeMessageElement.textContent = 'Memuat pilihan ujian...';
 
-            if (!publicSettings) {
-                console.warn("Node publicSettings tidak ditemukan di Firebase. Menampilkan tombol default.");
-                publicSettings = {};
-            }
+            if (!publicSettings) publicSettings = {};
 
             const activeButtons = [];
 
@@ -3260,7 +3183,7 @@
         function showForceLogoutModal() {
             stopAccessStatusListener();
             stopSubmissionStatusListener();
-            stopExamUpdateListener(); // STOP Update Listener
+            stopExamUpdateListener(); 
             if (timerInterval) clearInterval(timerInterval);
             isInExamMode = false;
 
@@ -3271,53 +3194,74 @@
             isAnyModalOpen = true;
         }
 
+        // --- HELPERS FOR FAIL-SAFE ---
+        function activateFailSafeMode() {
+            console.log("Mengaktifkan Mode Darurat (Fail-Safe)...");
+            
+            // Default Values untuk Mode Offline
+            isLocationEnabled = false;
+            publicSettings = {}; // Akan memicu tombol default
+            minDurationSettingsGlobal = { 
+                isMinDurationEnabled: true, 
+                minDurationSeconds: 1800 
+            };
+            isSoalAcakEnabled = true;
+            isPilganAcakEnabled = true;
+            isBlockEnabled = true;
+            blockAccessKey = "Pajangan201184*";
+        }
+
         async function initializeAppFlow() {
             loadingSpinner.style.display = 'flex';
             
+            // 1. Cek Offline via Navigator (Cepat)
+            if (!navigator.onLine) {
+                activateFailSafeMode();
+                loadingSpinner.style.display = 'none';
+                showToast("Anda sedang offline. Menggunakan mode darurat.", "error");
+                await loadAndRenderWelcomeButtons();
+                welcomeScreen.style.display = 'flex';
+                return;
+            }
+
             async function fetchGlobalSettings() {
-                try {
-                    const refs = getSetupDbRefs();
-                    const [locSnap, minDurSnap, pubSetSnap, shuffleSnap, blockKeySnap] = await Promise.all([
-                        get(refs.settingsRef), 
-                        get(refs.minDurationSettingsRef), 
-                        get(refs.publicSettingsRef),
-                        get(refs.shuffleSettingsRef),
-                        get(refs.blockKeySettingsRef)
-                    ]);
+                const refs = getSetupDbRefs();
+                const [locSnap, minDurSnap, pubSetSnap, shuffleSnap, blockKeySnap] = await Promise.all([
+                    get(refs.settingsRef), 
+                    get(refs.minDurationSettingsRef), 
+                    get(refs.publicSettingsRef),
+                    get(refs.shuffleSettingsRef),
+                    get(refs.blockKeySettingsRef)
+                ]);
 
-                    if (locSnap.exists()) {
-                        const s = locSnap.val();
-                        isLocationEnabled = s.isLocationEnabled ?? true;
-                        firebaseAllowedRadiusKm = s.allowedRadiusKm ?? 0.075;
-                        locationAccessKey = s.currentKey || "";
-                    }
-                    if (blockKeySnap.exists()) {
-                        const s = blockKeySnap.val();
-                        isBlockEnabled = s.isEnabled ?? false;
-                        blockAccessKey = s.key || "";
-                    }
-                    if (minDurSnap.exists()) {
-                        const s = minDurSnap.val();
-                        minDurationSettingsGlobal.isMinDurationEnabled = s.isMinDurationEnabled ?? false;
-                        minDurationSettingsGlobal.minDurationSeconds = s.minDurationSeconds ?? 1800;
-                    }
-                    if (pubSetSnap.exists()) publicSettings = pubSetSnap.val();
-                    if (shuffleSnap.exists()) {
-                        const s = shuffleSnap.val();
-                        isSoalAcakEnabled = s.soal ?? true;
-                        isPilganAcakEnabled = s.pilgan ?? true;
-                    } else {
-                        isSoalAcakEnabled = true;
-                        isPilganAcakEnabled = true;
-                    }
-
-                } catch (error) {
-                    console.error("Gagal mengambil pengaturan global:", error);
+                if (locSnap.exists()) {
+                    const s = locSnap.val();
+                    isLocationEnabled = s.isLocationEnabled ?? true;
+                    firebaseAllowedRadiusKm = s.allowedRadiusKm ?? 0.075;
+                    locationAccessKey = s.currentKey || "";
+                }
+                if (blockKeySnap.exists()) {
+                    const s = blockKeySnap.val();
+                    isBlockEnabled = s.isEnabled ?? false;
+                    blockAccessKey = s.key || "";
+                }
+                if (minDurSnap.exists()) {
+                    const s = minDurSnap.val();
+                    minDurationSettingsGlobal.isMinDurationEnabled = s.isMinDurationEnabled ?? false;
+                    minDurationSettingsGlobal.minDurationSeconds = s.minDurationSeconds ?? 1800;
+                }
+                if (pubSetSnap.exists()) publicSettings = pubSetSnap.val();
+                if (shuffleSnap.exists()) {
+                    const s = shuffleSnap.val();
+                    isSoalAcakEnabled = s.soal ?? true;
+                    isPilganAcakEnabled = s.pilgan ?? true;
+                } else {
+                    isSoalAcakEnabled = true;
+                    isPilganAcakEnabled = true;
                 }
             }
 
             try {
-                // GANTI: Menggunakan signInAnonymously untuk menghindari limit quota password
                 await signInAnonymously(setupAuth);
                 await fetchGlobalSettings();
 
@@ -3351,13 +3295,54 @@
                     }
                 }
             } catch (error) {
-                console.error("Login otomatis (Anonymous) gagal:", error);
+                console.error("Login otomatis (Anonymous) atau Fetch gagal:", error);
+                
                 loadingSpinner.style.display = 'none';
-                initialLoginScreen.style.display = 'flex';
-                loginMessage.textContent = "Login otomatis gagal. Pastikan Anonymous Auth diaktifkan di Firebase Console.";
-                loginButton.onclick = async () => {
-                      window.showCustomMessageModal("Fitur Belum Tersedia", "Silakan hubungi admin untuk mengaktifkan Anonymous Auth di Firebase Console.", "warning");
-                };
+
+                // 2. Cek apakah ini "Masalah Sinyal" atau "Server Penuh"
+                // Termasuk: Quota Exceeded, Network Request Failed, Timeout, Unavailable
+                const isConnectivityError = 
+                    error.code === 'auth/network-request-failed' || 
+                    error.code === 'unavailable' || 
+                    error.code === 'auth/quota-exceeded' ||
+                    (error.message && (error.message.includes('network') || error.message.includes('quota')));
+
+                // Jika aplikasi RESMI (isAllowedEnvironment = TRUE), tampilkan Modal Fail-Safe
+                if (isAllowedEnvironment()) {
+                    document.getElementById('setupFailedModal').classList.add('show');
+                    isAnyModalOpen = true;
+
+                    // Listener untuk tombol LANJUT di modal Fail-Safe
+                    document.getElementById('setupFailedBtn').onclick = async () => {
+                        document.getElementById('setupFailedModal').classList.remove('show');
+                        activateFailSafeMode();
+                        await loadAndRenderWelcomeButtons();
+                        welcomeScreen.style.display = 'flex';
+                    }
+                } else {
+                    // Jika aplikasi TIDAK RESMI (Chrome), biarkan defaultnya ke Block Overlay.
+                    // Tapi kita harus aktifkan fail-safe mode dulu supaya block key hardcode aktif.
+                    activateFailSafeMode();
+                    
+                    // Trigger logika blokir manual karena fetch gagal di awal
+                    unlockAccessBtn.onclick = async () => {
+                        if (unlockKeyInput.value === blockAccessKey) { // Key hardcode Pajangan201184*
+                            accessBlockedOverlay.style.display = 'none';
+                            loadingSpinner.style.display = 'flex';
+                            const isRestored = await restoreExamState();
+                             if (!isRestored) {
+                                await loadAndRenderWelcomeButtons();
+                                loadingSpinner.style.display = 'none';
+                                welcomeScreen.style.display = 'flex';
+                            } else {
+                                loadingSpinner.style.display = 'none';
+                            }
+                        } else {
+                            unlockMessage.textContent = "Kunci yang dimasukkan salah.";
+                        }
+                    };
+                    accessBlockedOverlay.style.display = 'flex';
+                }
             }
         }
 
@@ -3409,7 +3394,6 @@
                  message.textContent = '';
             });
             
-            // Tambah event untuk tombol update soal
             if(updateSoalBtn) {
                 updateSoalBtn.addEventListener('click', handleUpdateSoalClick);
             }
@@ -3436,10 +3420,8 @@
                 mobileSidebarToggle.classList.toggle('up');
                 
                 if (!wrapper.classList.contains('collapsed')) {
-                    // Jika panel baru saja dibuka, mulai timer
                     startSidebarCollapseTimer();
                 } else {
-                    // Jika panel baru saja ditutup, hentikan timer
                     clearTimeout(sidebarCollapseTimer);
                 }
             });
@@ -3453,12 +3435,10 @@
             
             // --- LOGIKA LONG PRESS UNTUK ADMIN ---
             function startLongPress() {
-                // Jangan lakukan apa-apa jika sudah visible
                 if (adminAccessControls.style.display === 'block') return;
-
                 longPressTimer = setTimeout(() => {
                     adminAccessControls.style.display = 'block';
-                }, 3000); // 3 detik
+                }, 3000);
             }
 
             function cancelLongPress() {
@@ -3468,19 +3448,15 @@
                 }
             }
 
-            // Mouse events
             blockedTitle.addEventListener('mousedown', startLongPress);
             blockedTitle.addEventListener('mouseup', cancelLongPress);
             blockedTitle.addEventListener('mouseleave', cancelLongPress);
 
-            // Touch events
             blockedTitle.addEventListener('touchstart', (e) => {
-                // e.preventDefault(); // Opsional: mencegah scrolling/selection saat touch
                 startLongPress();
             });
             blockedTitle.addEventListener('touchend', cancelLongPress);
             blockedTitle.addEventListener('touchcancel', cancelLongPress);
-            // ------------------------------------
         });
         
         function startSubmissionStatusListener() {
@@ -3496,7 +3472,7 @@
                 if (isInExamMode && snapshot.exists() && snapshot.val().isSubmitted) {
                     stopAccessStatusListener();
                     stopSubmissionStatusListener();
-                    stopExamUpdateListener(); // STOP Update Listener
+                    stopExamUpdateListener(); 
                     if (timerInterval) clearInterval(timerInterval);
                     isInExamMode = false;
                     
@@ -3556,15 +3532,11 @@
                     }
                 });
 
-                if (!foundToken) {
-                    throw new Error("Token ujian tidak ditemukan.");
-                }
+                if (!foundToken) throw new Error("Token ujian tidak ditemukan.");
                 foundTokenGlobal = foundToken;
 
                 const hasSubmitted = (await get(child(dbRefs.submittedExamsRef, `${foundToken.key}/${studentId}`))).exists();
-                if (hasSubmitted) {
-                    throw new Error("Anda sudah menyelesaikan ujian ini.");
-                }
+                if (hasSubmitted) throw new Error("Anda sudah menyelesaikan ujian ini.");
 
                 const now = Date.now();
                 const startTime = new Date(foundToken.startTime).getTime();
@@ -3579,9 +3551,7 @@
                 }
                 
                 const accessStatus = (await get(child(dbRefs.examAccessStatusRef, `${foundToken.key}/${studentId}`))).val();
-                if (accessStatus?.isLoggedIn) {
-                    throw new Error("Akun sedang login di perangkat lain.");
-                }
+                if (accessStatus?.isLoggedIn) throw new Error("Akun sedang login di perangkat lain.");
                 
                 message.textContent = "";
                 loginBtn.disabled = false;
