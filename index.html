@@ -2661,7 +2661,7 @@
                     await startExamProcess(foundToken.durationMinutes, examStartTime, initialData);
                     loadingSpinner.style.display = 'none';
                 } else {
-                    throw new Error("Gagal memulai sesi. Akun mungkin sedang digunakan di perangkat lain.");
+                    throw new Error("Gagal memulai sesi. Akun anda masih Login, minta reset ke pengawas atau admin!");
                 }
             } catch (err) {
                 console.error("Error di handleLanjutClick:", err);
@@ -3541,8 +3541,17 @@
                 const now = Date.now();
                 const startTime = new Date(foundToken.startTime).getTime();
                 const endTime = new Date(foundToken.endTime).getTime();
-                if (!foundToken.isForceActive && (now < startTime || now > endTime)) {
-                    throw new Error("Token belum aktif atau sudah kadaluarsa.");
+                
+                // --- LOGIKA PESAN WAKTU TOKEN (DIPERBARUI) ---
+                if (!foundToken.isForceActive) {
+                    if (now < startTime) {
+                        const timeOptions = { hour: '2-digit', minute: '2-digit', hour12: false };
+                        const jamMulai = new Date(startTime).toLocaleTimeString('id-ID', timeOptions).replace(':', '.');
+                        const jamSelesai = new Date(endTime).toLocaleTimeString('id-ID', timeOptions).replace(':', '.');
+                        throw new Error(`Token dapat diakses pukul ${jamMulai} sampai ${jamSelesai} saja!`);
+                    } else if (now > endTime) {
+                        throw new Error("Token sudah tidak aktif, minta admin untuk mengaktifkannya!");
+                    }
                 }
 
                 const studentClassNum = selectedStudentData.class.match(/^\d+/)[0];
@@ -3551,7 +3560,9 @@
                 }
                 
                 const accessStatus = (await get(child(dbRefs.examAccessStatusRef, `${foundToken.key}/${studentId}`))).val();
-                if (accessStatus?.isLoggedIn) throw new Error("Akun sedang login di perangkat lain.");
+                
+                // --- LOGIKA PESAN LOGIN (DIPERBARUI) ---
+                if (accessStatus?.isLoggedIn) throw new Error("Akun anda masih Login, minta reset ke pengawas atau admin!");
                 
                 message.textContent = "";
                 loginBtn.disabled = false;
