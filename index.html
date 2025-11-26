@@ -1644,8 +1644,7 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-app.js";
         import { getDatabase, ref, get, child, runTransaction, set, onValue, off, update, remove, query, orderByChild, equalTo } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-database.js";
-        // [PERUBAHAN]: Menambahkan import signInAnonymously
-        import { getAuth, signInWithEmailAndPassword, signInAnonymously, signOut } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-auth.js";
+        import { getAuth, signInWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-auth.js";
 
         // Konfigurasi Firebase untuk SETUP (login utama dan pengaturan global)
         const setupFirebaseConfig = {
@@ -1662,7 +1661,7 @@
         const setupDb = getDatabase(setupApp);
 
 
-        // [PERUBAHAN]: Variabel ini tidak lagi dibutuhkan untuk login siswa, tapi dibiarkan kosong
+        // Global variables for authenticated user credentials
         let globalUserEmail = '';
         let globalUserPassword = '';
 
@@ -1800,11 +1799,13 @@
                 firebaseAuths[classGroupKey] = getAuth(appInstance);
 
                 try {
-                    // [PERUBAHAN PENTING] Menggunakan Login Anonim untuk menghindari Quota Exceeded
-                    await signInAnonymously(firebaseAuths[classGroupKey]);
-                    
+                    if (globalUserEmail && globalUserPassword) {
+                        await signInWithEmailAndPassword(firebaseAuths[classGroupKey], globalUserEmail, globalUserPassword);
+                    } else {
+                       console.warn(`Peringatan: Kredensial pengguna tidak tersedia. Tidak bisa login ke DB kelas ${classGroupKey}.`);
+                    }
                 } catch (error) {
-                    console.error(`Gagal login anonim ke database kelas ${classGroupKey}:`, error);
+                    console.error(`Gagal login ke database kelas ${classGroupKey}:`, error);
                     window.showCustomMessageModal("Kesalahan Autentikasi Kelas", `Gagal mengautentikasi ke database untuk kelas ini. Mohon hubungi administrator.`, 'error');
                     return null;
                 }
@@ -3304,9 +3305,7 @@
                         minDurationSettingsGlobal.minDurationSeconds = s.minDurationSeconds ?? 1800;
                     }
                     if (pubSetSnap.exists()) publicSettings = pubSetSnap.val();
-                    
-                    // [PERBAIKAN]: Mengganti shuffleSettingsRef menjadi shuffleSnap
-                    if (shuffleSnap.exists()) { 
+                    if (shuffleSnap.exists()) {
                         const s = shuffleSnap.val();
                         isSoalAcakEnabled = s.soal ?? true;
                         isPilganAcakEnabled = s.pilgan ?? true;
@@ -3320,12 +3319,7 @@
                 }
             }
 
-            try {
-                // [PERUBAHAN PENTING]: Menggunakan Login Anonim untuk setup awal agar tidak kena kuota
-                await signInAnonymously(setupAuth);
-
-                // globalUserEmail & globalUserPassword tidak digunakan lagi
-                
+            async function onLoginSuccess() {
                 await fetchGlobalSettings();
 
                 if (isBlockEnabled && !isAllowedEnvironment()) {
@@ -3357,13 +3351,52 @@
                         loadingSpinner.style.display = 'none';
                     }
                 }
+            }
+
+            try {
+                // Mencoba login otomatis
+                await signInWithEmailAndPassword(setupAuth, "speropa@gmail.com", "Pajangan201184*");
+                globalUserEmail = "speropa@gmail.com";
+                globalUserPassword = "Pajangan201184*";
+                await onLoginSuccess();
             } catch (error) {
                 console.error("Login otomatis gagal:", error);
                 loadingSpinner.style.display = 'none';
+                
+                // Jika gagal (kuota habis dll), tampilkan form login manual
                 initialLoginScreen.style.display = 'flex';
-                loginMessage.textContent = "Gagal terhubung ke server. Coba refresh halaman.";
+                loginMessage.textContent = "Login otomatis gagal. Silakan masuk secara manual.";
+                
+                // Aktifkan logika tombol login manual
                 loginButton.onclick = async () => {
-                      window.showCustomMessageModal("Koneksi", "Periksa koneksi internet Anda dan coba lagi.", "warning");
+                    const email = loginEmailInput.value;
+                    const password = loginPasswordInput.value;
+                    
+                    if (!email || !password) {
+                        loginMessage.textContent = "Email dan password harus diisi.";
+                        return;
+                    }
+                    
+                    loginButton.disabled = true;
+                    loginButton.textContent = "Memproses...";
+                    
+                    try {
+                        await signInWithEmailAndPassword(setupAuth, email, password);
+                        globalUserEmail = email;
+                        globalUserPassword = password;
+                        
+                        // Sembunyikan form login, tampilkan spinner lagi
+                        initialLoginScreen.style.display = 'none';
+                        loadingSpinner.style.display = 'flex';
+                        
+                        await onLoginSuccess();
+                        
+                    } catch (manualError) {
+                        console.error("Login manual gagal:", manualError);
+                        loginMessage.textContent = "Login gagal: " + manualError.message;
+                        loginButton.disabled = false;
+                        loginButton.textContent = "Login";
+                    }
                 };
             }
         }
