@@ -1644,7 +1644,7 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-app.js";
         import { getDatabase, ref, get, child, runTransaction, set, onValue, off, update, remove, query, orderByChild, equalTo } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-database.js";
-        import { getAuth, signInWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-auth.js";
+        import { getAuth, signInWithEmailAndPassword, signInAnonymously, signOut } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-auth.js";
 
         // Konfigurasi Firebase untuk SETUP (login utama dan pengaturan global)
         const setupFirebaseConfig = {
@@ -1661,9 +1661,9 @@
         const setupDb = getDatabase(setupApp);
 
 
-        // Global variables for authenticated user credentials
-        let globalUserEmail = '';
-        let globalUserPassword = '';
+        // Global variables for authenticated user credentials (REMOVED - NO LONGER NEEDED)
+        // let globalUserEmail = ''; 
+        // let globalUserPassword = '';
 
         // Konfigurasi Firebase untuk setiap grup kelas (3 Angkatan)
         const allFirebaseConfigs = {
@@ -1799,14 +1799,11 @@
                 firebaseAuths[classGroupKey] = getAuth(appInstance);
 
                 try {
-                    if (globalUserEmail && globalUserPassword) {
-                        await signInWithEmailAndPassword(firebaseAuths[classGroupKey], globalUserEmail, globalUserPassword);
-                    } else {
-                       console.warn(`Peringatan: Kredensial pengguna tidak tersedia. Tidak bisa login ke DB kelas ${classGroupKey}.`);
-                    }
+                    // REVISI: Gunakan Anonymous Auth agar tidak kena limit quota password
+                    await signInAnonymously(firebaseAuths[classGroupKey]);
                 } catch (error) {
-                    console.error(`Gagal login ke database kelas ${classGroupKey}:`, error);
-                    window.showCustomMessageModal("Kesalahan Autentikasi Kelas", `Gagal mengautentikasi ke database untuk kelas ini. Mohon hubungi administrator.`, 'error');
+                    console.error(`Gagal login anonim ke database kelas ${classGroupKey}:`, error);
+                    window.showCustomMessageModal("Kesalahan Autentikasi Kelas", `Gagal mengautentikasi ke database untuk kelas ini. Mohon hubungi administrator. (Pastikan Anonymous Auth aktif di Firebase Console)`, 'error');
                     return null;
                 }
             }
@@ -3319,7 +3316,9 @@
                 }
             }
 
-            async function onLoginSuccess() {
+            try {
+                // GANTI: Menggunakan signInAnonymously untuk menghindari limit quota password
+                await signInAnonymously(setupAuth);
                 await fetchGlobalSettings();
 
                 if (isBlockEnabled && !isAllowedEnvironment()) {
@@ -3351,52 +3350,13 @@
                         loadingSpinner.style.display = 'none';
                     }
                 }
-            }
-
-            try {
-                // Mencoba login otomatis
-                await signInWithEmailAndPassword(setupAuth, "speropa@gmail.com", "Pajangan201184*");
-                globalUserEmail = "speropa@gmail.com";
-                globalUserPassword = "Pajangan201184*";
-                await onLoginSuccess();
             } catch (error) {
-                console.error("Login otomatis gagal:", error);
+                console.error("Login otomatis (Anonymous) gagal:", error);
                 loadingSpinner.style.display = 'none';
-                
-                // Jika gagal (kuota habis dll), tampilkan form login manual
                 initialLoginScreen.style.display = 'flex';
-                loginMessage.textContent = "Login otomatis gagal. Silakan masuk secara manual.";
-                
-                // Aktifkan logika tombol login manual
+                loginMessage.textContent = "Login otomatis gagal. Pastikan Anonymous Auth diaktifkan di Firebase Console.";
                 loginButton.onclick = async () => {
-                    const email = loginEmailInput.value;
-                    const password = loginPasswordInput.value;
-                    
-                    if (!email || !password) {
-                        loginMessage.textContent = "Email dan password harus diisi.";
-                        return;
-                    }
-                    
-                    loginButton.disabled = true;
-                    loginButton.textContent = "Memproses...";
-                    
-                    try {
-                        await signInWithEmailAndPassword(setupAuth, email, password);
-                        globalUserEmail = email;
-                        globalUserPassword = password;
-                        
-                        // Sembunyikan form login, tampilkan spinner lagi
-                        initialLoginScreen.style.display = 'none';
-                        loadingSpinner.style.display = 'flex';
-                        
-                        await onLoginSuccess();
-                        
-                    } catch (manualError) {
-                        console.error("Login manual gagal:", manualError);
-                        loginMessage.textContent = "Login gagal: " + manualError.message;
-                        loginButton.disabled = false;
-                        loginButton.textContent = "Login";
-                    }
+                      window.showCustomMessageModal("Fitur Belum Tersedia", "Silakan hubungi admin untuk mengaktifkan Anonymous Auth di Firebase Console.", "warning");
                 };
             }
         }
