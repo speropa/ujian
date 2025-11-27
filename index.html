@@ -1953,18 +1953,22 @@
 function isAllowedEnvironment() {
     const ua = navigator.userAgent.toLowerCase();
 
-    const isSEB = ua.includes('seb/');
-    const isIOS = ua.includes('iphone') || ua.includes('ipad');
-    const isIOSWebView = isIOS && !ua.includes('safari');
+    // 1. Android App (KODE ASLI - TIDAK DIUBAH)
+    // Karena aplikasi Android Bapak bukan SEB, dia WAJIB lolos lewat jalur ini.
+    const isAndroidWebView = ua.includes('wv') || (ua.includes('android') && !ua.includes('chrome') && !ua.includes('firefox'));
 
-    if (isSEB) {
-        if (isIOS) {
-            return false;
-        }
-        return true;
-    }
+    // 2. SEB (Safe Exam Browser)
+    // Syarat Lolos: Harus ada 'seb/' DAN BUKAN iPhone/iPad.
+    // Hasil: Laptop Lolos, iPhone Ditolak.
+    const isLaptopSEB = ua.includes('seb/') && !ua.includes('iphone') && !ua.includes('ipad');
 
-    return isIOSWebView;
+    // 3. iOS App (Aplikasi Sekolah di iPhone - Jika ada)
+    // Syarat Lolos: iPhone DAN Bukan Safari DAN BUKAN SEB.
+    // Tambahan '!ua.includes('seb/')' penting supaya iPhone SEB tidak menyelinap lewat sini.
+    const isIOSApp = (ua.includes('iphone') || ua.includes('ipad')) && !ua.includes('safari') && !ua.includes('seb/');
+
+    // Gabungkan semua pintu masuk
+    return isAndroidWebView || isLaptopSEB || isIOSApp;
 }
 
         function shuffleArray(array) {
