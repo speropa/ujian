@@ -1953,17 +1953,20 @@
 function isAllowedEnvironment() {
     const ua = navigator.userAgent.toLowerCase();
 
-    const hasSEB = ua.includes('seb/');
-    const hasAndroid = ua.includes('android');
-    const hasIphone = ua.includes('iphone') || ua.includes('ipad');
+    const isAndroid = ua.includes('wv') || (ua.includes('android') && !ua.includes('chrome') && !ua.includes('firefox'));
+    if (isAndroid) {
+        return true; 
+    }
 
-    const isAndroidWebView = ua.includes('wv') || (hasAndroid && !ua.includes('chrome') && !ua.includes('firefox'));
+    const isIOS = ua.includes('iphone') || ua.includes('ipad');
+    if (isIOS && ua.includes('seb/')) {
+        return false;
+    }
 
-    const isAllowedSEB = hasSEB && (hasAndroid || !hasIphone);
+    const isSEB = ua.includes('seb/');
+    const isIOSApp = isIOS && !ua.includes('safari');
 
-    const isAllowedIOSApp = hasIphone && !ua.includes('safari') && !hasSEB;
-
-    return isAllowedSEB || isAndroidWebView || isAllowedIOSApp;
+    return isSEB || isIOSApp;
 }
 
         function shuffleArray(array) {
@@ -3568,4 +3571,4 @@ function isAllowedEnvironment() {
         };
     </script>
 </body>
-</html>
+</html> 
