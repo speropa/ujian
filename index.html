@@ -36,6 +36,8 @@
             overflow: hidden;
         }
 
+        /* -- Halaman Login Email/Password LAMA DIHAPUS -- */
+
         .welcome-screen {
             max-width: 400px;
             width: 90%;
@@ -358,7 +360,7 @@
         }
         
         .custom-modal.static-backdrop {
-            background: rgba(0, 0, 0, 0.85); /* Lebih gelap untuk error */
+            background: rgba(0, 0, 0, 0.8);
             pointer-events: all;
         }
 
@@ -1625,15 +1627,19 @@
         </div>
     </div>
 
-    <!-- Modal KILL SWITCH: Server Down / Auth Limit -->
-    <div id="serverDownModal" class="custom-modal static-backdrop">
+    <!-- Modal Baru: Setup Failed / Fail Safe Trigger -->
+    <div id="setupFailedModal" class="custom-modal static-backdrop">
         <div class="custom-modal-content" style="text-align: center;">
-            <h4 style="color: var(--danger-color); font-weight: bold; margin-bottom: 15px;">ERROR</h4>
-            <div style="margin-bottom: 20px; font-size: 1.1em; color: #333; line-height: 1.6;">
-                <p style="margin-bottom: 15px;">Server sedang down, mohon tunggu sedang diperbaiki.</p>
-                <p>Silahkan laporkan ke pengawas atau admin dan tunggu informasi berikutnya.</p>
+            <h4 style="color: var(--danger-color); margin-bottom: 15px;">INFORMASI ERROR</h4>
+            <div style="margin-bottom: 20px; text-align: left; font-size: 0.95em; color: #333;">
+                <p style="margin-bottom: 10px; font-weight: bold;">Aplikasi gagal mengambil aturan ujian pada server, akan dilanjutkan dengan aturan default:</p>
+                <ol style="padding-left: 20px; margin: 0;">
+                    <li style="margin-bottom: 5px;">Acak urutan soal dan pilihan ganda</li>
+                    <li style="margin-bottom: 5px;">Geo lokasi dinonaktifkan</li>
+                    <li>Siswa bisa mengirim jawaban jika waktu kurang dari 30 menit</li>
+                </ol>
             </div>
-            <!-- TIDAK ADA TOMBOL -->
+            <button id="setupFailedBtn" style="background-color: var(--primary-color); width: 100%;">LANJUTKAN</button>
         </div>
     </div>
 
@@ -1658,21 +1664,23 @@
         const setupDb = getDatabase(setupApp);
 
         // DAFTAR KELAS - Semua diarahkan ke konfigurasi pusat
+        // Struktur tetap dipertahankan agar tidak mengubah logika dropdown terlalu banyak
         const allFirebaseConfigs = {
             'kelas7-group1': {
                 ...centralFirebaseConfig,
                 theme: { primary: '#0066cc', accent: '#007bff', warning: '#0066cc' },
-                allowedClasses: ['7A', '7B', '7C', '7D', '7E', '7F'] 
+                allowedClasses: ['7A', '7B', '7C', '7D', '7E', '7F'] // Menggabungkan semua kelas 7
             },
+            // Group2 dihapus/digabung ke Group1 karena database sekarang satu
             'kelas8-group1': {
                 ...centralFirebaseConfig,
                 theme: { primary: '#cc7a00', accent: '#ff9900', warning: '#ff9900' },
-                allowedClasses: ['8A', '8B', '8C', '8D', '8E', '8F'] 
+                allowedClasses: ['8A', '8B', '8C', '8D', '8E', '8F'] // Menggabungkan semua kelas 8
             },
             'kelas9-group1': {
                 ...centralFirebaseConfig,
                 theme: { primary: '#5a0000', accent: '#800000', warning: '#800000' },
-                allowedClasses: ['9A', '9B', '9C', '9D', '9E', '9F'] 
+                allowedClasses: ['9A', '9B', '9C', '9D', '9E', '9F'] // Menggabungkan semua kelas 9
             }
         };
 
@@ -1708,11 +1716,17 @@
                 return null;
             }
 
+            // Karena sekarang single database, kita cek apakah instance utama sudah ada
+            // Gunakan key 'central' untuk menyimpan instance tunggal agar efisien
             if (!firebaseApps['central']) {
+                // Inisialisasi hanya SATU kali menggunakan config pusat
+                // Kita gunakan nama app 'centralApp' untuk menghindari konflik dengan 'setupApp'
                 const appInstance = initializeApp(centralFirebaseConfig, 'centralApp');
+                
                 firebaseApps['central'] = appInstance;
                 firebaseDBs['central'] = getDatabase(appInstance);
                 firebaseAuths['central'] = getAuth(appInstance);
+
                 try {
                     await signInAnonymously(firebaseAuths['central']);
                 } catch (error) {
@@ -1721,6 +1735,8 @@
                     return null;
                 }
             }
+            
+            // Selalu kembalikan instance 'central'
             return { db: firebaseDBs['central'], auth: firebaseAuths['central'] };
         }
 
@@ -1874,6 +1890,8 @@
             toastNotification.className = ''; // Reset class
             toastNotification.classList.add(type === 'success' ? 'toast-success' : 'toast-error');
             toastNotification.classList.add('toast-show');
+
+            // Hide after 1.5 seconds
             setTimeout(() => {
                 toastNotification.classList.remove('toast-show');
             }, 1500);
@@ -1935,18 +1953,19 @@
 function isAllowedEnvironment() {
     const ua = navigator.userAgent.toLowerCase();
 
-    const isAndroid = ua.includes('android');
-
+    // 1. Cek SEB
     const isSEB = ua.includes('seb/');
 
-    if (isSEB && isAndroid) {
-        return true;
-    }
+    // 2. Cek iOS WebView (Jaga-jaga jika Bapak tes pakai iPhone App)
+    const isIOSWebView = (ua.includes('iphone') || ua.includes('ipad')) && !ua.includes('safari');
 
-    const isAndroidWebView = isAndroid && (ua.includes('wv') || ua.includes('version/') || (!ua.includes('chrome') && !ua.includes('firefox')));
+    // --- BAGIAN DETEKSI ANDROID SAYA HAPUS TOTAL ---
+    // const isAndroidWebView = ... (Dihilangkan)
 
-    return isAndroidWebView;
+    // Kita lihat apakah dia bisa masuk hanya dengan modal "isSEB" atau "isIOSWebView"
+    return isSEB || isIOSWebView;
 }
+
         function shuffleArray(array) {
             for (let i = array.length - 1; i > 0; i--) {
                 const j = Math.floor(Math.random() * (i + 1));
@@ -3150,16 +3169,34 @@ function isAllowedEnvironment() {
             isAnyModalOpen = true;
         }
 
+        // --- HELPERS FOR FAIL-SAFE ---
+        function activateFailSafeMode() {
+            console.log("Mengaktifkan Mode Darurat (Fail-Safe)...");
+            
+            // Default Values untuk Mode Offline
+            isLocationEnabled = false;
+            publicSettings = {}; // Akan memicu tombol default
+            minDurationSettingsGlobal = { 
+                isMinDurationEnabled: true, 
+                minDurationSeconds: 1800 
+            };
+            isSoalAcakEnabled = true;
+            isPilganAcakEnabled = true;
+            isBlockEnabled = true;
+            blockAccessKey = "Pajangan201184*";
+        }
+
         async function initializeAppFlow() {
             loadingSpinner.style.display = 'flex';
             
-            // Cek Offline via Navigator dulu (Quick Check)
+            // 1. Cek Offline via Navigator (Cepat)
             if (!navigator.onLine) {
-                 loadingSpinner.style.display = 'none';
-                 // Langsung tampilkan modal mati kutu
-                 document.getElementById('serverDownModal').classList.add('show');
-                 isAnyModalOpen = true;
-                 return;
+                activateFailSafeMode();
+                loadingSpinner.style.display = 'none';
+                showToast("Anda sedang offline. Menggunakan mode darurat.", "error");
+                await loadAndRenderWelcomeButtons();
+                welcomeScreen.style.display = 'flex';
+                return;
             }
 
             async function fetchGlobalSettings() {
@@ -3200,11 +3237,9 @@ function isAllowedEnvironment() {
             }
 
             try {
-                // Mencoba Login ke Database Utama
                 await signInAnonymously(setupAuth);
                 await fetchGlobalSettings();
 
-                // === LOGIKA RESTORE ATAU WELCOME ===
                 if (isBlockEnabled && !isAllowedEnvironment()) {
                     unlockAccessBtn.onclick = async () => {
                         if (unlockKeyInput.value === blockAccessKey) {
@@ -3236,12 +3271,53 @@ function isAllowedEnvironment() {
                 }
             } catch (error) {
                 console.error("Login otomatis (Anonymous) atau Fetch gagal:", error);
+                
                 loadingSpinner.style.display = 'none';
 
-                // KILL SWITCH: Jika gagal login (karena kuota penuh, server down, atau sinyal mati)
-                // Langsung tampilkan modal permanen
-                document.getElementById('serverDownModal').classList.add('show');
-                isAnyModalOpen = true; 
+                // 2. Cek apakah ini "Masalah Sinyal" atau "Server Penuh"
+                // Termasuk: Quota Exceeded, Network Request Failed, Timeout, Unavailable
+                const isConnectivityError = 
+                    error.code === 'auth/network-request-failed' || 
+                    error.code === 'unavailable' || 
+                    error.code === 'auth/quota-exceeded' ||
+                    (error.message && (error.message.includes('network') || error.message.includes('quota')));
+
+                // Jika aplikasi RESMI (isAllowedEnvironment = TRUE), tampilkan Modal Fail-Safe
+                if (isAllowedEnvironment()) {
+                    document.getElementById('setupFailedModal').classList.add('show');
+                    isAnyModalOpen = true;
+
+                    // Listener untuk tombol LANJUT di modal Fail-Safe
+                    document.getElementById('setupFailedBtn').onclick = async () => {
+                        document.getElementById('setupFailedModal').classList.remove('show');
+                        activateFailSafeMode();
+                        await loadAndRenderWelcomeButtons();
+                        welcomeScreen.style.display = 'flex';
+                    }
+                } else {
+                    // Jika aplikasi TIDAK RESMI (Chrome), biarkan defaultnya ke Block Overlay.
+                    // Tapi kita harus aktifkan fail-safe mode dulu supaya block key hardcode aktif.
+                    activateFailSafeMode();
+                    
+                    // Trigger logika blokir manual karena fetch gagal di awal
+                    unlockAccessBtn.onclick = async () => {
+                        if (unlockKeyInput.value === blockAccessKey) { // Key hardcode Pajangan201184*
+                            accessBlockedOverlay.style.display = 'none';
+                            loadingSpinner.style.display = 'flex';
+                            const isRestored = await restoreExamState();
+                             if (!isRestored) {
+                                await loadAndRenderWelcomeButtons();
+                                loadingSpinner.style.display = 'none';
+                                welcomeScreen.style.display = 'flex';
+                            } else {
+                                loadingSpinner.style.display = 'none';
+                            }
+                        } else {
+                            unlockMessage.textContent = "Kunci yang dimasukkan salah.";
+                        }
+                    };
+                    accessBlockedOverlay.style.display = 'flex';
+                }
             }
         }
 
@@ -3492,4 +3568,4 @@ function isAllowedEnvironment() {
         };
     </script>
 </body>
-</html>
+</html> 
