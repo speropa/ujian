@@ -1951,23 +1951,18 @@
         }
 
 function isAllowedEnvironment() {
-    const ua = navigator.userAgent.toLowerCase();
+            const ua = navigator.userAgent.toLowerCase();
 
-    const isSEB = ua.includes('seb/');
-    const isAndroidWebView = ua.includes('wv') || (ua.includes('android') && !ua.includes('chrome') && !ua.includes('firefox'));
-    const isIOSWebView = (ua.includes('iphone') || ua.includes('ipad')) && !ua.includes('safari');
-    const isIphone = ua.includes('iphone') || ua.includes('ipad');
+            if (ua.includes('seb/') && (ua.includes('iphone') || ua.includes('ipad'))) {
+                return false;
+            }
 
-    if (isAndroidWebView) {
-        return true;
-    }
+            const isSEB = ua.includes('seb/');
+            const isAndroidWebView = ua.includes('wv') || (ua.includes('android') && !ua.includes('chrome') && !ua.includes('firefox'));
+            const isIOSWebView = (ua.includes('iphone') || ua.includes('ipad')) && !ua.includes('safari');
 
-    if (isIphone && isSEB) {
-        return false;
-    }
-
-    return isSEB || isIOSWebView;
-}
+            return isSEB || isAndroidWebView || isIOSWebView;
+        }
 
         function shuffleArray(array) {
             for (let i = array.length - 1; i > 0; i--) {
