@@ -1648,7 +1648,8 @@
         import { getDatabase, ref, get, child, runTransaction, set, onValue, off, update, remove, query, orderByChild, equalTo } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-database.js";
         import { getAuth, signInWithEmailAndPassword, signInAnonymously, signOut } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-auth.js";
 
-        const setupFirebaseConfig = {
+        // Konfigurasi Firebase PUSAT (SETUP) - Digunakan untuk SEMUA KELAS
+        const centralFirebaseConfig = {
             apiKey: "AIzaSyBbXJ4VuACXyHJhl2eVSB2vHiT6hrx-XnE",
             authDomain: "setup-73809.firebaseapp.com",
             databaseURL: "https://setup-73809-default-rtdb.firebaseio.com",
@@ -1657,76 +1658,29 @@
             messagingSenderId: "843995999446",
             appId: "1:843995999446:web:7fd92546f2d0bea73fed77"
         };
-        const setupApp = initializeApp(setupFirebaseConfig, "setupApp");
+
+        const setupApp = initializeApp(centralFirebaseConfig, "setupApp");
         const setupAuth = getAuth(setupApp);
         const setupDb = getDatabase(setupApp);
 
+        // DAFTAR KELAS - Semua diarahkan ke konfigurasi pusat
+        // Struktur tetap dipertahankan agar tidak mengubah logika dropdown terlalu banyak
         const allFirebaseConfigs = {
-            'kelas7-group1': { /* 7ABC */
-                apiKey: "AIzaSyBAKwT7JY_HGnvK6h3u30-dfgRPXfef8l8",
-                authDomain: "abc-a13ea.firebaseapp.com",
-                databaseURL: "https://abc-a13ea-default-rtdb.firebaseio.com",
-                projectId: "abc-a13ea",
-                storageBucket: "abc-a13ea.firebasestorage.app",
-                messagingSenderId: "1052966795599",
-                appId: "1:1052966795599:web:d4d331199ca9081321ed3a",
+            'kelas7-group1': {
+                ...centralFirebaseConfig,
                 theme: { primary: '#0066cc', accent: '#007bff', warning: '#0066cc' },
-                allowedClasses: ['7A', '7B', '7C']
+                allowedClasses: ['7A', '7B', '7C', '7D', '7E', '7F'] // Menggabungkan semua kelas 7
             },
-            'kelas7-group2': { /* 7DEF */
-                apiKey: "AIzaSyBkhBZw3oADXUAJ9FXY9-g7XBsSmQhzZVk",
-                authDomain: "def-ab5ee.firebaseapp.com",
-                databaseURL: "https://def-ab5ee-default-rtdb.firebaseio.com",
-                projectId: "def-ab5ee",
-                storageBucket: "def-ab5ee.firebasestorage.app",
-                messagingSenderId: "129712840107",
-                appId: "1:129712840107:web:ab10576fed95f735dd46ee",
-                 theme: { primary: '#0066cc', accent: '#007bff', warning: '#0066cc' },
-                allowedClasses: ['7D', '7E', '7F']
-            },
-            'kelas8-group1': { /* 8ABC */
-                apiKey: "AIzaSyAwilwwwEJ2MAdSf09BotxNH-z6RiXaHXY",
-                authDomain: "abc-43e73.firebaseapp.com",
-                databaseURL: "https://abc-43e73-default-rtdb.firebaseio.com",
-                projectId: "abc-43e73",
-                storageBucket: "abc-43e73.firebasestorage.app",
-                messagingSenderId: "1043754727577",
-                appId: "1:1043754727577:web:56c3732bf2a6ac900c2008",
+            // Group2 dihapus/digabung ke Group1 karena database sekarang satu
+            'kelas8-group1': {
+                ...centralFirebaseConfig,
                 theme: { primary: '#cc7a00', accent: '#ff9900', warning: '#ff9900' },
-                allowedClasses: ['8A', '8B', '8C']
+                allowedClasses: ['8A', '8B', '8C', '8D', '8E', '8F'] // Menggabungkan semua kelas 8
             },
-            'kelas8-group2': { /* 8DEF */
-                apiKey: "AIzaSyBeCI57lmZ4-8DAKYJ7nvYjnXOfvy0vqrk",
-                authDomain: "def-efcb2.firebaseapp.com",
-                databaseURL: "https://def-efcb2-default-rtdb.firebaseio.com",
-                projectId: "def-efcb2",
-                storageBucket: "def-efcb2.firebasestorage.app",
-                messagingSenderId: "12569956361",
-                appId: "1:12569956361:web:fea36c4e034e65f33ba8d8",
-                theme: { primary: '#cc7a00', accent: '#ff9900', warning: '#ff9900' },
-                allowedClasses: ['8D', '8E', '8F']
-            },
-            'kelas9-group1': { /* 9ABC */
-                apiKey: "AIzaSyBZ6JR3ggnUiZFQ-wdrewbfhzMUwFaGGzQ",
-                authDomain: "abc-d272a.firebaseapp.com",
-                databaseURL: "https://abc-d272a-default-rtdb.firebaseio.com",
-                projectId: "abc-d272a",
-                storageBucket: "abc-d272a.firebasestorage.app",
-                messagingSenderId: "1036605132828",
-                appId: "1:1036605132828:web:2b59f91290d50afe304fd9",
+            'kelas9-group1': {
+                ...centralFirebaseConfig,
                 theme: { primary: '#5a0000', accent: '#800000', warning: '#800000' },
-                allowedClasses: ['9A', '9B', '9C']
-            },
-            'kelas9-group2': { /* 9DEF */
-                apiKey: "AIzaSyC2iwuDMWTaJIG8g464Wt0En3CXI2DZiz4",
-                authDomain: "def-85f32.firebaseapp.com",
-                databaseURL: "https://def-85f32-default-rtdb.firebaseio.com",
-                projectId: "def-85f32",
-                storageBucket: "def-85f32.firebasestorage.app",
-                messagingSenderId: "82670626048",
-                appId: "1:82670626048:web:f5fdfda8fe078245b6bfe5",
-                theme: { primary: '#5a0000', accent: '#800000', warning: '#800000' },
-                allowedClasses: ['9D', '9E', '9F']
+                allowedClasses: ['9A', '9B', '9C', '9D', '9E', '9F'] // Menggabungkan semua kelas 9
             }
         };
 
@@ -1762,22 +1716,28 @@
                 return null;
             }
 
-            if (!firebaseApps[classGroupKey]) {
-                const config = allFirebaseConfigs[classGroupKey];
-                const appInstance = initializeApp(config, classGroupKey);
-                firebaseApps[classGroupKey] = appInstance;
-                firebaseDBs[classGroupKey] = getDatabase(appInstance);
-                firebaseAuths[classGroupKey] = getAuth(appInstance);
+            // Karena sekarang single database, kita cek apakah instance utama sudah ada
+            // Gunakan key 'central' untuk menyimpan instance tunggal agar efisien
+            if (!firebaseApps['central']) {
+                // Inisialisasi hanya SATU kali menggunakan config pusat
+                // Kita gunakan nama app 'centralApp' untuk menghindari konflik dengan 'setupApp'
+                const appInstance = initializeApp(centralFirebaseConfig, 'centralApp');
+                
+                firebaseApps['central'] = appInstance;
+                firebaseDBs['central'] = getDatabase(appInstance);
+                firebaseAuths['central'] = getAuth(appInstance);
 
                 try {
-                    await signInAnonymously(firebaseAuths[classGroupKey]);
+                    await signInAnonymously(firebaseAuths['central']);
                 } catch (error) {
-                    console.error(`Gagal login anonim ke database kelas ${classGroupKey}:`, error);
-                    window.showCustomMessageModal("Kesalahan Autentikasi Kelas", `Gagal mengautentikasi ke database untuk kelas ini. Mohon hubungi administrator. (Pastikan Anonymous Auth aktif di Firebase Console)`, 'error');
+                    console.error(`Gagal login anonim ke database pusat:`, error);
+                    window.showCustomMessageModal("Kesalahan Autentikasi", `Gagal mengautentikasi ke database pusat. Mohon hubungi administrator.`, 'error');
                     return null;
                 }
             }
-            return { db: firebaseDBs[classGroupKey], auth: firebaseAuths[classGroupKey] };
+            
+            // Selalu kembalikan instance 'central'
+            return { db: firebaseDBs['central'], auth: firebaseAuths['central'] };
         }
 
         function getDbRefs() {
