@@ -1952,14 +1952,21 @@
 
 function isAllowedEnvironment() {
     const ua = navigator.userAgent.toLowerCase();
-    
+
     const isSEB = ua.includes('seb/');
     const isAndroidWebView = ua.includes('wv') || (ua.includes('android') && !ua.includes('chrome') && !ua.includes('firefox'));
     const isIOSWebView = (ua.includes('iphone') || ua.includes('ipad')) && !ua.includes('safari');
-    
-    return isAndroidWebView || 
-           (isIOSWebView && !ua.includes('seb/')) || 
-           (isSEB && !ua.includes('iphone') && !ua.includes('ipad'));
+    const isIphone = ua.includes('iphone') || ua.includes('ipad');
+
+    if (isAndroidWebView) {
+        return true;
+    }
+
+    if (isIphone && isSEB) {
+        return false;
+    }
+
+    return isSEB || isIOSWebView;
 }
 
         function shuffleArray(array) {
