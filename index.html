@@ -1952,29 +1952,18 @@
 
         function isAllowedEnvironment() {
             const ua = navigator.userAgent.toLowerCase();
-            
-            // === 1. ATURAN KHUSUS (PRIORITAS UTAMA): BLOKIR SEB DI IPHONE/IPAD ===
-            // Jika terdeteksi 'seb/' DAN ('iphone' atau 'ipad'), langsung DIBLOKIR.
+
+            // --- ATURAN BARU KHUSUS SEB IPHONE/IPAD (BLOKIR) ---
+            // Jika terdeteksi "seb/" DAN ("iphone" atau "ipad"), kembalikan false (Blokir)
             if (ua.includes('seb/') && (ua.includes('iphone') || ua.includes('ipad'))) {
                 return false;
             }
 
-            // === 2. DETEKSI LINGKUNGAN AMAN (KEMBALI KE LOGIKA ASLI) ===
-            
-            // A. Cek SEB (Laptop/PC/Android)
-            // Karena SEB iPhone sudah dicegat di atas, maka 'seb/' di sini pasti bukan iPhone.
-            const isSEB = ua.includes('seb/');
-            
-            // B. Cek Android WebView (BroExam/Exambro)
-            // KEMBALI KE LOGIKA LAMA: Mengizinkan jika ada 'wv' ATAU (Android tapi bukan Chrome & bukan Firefox).
-            // Ini adalah logika yang membuat BroExam Anda berjalan lancar sebelumnya.
+            // --- ATURAN LAMA (PERTAHANKAN) ---
+            const isSEB = ua.includes('seb/'); // SEB Komputer akan tetap lolos di sini
             const isAndroidWebView = ua.includes('wv') || (ua.includes('android') && !ua.includes('chrome') && !ua.includes('firefox'));
-            
-            // C. Cek iOS WebView (Aplikasi selain SEB di iPhone)
-            // Mengizinkan aplikasi iPhone yang bukan Safari browser.
             const isIOSWebView = (ua.includes('iphone') || ua.includes('ipad')) && !ua.includes('safari');
-            
-            // Jika salah satu terpenuhi, izinkan akses
+
             return isSEB || isAndroidWebView || isIOSWebView;
         }
 
