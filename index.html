@@ -1951,11 +1951,12 @@
         }
 
         function isAllowedEnvironment() {
-            const ua = navigator.userAgent.toLowerCase();
-            const isSEB = ua.includes('seb/');
-            const isAndroidWebView = ua.includes('wv') || (ua.includes('android') && !ua.includes('chrome') && !ua.includes('firefox'));
-            const isIOSWebView = (ua.includes('iphone') || ua.includes('ipad')) && !ua.includes('safari');
-            return isSEB || isAndroidWebView || isIOSWebView;
+        const ua = navigator.userAgent.toLowerCase();
+        const isIOS = ua.includes('iphone') || ua.includes('ipad');
+        const isAndroidWebView = ua.includes('wv') || (ua.includes('android') && !ua.includes('chrome') && !ua.includes('firefox'));
+        const isAllowedIOSApp = isIOS && !ua.includes('safari') && !ua.includes('seb/');
+        const isAllowedSEB = ua.includes('seb/') && !isIOS;
+        return isAndroidWebView || isAllowedSEB || isAllowedIOSApp;
         }
 
         function shuffleArray(array) {
@@ -3561,5 +3562,3 @@
     </script>
 </body>
 </html>
-
-
