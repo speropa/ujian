@@ -1630,9 +1630,16 @@
     <!-- Modal Baru: Setup Failed / Fail Safe Trigger -->
     <div id="setupFailedModal" class="custom-modal static-backdrop">
         <div class="custom-modal-content" style="text-align: center;">
-            <h4 style="color: var(--danger-color); margin-bottom: 15px;">APLIKASI GAGAL LOGIN KE SERVER SETTING UJIAN</h4>
-            <p style="margin-bottom: 20px;">Jika ingin melanjutkan dengan setting ujian default klik lanjut.</p>
-            <button id="setupFailedBtn" style="background-color: var(--primary-color); width: 100%;">LANJUT</button>
+            <h4 style="color: var(--danger-color); margin-bottom: 15px;">INFORMASI ERROR</h4>
+            <div style="margin-bottom: 20px; text-align: left; font-size: 0.95em; color: #333;">
+                <p style="margin-bottom: 10px; font-weight: bold;">Aplikasi gagal mengambil aturan ujian pada server, akan dilanjutkan dengan aturan default:</p>
+                <ol style="padding-left: 20px; margin: 0;">
+                    <li style="margin-bottom: 5px;">Acak urutan soal dan pilihan ganda</li>
+                    <li style="margin-bottom: 5px;">Geo lokasi dinonaktifkan</li>
+                    <li>Siswa bisa mengirim jawaban jika waktu kurang dari 30 menit</li>
+                </ol>
+            </div>
+            <button id="setupFailedBtn" style="background-color: var(--primary-color); width: 100%;">LANJUTKAN</button>
         </div>
     </div>
 
