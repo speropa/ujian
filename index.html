@@ -1952,9 +1952,24 @@
 
         function isAllowedEnvironment() {
             const ua = navigator.userAgent.toLowerCase();
+            
+            // === [UPDATE KHUSUS] BLOKIR SEB IPHONE/IPAD ===
+            // Jika User Agent mengandung 'seb/' (Safe Exam Browser) 
+            // DAN mengandung kata 'iphone' atau 'ipad', maka return FALSE (Diblokir).
+            if (ua.includes('seb/') && (ua.includes('iphone') || ua.includes('ipad'))) {
+                return false;
+            }
+
+            // === ATURAN LAIN TETAP AMAN ===
+            // 1. Cek SEB (Untuk Komputer/Laptop tetap True karena tidak kena blokir di atas)
             const isSEB = ua.includes('seb/');
+            
+            // 2. Cek Android WebView (Aplikasi Ujian Android seperti BroExam dll)
             const isAndroidWebView = ua.includes('wv') || (ua.includes('android') && !ua.includes('chrome') && !ua.includes('firefox'));
+            
+            // 3. Cek iOS WebView (Aplikasi selain SEB di iPhone)
             const isIOSWebView = (ua.includes('iphone') || ua.includes('ipad')) && !ua.includes('safari');
+            
             return isSEB || isAndroidWebView || isIOSWebView;
         }
 
