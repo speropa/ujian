@@ -1934,16 +1934,21 @@
 
 function isAllowedEnvironment() {
     const ua = navigator.userAgent.toLowerCase();
-    const isAndroidWebView = ua.includes('wv') || (ua.includes('android') && !ua.includes('chrome') && !ua.includes('firefox'));
-    if (isAndroidWebView) {
-        return true;
+
+    const isAndroid = ua.includes('android');
+    const isSEB = ua.includes('seb/');
+    let isAllowedSEB = false;
+    
+    if (isSEB) {
+        const hasMouse = window.matchMedia('(pointer: fine)').matches;
+        if (hasMouse || isAndroid) {
+            isAllowedSEB = true;
+        }
     }
-    if (ua.includes('seb/')) {
-        const hasCursor = window.matchMedia('(pointer: fine)').matches;
-        return hasCursor;
-    }
-    const isIOSWebView = (ua.includes('iphone') || ua.includes('ipad')) && !ua.includes('safari');
-    return isIOSWebView;
+    const isAndroidWebView = ua.includes('wv') || (isAndroid && !ua.includes('chrome') && !ua.includes('firefox'));
+    const isIOSWebView = (ua.includes('iphone') || ua.includes('ipad')) && !ua.includes('safari') && !isSEB;
+
+    return isAllowedSEB || isAndroidWebView || isIOSWebView;
 }
 
         function shuffleArray(array) {
