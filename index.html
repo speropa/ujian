@@ -3371,6 +3371,13 @@
                 document.getElementById('loc-eye-closed')
             );
             
+            // Tambahkan listener tombol Enter untuk Buka Akses
+            unlockKeyInput.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter') {
+                    unlockAccessBtn.click();
+                }
+            });
+            
             customSelectKelasDisplay.addEventListener('click', openClassModal);
             customSelectNamaSiswaDisplay.addEventListener('click', openStudentModal);
             document.getElementById('validateLocationKeyBtn').addEventListener('click', validateLocationKey);
