@@ -1934,7 +1934,16 @@
 
 function isAllowedEnvironment() {
     const ua = navigator.userAgent.toLowerCase();
-    const isAndroidWebView = ua.includes('wv') || (ua.includes('android') && !ua.includes('chrome') && !ua.includes('firefox'));
+
+    const isAndroid = ua.includes('android');
+
+    const isSEB = ua.includes('seb/');
+
+    if (isSEB && isAndroid) {
+        return true;
+    }
+
+    const isAndroidWebView = isAndroid && (ua.includes('wv') || ua.includes('version/') || (!ua.includes('chrome') && !ua.includes('firefox')));
 
     return isAndroidWebView;
 }
