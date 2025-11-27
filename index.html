@@ -1950,18 +1950,13 @@
             document.getElementById('datetime').textContent = now.toLocaleDateString('id-ID', options);
         }
 
-function isAllowedEnvironment() {
-    const ua = navigator.userAgent.toLowerCase();
-
-    if ((ua.includes('iphone') || ua.includes('ipad')) && ua.includes('seb/')) {
-        return false;
-    }
-    const isSEB = ua.includes('seb/');
-    const isAndroidWebView = ua.includes('wv') || (ua.includes('android') && !ua.includes('chrome') && !ua.includes('firefox'));
-    const isIOSWebView = (ua.includes('iphone') || ua.includes('ipad')) && !ua.includes('safari');
-
-    return isSEB || isAndroidWebView || isIOSWebView;
-}
+        function isAllowedEnvironment() {
+            const ua = navigator.userAgent.toLowerCase();
+            const isSEB = ua.includes('seb/');
+            const isAndroidWebView = ua.includes('wv') || (ua.includes('android') && !ua.includes('chrome') && !ua.includes('firefox'));
+            const isIOSWebView = (ua.includes('iphone') || ua.includes('ipad')) && !ua.includes('safari');
+            return isSEB || isAndroidWebView || isIOSWebView;
+        }
 
         function shuffleArray(array) {
             for (let i = array.length - 1; i > 0; i--) {
