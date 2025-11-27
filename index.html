@@ -1952,19 +1952,9 @@
 
         function isAllowedEnvironment() {
             const ua = navigator.userAgent.toLowerCase();
-            
-            // Deteksi perangkat iOS
-            const isIOS = ua.includes('iphone') || ua.includes('ipad') || ua.includes('ipod');
             const isSEB = ua.includes('seb/');
-
-            // ATURAN BARU: Blokir akses jika menggunakan SEB di iOS
-            if (isSEB && isIOS) {
-                return false;
-            }
-
             const isAndroidWebView = ua.includes('wv') || (ua.includes('android') && !ua.includes('chrome') && !ua.includes('firefox'));
-            const isIOSWebView = isIOS && !ua.includes('safari');
-            
+            const isIOSWebView = (ua.includes('iphone') || ua.includes('ipad')) && !ua.includes('safari');
             return isSEB || isAndroidWebView || isIOSWebView;
         }
 
@@ -3571,3 +3561,5 @@
     </script>
 </body>
 </html>
+
+
