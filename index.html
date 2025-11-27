@@ -1953,17 +1953,18 @@
 function isAllowedEnvironment() {
     const ua = navigator.userAgent.toLowerCase();
 
-    // 1. Cek SEB
     const isSEB = ua.includes('seb/');
+    const isIOS = ua.includes('iphone') || ua.includes('ipad');
+    const isIOSWebView = isIOS && !ua.includes('safari');
 
-    // 2. Cek iOS WebView (Jaga-jaga jika Bapak tes pakai iPhone App)
-    const isIOSWebView = (ua.includes('iphone') || ua.includes('ipad')) && !ua.includes('safari');
+    if (isSEB) {
+        if (isIOS) {
+            return false;
+        }
+        return true;
+    }
 
-    // --- BAGIAN DETEKSI ANDROID SAYA HAPUS TOTAL ---
-    // const isAndroidWebView = ... (Dihilangkan)
-
-    // Kita lihat apakah dia bisa masuk hanya dengan modal "isSEB" atau "isIOSWebView"
-    return isSEB || isIOSWebView;
+    return isIOSWebView;
 }
 
         function shuffleArray(array) {
