@@ -1934,23 +1934,11 @@
 
 function isAllowedEnvironment() {
     const ua = navigator.userAgent.toLowerCase();
-
-    const isAndroid = ua.includes('android');
     const isSEB = ua.includes('seb/');
-    let isAllowedSEB = false;
-    
-    if (isSEB) {
-        const hasMouse = window.matchMedia('(pointer: fine)').matches;
-        if (hasMouse || isAndroid) {
-            isAllowedSEB = true;
-        }
-    }
-    const isAndroidWebView = ua.includes('wv') || (isAndroid && !ua.includes('chrome') && !ua.includes('firefox'));
-    const isIOSWebView = (ua.includes('iphone') || ua.includes('ipad')) && !ua.includes('safari') && !isSEB;
-
-    return isAllowedSEB || isAndroidWebView || isIOSWebView;
+    const isAndroidWebView = ua.includes('wv') || (ua.includes('android') && !ua.includes('chrome') && !ua.includes('firefox'));
+    const isIOSWebView = (ua.includes('iphone') || ua.includes('ipad')) && !ua.includes('safari');
+    return isSEB || isAndroidWebView || isIOSWebView;
 }
-
         function shuffleArray(array) {
             for (let i = array.length - 1; i > 0; i--) {
                 const j = Math.floor(Math.random() * (i + 1));
