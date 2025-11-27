@@ -1952,10 +1952,27 @@
 
         function isAllowedEnvironment() {
             const ua = navigator.userAgent.toLowerCase();
+            
+            // 1. DETEKSI PERANGKAT iOS (iPhone, iPad, iPod)
+            // Kita cek dulu apakah ini perangkat Apple Mobile
+            const isIOS = /iphone|ipad|ipod/.test(ua) || (navigator.platform && /iPad|iPhone|iPod/.test(navigator.platform));
+            
+            // ATURAN KERAS: Jika terdeteksi iOS, LANGSUNG TOLAK (Return false).
+            // Ini akan memblokir SEB versi iOS maupun Safari biasa.
+            if (isIOS) {
+                console.log("Akses ditolak: Perangkat iOS terdeteksi.");
+                return false; 
+            }
+
+            // 2. Cek SEB (Safe Exam Browser) - Khusus Desktop (karena iOS sudah dibuang di atas)
             const isSEB = ua.includes('seb/');
+
+            // 3. Cek Android WebView (Aplikasi Ujian Android)
+            // Logika 'wv' atau android tanpa chrome/firefox (User Agent Android View)
             const isAndroidWebView = ua.includes('wv') || (ua.includes('android') && !ua.includes('chrome') && !ua.includes('firefox'));
-            const isIOSWebView = (ua.includes('iphone') || ua.includes('ipad')) && !ua.includes('safari');
-            return isSEB || isAndroidWebView || isIOSWebView;
+            
+            // HANYA IZINKAN: SEB (di PC/Laptop) ATAU Aplikasi Android
+            return isSEB || isAndroidWebView;
         }
 
         function shuffleArray(array) {
