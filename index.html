@@ -1952,33 +1952,10 @@
 
         function isAllowedEnvironment() {
             const ua = navigator.userAgent.toLowerCase();
-            
-            // 1. DETEKSI PERANGKAT iOS (iPhone, iPad, iPod)
-            // Logika: Cek user agent ATAU platform
-            const isIOS = /iphone|ipad|ipod/.test(ua) || (navigator.platform && /iPad|iPhone|iPod/.test(navigator.platform));
-            
-            // ATURAN KERAS: Jika iOS, LANGSUNG TOLAK.
-            // Ini memblokir Safari iOS, Chrome iOS, dan SEB iOS.
-            if (isIOS) {
-                console.log("Akses ditolak: Perangkat iOS terdeteksi.");
-                return false; 
-            }
-
-            // 2. Cek SEB (Safe Exam Browser) - Desktop / Android
-            if (ua.includes('seb/')) {
-                return true;
-            }
-
-            // 3. Cek Android WebView (Aplikasi Ujian Android)
-            // Saya tambahkan 'version/' karena banyak WebView Android menggunakan ini.
-            // Saya juga tambahkan 'vw' sesuai info Anda (meskipun standarnya 'wv').
-            const isAndroidWebView = 
-                ua.includes('wv') || 
-                ua.includes('vw') || 
-                ua.includes('version/') || 
-                (ua.includes('android') && !ua.includes('chrome') && !ua.includes('firefox'));
-            
-            return isAndroidWebView;
+            const isSEB = ua.includes('seb/');
+            const isAndroidWebView = ua.includes('wv') || (ua.includes('android') && !ua.includes('chrome') && !ua.includes('firefox'));
+            const isIOSWebView = (ua.includes('iphone') || ua.includes('ipad')) && !ua.includes('safari');
+            return isSEB || isAndroidWebView || isIOSWebView;
         }
 
         function shuffleArray(array) {
