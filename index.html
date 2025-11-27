@@ -1934,10 +1934,9 @@
 
 function isAllowedEnvironment() {
     const ua = navigator.userAgent.toLowerCase();
-    const isSEB = ua.includes('seb/');
     const isAndroidWebView = ua.includes('wv') || (ua.includes('android') && !ua.includes('chrome') && !ua.includes('firefox'));
-    const isIOSWebView = (ua.includes('iphone') || ua.includes('ipad')) && !ua.includes('safari');
-    return isSEB || isAndroidWebView || isIOSWebView;
+
+    return isAndroidWebView;
 }
         function shuffleArray(array) {
             for (let i = array.length - 1; i > 0; i--) {
