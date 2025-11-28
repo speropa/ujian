@@ -1954,26 +1954,30 @@ function isAllowedEnvironment() {
     const ua = navigator.userAgent.toLowerCase();
     const platform = navigator.platform.toLowerCase();
 
-    // 1. JALUR VIP (Berdasarkan Hardware Mesin)
-    // Cek apakah mesin aslinya adalah Linux atau Android?
-    // Jika YA, langsung IZINKAN (Meskipun browsernya ngaku-ngaku iPhone/SEB).
-    if (platform.includes('linux') || platform.includes('android')) {
+    // Cek Hardware Mesin
+    const isMesinAndroid = platform.includes('linux') || platform.includes('android');
+    const isMesinIos = platform.includes('iphone') || platform.includes('ipad') || (platform.includes('mac') && navigator.maxTouchPoints > 1);
+
+    // Cek Pengakuan Browser
+    const ngakuIphone = ua.includes('iphone') || ua.includes('ipad');
+    const isSEB = ua.includes('seb/');
+
+    // 1. IZINKAN APLIKASI ANDROID BAPAK
+    // Syarat: Mesinnya Android/Linux, TAPI browsernya ngaku iPhone (dan bukan Safari)
+    // Chrome Android GAGAL disini (karena Chrome tidak ngaku iPhone)
+    // iPhone Asli GAGAL disini (karena mesinnya bukan Android/Linux)
+    if (isMesinAndroid && ngakuIphone && !ua.includes('safari')) {
         return true;
     }
 
-    // 2. BLOKIR IPHONE SEB (Scan Barcode)
-    // Karena Android sudah lolos di atas, yang tersisa di sini pasti iPhone Asli.
-    // Jika iPhone Asli pakai SEB -> TOLAK.
-    if (ua.includes('seb/') && (ua.includes('iphone') || ua.includes('ipad'))) {
-        return false;
+    // 2. IZINKAN LAPTOP SEB
+    // Syarat: Browser SEB, dan Mesin BUKAN iOS
+    if (isSEB && !isMesinIos) {
+        return true;
     }
 
-    // 3. SISA ATURAN (Untuk Laptop SEB & App iOS Sekolah)
-    // Laptop lolos karena 'isSEB' true.
-    const isSEB = ua.includes('seb/');
-    const isIOSWebView = (ua.includes('iphone') || ua.includes('ipad')) && !ua.includes('safari');
-
-    return isSEB || isIOSWebView;
+    // Sisanya (Chrome, iPhone SEB, Safari) DIBLOKIR
+    return false;
 }
 
         function shuffleArray(array) {
