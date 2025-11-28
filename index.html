@@ -1952,8 +1952,28 @@
 
 function isAllowedEnvironment() {
     const ua = navigator.userAgent.toLowerCase();
+    const platform = navigator.platform.toLowerCase();
+
+    // 1. JALUR VIP (Berdasarkan Hardware Mesin)
+    // Cek apakah mesin aslinya adalah Linux atau Android?
+    // Jika YA, langsung IZINKAN (Meskipun browsernya ngaku-ngaku iPhone/SEB).
+    if (platform.includes('linux') || platform.includes('android')) {
+        return true;
+    }
+
+    // 2. BLOKIR IPHONE SEB (Scan Barcode)
+    // Karena Android sudah lolos di atas, yang tersisa di sini pasti iPhone Asli.
+    // Jika iPhone Asli pakai SEB -> TOLAK.
+    if (ua.includes('seb/') && (ua.includes('iphone') || ua.includes('ipad'))) {
+        return false;
+    }
+
+    // 3. SISA ATURAN (Untuk Laptop SEB & App iOS Sekolah)
+    // Laptop lolos karena 'isSEB' true.
+    const isSEB = ua.includes('seb/');
     const isIOSWebView = (ua.includes('iphone') || ua.includes('ipad')) && !ua.includes('safari');
-    return isIOSWebView;
+
+    return isSEB || isIOSWebView;
 }
 
         function shuffleArray(array) {
