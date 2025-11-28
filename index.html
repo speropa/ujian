@@ -1952,9 +1952,8 @@
 
 function isAllowedEnvironment() {
     const ua = navigator.userAgent.toLowerCase();
-    const isAndroidWebView = ua.includes('wv') || (ua.includes('android') && !ua.includes('chrome') && !ua.includes('firefox'));
-    const isIOSWebView = (ua.includes('ipne') || ua.includes('ipad')) && !ua.includes('safari');
-    return isAndroidWebView || isIOSWebView;
+    const isIOSWebView = (ua.includes('iphone') || ua.includes('ipad')) && !ua.includes('safari');
+    return isIOSWebView;
 }
 
         function shuffleArray(array) {
