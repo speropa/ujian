@@ -3418,6 +3418,7 @@
         window.cekToken = async function() {
             const tokenPrefix = inputTokenPrefix.value.trim().toUpperCase();
             const studentId = displayStudentId.value.trim();
+            const studentClassNum = selectedStudentData.class.match(/^\d+/)[0];
             
             if (!hiddenSelectKelas.value || !hiddenSelectNamaSiswa.value || !tokenPrefix) {
                 message.textContent = "Harap lengkapi semua pilihan.";
@@ -3437,14 +3438,29 @@
             try {
                 const tokensSnapshot = await get(dbRefs.tokensRef);
                 let foundToken = null;
+                let tokenFoundForOtherClass = false;
+
+                // LOGIKA PENCARIAN TOKEN DIPERBARUI
+                // Mencari token yang string-nya cocok DAN kelasnya cocok dengan siswa
                 tokensSnapshot.forEach(child => {
                     const data = child.val();
                     if (data.token.toUpperCase() === tokenPrefix) {
-                        foundToken = { ...data, key: child.key };
+                        if (String(data.kelas) === String(studentClassNum)) {
+                             foundToken = { ...data, key: child.key };
+                        } else {
+                             tokenFoundForOtherClass = true;
+                        }
                     }
                 });
 
-                if (!foundToken) throw new Error("Token ujian tidak ditemukan.");
+                if (!foundToken) {
+                    if (tokenFoundForOtherClass) {
+                         throw new Error(`Token ini bukan untuk kelas ${studentClassNum}.`);
+                    } else {
+                         throw new Error("Token ujian tidak ditemukan.");
+                    }
+                }
+                
                 foundTokenGlobal = foundToken;
 
                 const hasSubmitted = (await get(child(dbRefs.submittedExamsRef, `${foundToken.key}/${studentId}`))).exists();
@@ -3466,7 +3482,6 @@
                     }
                 }
 
-                const studentClassNum = selectedStudentData.class.match(/^\d+/)[0];
                 if (String(studentClassNum) !== String(foundToken.kelas)) {
                     throw new Error(`Token ini bukan untuk kelas ${studentClassNum}.`);
                 }
