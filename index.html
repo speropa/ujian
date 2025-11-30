@@ -601,6 +601,55 @@
             color: var(--danger-color);
             text-align: center;
         }
+
+        /* --- GAYA TOMBOL KONTROL DI HEADER --- */
+        #headerControlsLeft {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            display: flex;
+            gap: 8px;
+            z-index: 10;
+        }
+
+        #updateSoalBtn, #refreshSoalBtn {
+            display: none; /* Dikontrol via JS */
+            position: static; /* Tidak lagi fixed */
+            background-color: #17a2b8;
+            color: white;
+            padding: 6px 10px;
+            border-radius: 5px;
+            font-weight: bold;
+            font-size: 0.85em;
+            border: none;
+            cursor: pointer;
+            box-shadow: none;
+            animation: none;
+            align-items: center;
+            gap: 5px;
+            width: auto;
+            margin: 0;
+            transition: background-color 0.2s;
+        }
+        
+        #updateSoalBtn {
+            background-color: #ff9800;
+            display: none; 
+        }
+        
+        #refreshSoalBtn {
+            background-color: #17a2b8;
+            display: flex; 
+        }
+
+        #updateSoalBtn:hover { background-color: #f57c00; }
+        #refreshSoalBtn:hover { background-color: #138496; }
+
+        #updateSoalBtn svg, #refreshSoalBtn svg {
+            width: 18px;
+            height: 18px;
+        }
         
         #mobileSidebarToggle {
             display: block; 
@@ -1215,97 +1264,17 @@
             }
             #warningCountdown { font-size: 3em; }
             #warningMessage { font-size: 1.2em; }
-        }
-
-        /* === GAYA TOMBOL UPDATE SOAL (FLOATING) === */
-        #updateSoalBtn {
-            display: none;
-            position: fixed;
-            top: 70px;
-            right: 20px;
-            background-color: #ff9800;
-            color: white;
-            padding: 10px 20px;
-            border-radius: 50px;
-            font-weight: bold;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
-            z-index: 1000;
-            cursor: pointer;
-            border: 2px solid white;
-            animation: pulseBtn 2s infinite;
-            align-items: center;
-            gap: 8px;
-            width: auto;
-            font-size: 0.9em;
-        }
-
-        #updateSoalBtn:hover {
-            background-color: #f57c00;
-            transform: scale(1.05);
-        }
-
-        #updateSoalBtn svg {
-            width: 20px;
-            height: 20px;
-        }
-
-        @keyframes pulseBtn {
-            0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(255, 152, 0, 0.7); }
-            70% { transform: scale(1.05); box-shadow: 0 0 0 10px rgba(255, 152, 0, 0); }
-            100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(255, 152, 0, 0); }
-        }
-
-        /* === GAYA TOMBOL REFRESH SOAL (FLOATING - TANPA ANIMASI) === */
-        #refreshSoalBtn {
-            display: flex; /* Tampil jika ujian berlangsung */
-            position: fixed;
-            top: 120px; /* Di bawah update soal */
-            right: 20px;
-            background-color: #17a2b8; /* Warna Cyan/Info */
-            color: white;
-            padding: 8px 15px; /* Ukuran Desktop sedikit lebih kecil */
-            border-radius: 50px;
-            font-weight: bold;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
-            z-index: 1000;
-            cursor: pointer;
-            border: 2px solid white;
-            align-items: center;
-            gap: 8px;
-            width: auto;
-            font-size: 0.85em;
-            transition: transform 0.2s;
-        }
-
-        #refreshSoalBtn:hover {
-            background-color: #138496;
-            transform: scale(1.05);
-        }
-
-        #refreshSoalBtn svg {
-            width: 18px;
-            height: 18px;
-        }
-
-        /* MEDIA QUERY KHUSUS UNTUK TOMBOL REFRESH DI HP (Ukuran 2x lebih kecil) */
-        @media (max-width: 768px) {
-            #refreshSoalBtn {
-                padding: 4px 8px; /* Padding separuh dari desktop */
-                font-size: 0.7em; /* Font lebih kecil */
-                top: 80px; /* Sesuaikan posisi jika perlu */
-                right: 10px; /* Lebih mepet ke kanan */
-                border-width: 1px; /* Border lebih tipis */
-                gap: 4px;
+            /* Sesuaikan ukuran timer dan tombol di layar kecil */
+            .sidebar-header #timerText {
+                 font-size: 1.8em; /* Sedikit dikecilkan agar muat */
             }
-            #refreshSoalBtn svg {
-                width: 14px; /* Ikon lebih kecil */
-                height: 14px;
-            }
-            /* Sesuaikan juga posisi Update Soal agar tidak tumpang tindih */
-            #updateSoalBtn {
-                top: 40px; /* Naikkan sedikit di mobile */
-                padding: 5px 10px;
+            #updateSoalBtn, #refreshSoalBtn {
+                padding: 5px 8px;
                 font-size: 0.75em;
+            }
+            #updateSoalBtn svg, #refreshSoalBtn svg {
+                width: 16px;
+                height: 16px;
             }
         }
 
@@ -1460,24 +1429,27 @@
 
     
     <div id="examContainer" style="display: none;">
-        <button id="updateSoalBtn">
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-            </svg>
-            UPDATE SOAL
-        </button>
-
-        <button id="refreshSoalBtn">
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-            </svg>
-            REFRESH
-        </button>
-
         <div id="examBody">
             <div id="examSidePanel">
                 <div class="sidebar-header">
+                    <!-- Container Tombol Refresh & Update di Kiri Header -->
+                    <div id="headerControlsLeft">
+                        <button id="updateSoalBtn" title="Update Soal">
+                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                            </svg>
+                            Update
+                        </button>
+                        <button id="refreshSoalBtn" title="Refresh">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                            </svg>
+                            Refresh
+                        </button>
+                    </div>
+                    
                     <span id="timerText">00:00</span>
+                    
                     <button id="mobileSidebarToggle">
                         <svg class="arrow-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
                     </button>
@@ -3308,6 +3280,10 @@
             
             if(updateSoalBtn) {
                 updateSoalBtn.addEventListener('click', handleUpdateSoalClick);
+            }
+            
+            if(refreshSoalBtn) {
+                refreshSoalBtn.addEventListener('click', handleRefreshSoalClick);
             }
 
             window.onpopstate = e => isInExamMode && history.pushState(null, '', location.href);
