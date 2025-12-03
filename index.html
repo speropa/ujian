@@ -1884,6 +1884,9 @@
         let sidebarCollapseTimer = null;
         let longPressTimer;
 
+        // TAMBAHAN: Variabel untuk listener durasi minimal
+        let minDurationListenerRef = null;
+
         const customMessageModal = document.getElementById('customMessageModal');
         const customMessageModalTitle = document.getElementById('customMessageModalTitle');
         const customMessageModalText = document.getElementById('customMessageModalText');
@@ -2366,7 +2369,9 @@
             sessionStorage.clear();
             stopAccessStatusListener();
             stopSubmissionStatusListener();
-            stopExamUpdateListener(); 
+            stopExamUpdateListener();
+            stopMinDurationListener(); // UPDATE: Matikan listener durasi saat submit
+            
             loginContainer.style.display = 'none';
             examContainer.style.opacity = 0;
 
@@ -2508,6 +2513,7 @@
             history.pushState(null, '', location.href);
             startAccessStatusListener();
             startSubmissionStatusListener();
+            startMinDurationListener(); // UPDATE: Jalankan listener durasi saat ujian mulai
             
             const storedExamPath = sessionStorage.getItem('currentExamPath');
             if (storedExamPath) {
@@ -2572,6 +2578,54 @@
                 updateStudentIdentityPanel();
                 submitAnswers(true);
                 return true;
+            }
+        }
+
+        // === FUNGSI BARU: LISTENER REAL-TIME ATURAN DURASI ===
+        function startMinDurationListener() {
+            stopMinDurationListener(); // Bersihkan listener lama jika ada
+            
+            const refs = getSetupDbRefs();
+            // Gunakan onValue untuk mendengarkan perubahan terus menerus
+            minDurationListenerRef = onValue(refs.minDurationSettingsRef, (snapshot) => {
+                if (snapshot.exists()) {
+                    const data = snapshot.val();
+                    
+                    // Simpan state lama untuk perbandingan
+                    const oldEnabled = minDurationSettingsGlobal.isMinDurationEnabled;
+                    const oldSeconds = minDurationSettingsGlobal.minDurationSeconds;
+
+                    // Update variabel global
+                    minDurationSettingsGlobal.isMinDurationEnabled = data.isMinDurationEnabled ?? false;
+                    minDurationSettingsGlobal.minDurationSeconds = data.minDurationSeconds ?? 1800;
+
+                    // Cek apakah ada perubahan DAN apakah sedang dalam mode ujian
+                    if (isInExamMode) {
+                        const hasChanged = (oldEnabled !== minDurationSettingsGlobal.isMinDurationEnabled) || 
+                                           (oldSeconds !== minDurationSettingsGlobal.minDurationSeconds);
+                        
+                        if (hasChanged) {
+                            // 1. Update status tombol kirim segera
+                            updateSubmissionButtonState();
+
+                            // 2. Beri notifikasi ke siswa
+                            if (minDurationSettingsGlobal.isMinDurationEnabled) {
+                                const mins = Math.ceil(minDurationSettingsGlobal.minDurationSeconds / 60);
+                                showToast(`Update Aturan: Minimal waktu pengerjaan ${mins} menit`, "info");
+                            } else {
+                                showToast("Update Aturan: Batasan waktu minimal DINONAKTIFKAN Admin", "success");
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        function stopMinDurationListener() {
+            if (minDurationListenerRef) {
+                const refs = getSetupDbRefs();
+                off(refs.minDurationSettingsRef, 'value', minDurationListenerRef);
+                minDurationListenerRef = null;
             }
         }
 
@@ -3239,7 +3293,8 @@
         function showForceLogoutModal() {
             stopAccessStatusListener();
             stopSubmissionStatusListener();
-            stopExamUpdateListener(); 
+            stopExamUpdateListener();
+            stopMinDurationListener(); // UPDATE: Matikan listener durasi saat logout paksa
             if (timerInterval) clearInterval(timerInterval);
             isInExamMode = false;
 
@@ -3511,7 +3566,8 @@
                 if (isInExamMode && snapshot.exists() && snapshot.val().isSubmitted) {
                     stopAccessStatusListener();
                     stopSubmissionStatusListener();
-                    stopExamUpdateListener(); 
+                    stopExamUpdateListener();
+                    stopMinDurationListener(); // UPDATE: Matikan listener
                     if (timerInterval) clearInterval(timerInterval);
                     isInExamMode = false;
                     
