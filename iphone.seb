@@ -325,17 +325,6 @@
         #btnBatal:hover {
             background-color: #c82333 !important;
         }
-        
-        #btnSebIphone {
-            background-color: #007bff;
-            margin-bottom: 20px;
-            font-weight: bold;
-            border: 2px solid white;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-        }
-        #btnSebIphone:hover {
-            background-color: #0056b3;
-        }
 
         .message {
             margin-bottom: 10px;
@@ -958,39 +947,6 @@
             border-width: 0 12px 12px 0;
             border-color: transparent var(--danger-color) transparent transparent;
         }
-        
-        /* === STYLE BARU: TANDA SOAL TERUPDATE === */
-        .question-nav-box.updated-mark {
-            background-color: #fff3cd !important;
-            border: 2px solid #ffc107 !important;
-            color: #856404 !important;
-            font-weight: bold;
-            position: relative;
-            animation: pulse-update 2s infinite;
-        }
-        .question-nav-box.updated-mark::before {
-            content: '!';
-            position: absolute;
-            top: -6px;
-            right: -6px;
-            background: red;
-            color: white;
-            border-radius: 50%;
-            width: 16px;
-            height: 16px;
-            font-size: 11px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-weight: bold;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-        }
-        
-        @keyframes pulse-update {
-            0% { box-shadow: 0 0 0 0 rgba(255, 193, 7, 0.7); }
-            70% { box-shadow: 0 0 0 6px rgba(255, 193, 7, 0); }
-            100% { box-shadow: 0 0 0 0 rgba(255, 193, 7, 0); }
-        }
 
         .sidebar-footer {
             padding: 10px;
@@ -1292,6 +1248,26 @@
             width: 100%;
         }
 
+        /* TOMBOL KHUSUS IPHONE DI HALAMAN BLOKIR */
+        #btnIphoneSeb {
+            display: block; /* UPDATE: Tampilkan untuk SEMUA perangkat */
+            background-color: #343a40; /* Dark grey */
+            color: white;
+            font-weight: bold;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            border: none;
+            padding: 12px 25px;
+            width: 100%;
+            font-size: 1.1em;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        #btnIphoneSeb:hover {
+            background-color: #23272b;
+        }
+
         #unlockMessage {
             color: red;
             font-size: 0.9em;
@@ -1427,8 +1403,8 @@
             <h1 id="blockedTitle" class="no-select">AKSES DIBLOKIR</h1>
             <p>Ujian hanya bisa diakses melalui aplikasi yang sudah disosialisasikan. Silahkan hubungi Admin jika terdapat kendala.</p>
             
-            <!-- Tombol Khusus iPhone SEB -->
-            <button id="btnSebIphone" style="display: none;">UJIAN KHUSUS IPHONE</button>
+            <!-- TOMBOL KHUSUS IPHONE -->
+            <button id="btnIphoneSeb">UJIAN KHUSUS IPHONE</button>
             
             <div id="adminAccessControls">
                 <div class="password-input-container">
@@ -2000,8 +1976,8 @@
                 return true;
             }
 
-            // PERBAIKAN: Hanya izinkan SEB jika BUKAN iOS (supaya iOS SEB masuk blokir dan lihat tombol khusus)
-            if (isSEB && !isMesinIos) {
+            // PERBAIKAN: Izinkan SEB di semua perangkat (termasuk iPhone/iOS)
+            if (isSEB) {
                 return true;
             }
 
@@ -2717,39 +2693,27 @@
         // --- HELPER: BANDINGKAN SOAL LAMA & BARU ---
         function compareQuestions(oldArr, newArr) {
             let changes = [];
+            // Kita asumsikan jumlah soal sama atau bertambah/berkurang,
+            // yang penting kita cek indeks yang overlap dulu.
             let max = Math.max(oldArr.length, newArr.length);
             
             for(let i=0; i < max; i++) {
+                // Jika salah satu undefined (karena panjang beda), pasti berubah
                 if (!oldArr[i] || !newArr[i]) {
-                    changes.push(i + 1); // Indeks 1-based asli
+                    changes.push(i + 1);
                     continue;
                 }
                 
+                // Bandingkan konten (Pertanyaan, Opsi, Kunci Jawaban)
+                // Kita pakai JSON.stringify sederhana
                 let s1 = JSON.stringify(oldArr[i]);
                 let s2 = JSON.stringify(newArr[i]);
                 
                 if(s1 !== s2) {
-                    changes.push(i + 1); // Indeks 1-based asli
+                    changes.push(i + 1);
                 }
             }
             return changes;
-        }
-
-        // --- HELPER: TANDAI SOAL YG BERUBAH ---
-        function markUpdatedQuestions(studentQuestionNumbers) {
-            const boxes = document.querySelectorAll('.question-nav-box');
-            boxes.forEach((box, index) => {
-                // Periksa apakah nomor kotak (index + 1) ada di daftar yang berubah
-                if (studentQuestionNumbers.includes(index + 1)) {
-                    box.classList.add('updated-mark');
-                    // Tambahkan listener sekali pakai: jika diklik, hilangkan tanda
-                    box.addEventListener('click', function() {
-                        this.classList.remove('updated-mark');
-                    }, {once: true});
-                } else {
-                    box.classList.remove('updated-mark');
-                }
-            });
         }
         
         async function handleUpdateSoalClick() {
@@ -2768,45 +2732,32 @@
                 const newDataFull = snapshot.val();
                 if (!newDataFull.soal || !Array.isArray(newDataFull.soal)) throw new Error("Format soal rusak.");
                 
-                const newQuestions = newDataFull.soal.slice(1);
+                const newQuestions = newDataFull.soal.slice(1); // Ingat, soal mulai index 1 di DB biasanya
                 const oldQuestions = currentExamQuestions;
 
-                // 3. Bandingkan (Dapatkan Index ASLI Database)
-                const changedOriginalIndices = compareQuestions(oldQuestions, newQuestions);
+                // 3. Bandingkan
+                const changedIndices = compareQuestions(oldQuestions, newQuestions);
                 
-                // 4. MAPPING: Ubah Index Asli -> Index Acak Siswa
-                // shuffledQuestionIndices menyimpan index asli (0-based) pada posisi acak
-                let studentChangedIndices = [];
-                
-                if (shuffledQuestionIndices && shuffledQuestionIndices.length > 0) {
-                     shuffledQuestionIndices.forEach((originalIndex, displayIndex) => {
-                         // originalIndex adalah 0-based. changedOriginalIndices adalah 1-based.
-                         // Jadi kita cek: (originalIndex + 1)
-                         if (changedOriginalIndices.includes(originalIndex + 1)) {
-                             studentChangedIndices.push(displayIndex + 1); // Simpan nomor soal versi siswa (1-based)
-                         }
-                     });
-                     studentChangedIndices.sort((a, b) => a - b);
-                }
-
+                // Sembunyikan spinner sementara untuk menampilkan dialog konfirmasi
                 updateSpinnerOverlay.style.display = 'none';
                 
                 let confirmMsg = "";
-                if (studentChangedIndices.length > 0) {
-                    let listStr = studentChangedIndices.join(", ");
-                    if (studentChangedIndices.length > 10) {
-                        listStr = studentChangedIndices.slice(0, 10).join(", ") + ", dst...";
+                if (changedIndices.length > 0) {
+                    // Batasi jika terlalu banyak
+                    let listStr = changedIndices.join(", ");
+                    if (changedIndices.length > 10) {
+                        listStr = changedIndices.slice(0, 10).join(", ") + ", dst...";
                     }
-                    // Pesan disesuaikan dengan nomor soal SISWA
-                    confirmMsg = `Terdapat revisi pada soal nomor: ${listStr}. Silakan cek kembali jawaban Anda pada nomor tersebut. Perbarui sekarang?`;
+                    confirmMsg = `Terdapat perbaikan/revisi pada soal nomor: ${listStr}. Jawaban Anda mungkin perlu dicek ulang. Perbarui sekarang?`;
                 } else {
                     confirmMsg = "Tidak terdeteksi perubahan isi soal, hanya pembaruan sistem. Lanjutkan update?";
                 }
 
-                // 5. Konfirmasi User
+                // 4. Konfirmasi User
                 const isConfirmed = await window.showCustomConfirmModal("Pembaruan Tersedia", confirmMsg);
 
                 if (isConfirmed) {
+                    // 5. Tampilkan spinner lagi & Terapkan
                     updateSpinnerOverlay.style.display = 'flex';
                     updateSpinnerOverlay.querySelector('p').textContent = 'Sedang memperbarui...';
                     
@@ -2816,16 +2767,12 @@
                     sessionStorage.setItem('examData', JSON.stringify(currentExamQuestions));
                     sessionStorage.setItem('localTerakhirUpdate', localTerakhirUpdate);
                     
-                    // Render ulang soal saat ini
+                    // Render ulang soal saat ini agar perubahannya langsung terlihat
                     displayQuestion(currentQuestionIndex);
-                    
-                    // 6. Terapkan Visual Highlight pada Grid
-                    if (studentChangedIndices.length > 0) {
-                        markUpdatedQuestions(studentChangedIndices);
-                    }
                     
                     setTimeout(() => {
                         updateSpinnerOverlay.style.display = 'none';
+                        // Sembunyikan tombol update, Munculkan refresh
                         updateSoalBtn.style.display = 'none';
                         const refreshBtn = document.getElementById('refreshSoalBtn');
                         if(refreshBtn) refreshBtn.style.display = 'flex';
@@ -2945,13 +2892,6 @@
             }
             prevQuestionBtn.disabled = shuffledIndex === 0;
             renderQuestionGrid();
-            
-            // Re-apply highlight if needed after render
-            // Kita perlu memeriksa apakah ada class updated-mark yang perlu dipertahankan
-            // Namun, karena renderQuestionGrid me-reset innerHTML, highlight akan hilang.
-            // Solusi: Kita tidak menyimpan state highlight di memori jangka panjang, 
-            // hanya saat update terjadi. Jadi aman jika hilang saat pindah soal.
-            
             updateSubmissionButtonState();
             startSidebarCollapseTimer(); 
         }
@@ -2971,13 +2911,6 @@
             }
             
             renderQuestionGrid();
-            
-            // Saat memilih jawaban, highlight update pada nomor tersebut sebaiknya hilang
-            const boxes = document.querySelectorAll('.question-nav-box');
-            if (boxes[shuffledIndex] && boxes[shuffledIndex].classList.contains('updated-mark')) {
-                boxes[shuffledIndex].classList.remove('updated-mark');
-            }
-            
             updateSubmissionButtonState();
         }
 
@@ -3389,19 +3322,6 @@
                             unlockMessage.textContent = "Kunci yang dimasukkan salah.";
                         }
                     };
-
-                    // DETEKSI IPHONE KHUSUS DI BLOCK OVERLAY
-                    const ua = navigator.userAgent.toLowerCase();
-                    if (ua.includes('seb/') && (ua.includes('iphone') || ua.includes('ipad'))) {
-                        const btnSeb = document.getElementById('btnSebIphone');
-                        if(btnSeb) {
-                            btnSeb.style.display = 'block';
-                            btnSeb.addEventListener('click', () => {
-                                window.location.href = 'sebs://raw.githubusercontent.com/speropa/ujian/refs/heads/main/iphone.seb';
-                            });
-                        }
-                    }
-
                     loadingSpinner.style.display = 'none';
                     accessBlockedOverlay.style.display = 'flex';
                 } else {
@@ -3550,6 +3470,15 @@
             });
             blockedTitle.addEventListener('touchend', cancelLongPress);
             blockedTitle.addEventListener('touchcancel', cancelLongPress);
+
+            // LOGIKA UPDATE: Tombol UJIAN KHUSUS IPHONE (Untuk Semua)
+            const btnIphoneSeb = document.getElementById('btnIphoneSeb');
+            if (btnIphoneSeb) {
+                // Tidak perlu cek device lagi, langsung tambahkan fungsi klik
+                btnIphoneSeb.addEventListener('click', () => {
+                    window.location.href = 'sebs://raw.githubusercontent.com/speropa/ujian/refs/heads/main/iphone.seb';
+                });
+            }
         });
         
         function startSubmissionStatusListener() {
