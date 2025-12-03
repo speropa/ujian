@@ -1250,7 +1250,7 @@
 
         /* TOMBOL KHUSUS IPHONE DI HALAMAN BLOKIR */
         #btnIphoneSeb {
-            display: none; /* UPDATE: Sembunyikan secara default */
+            display: none; /* UPDATE: Sembunyikan kembali secara default */
             background-color: #343a40; /* Dark grey */
             color: white;
             font-weight: bold;
@@ -3471,7 +3471,7 @@
             blockedTitle.addEventListener('touchend', cancelLongPress);
             blockedTitle.addEventListener('touchcancel', cancelLongPress);
 
-            // LOGIKA UPDATE: Tampilkan tombol hanya di iPhone/iPad (Deteksi Lebih Kuat)
+            // LOGIKA UPDATE: Tampilkan tombol HANYA di iPhone/iPad (Dikembalikan)
             const btnIphoneSeb = document.getElementById('btnIphoneSeb');
             if (btnIphoneSeb) {
                 const ua = navigator.userAgent.toLowerCase();
