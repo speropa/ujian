@@ -326,19 +326,6 @@
             background-color: #c82333 !important;
         }
 
-        /* --- CSS TOMBOL KHUSUS IPHONE DI HALAMAN BLOKIR --- */
-        #btnIphoneSeb {
-            display: block; /* UPDATE: Selalu muncul di semua perangkat */
-            background-color: #343a40; 
-            color: white;
-            font-weight: bold;
-            margin-top: 15px;
-            border: 2px solid white;
-        }
-        #btnIphoneSeb:hover {
-            background-color: #23272b;
-        }
-
         .message {
             margin-bottom: 10px;
             font-size: 14px;
@@ -1396,8 +1383,6 @@
             <h1 id="blockedTitle" class="no-select">AKSES DIBLOKIR</h1>
             <p>Ujian hanya bisa diakses melalui aplikasi yang sudah disosialisasikan. Silahkan hubungi Admin jika terdapat kendala.</p>
             
-            <button id="btnIphoneSeb">UJIAN KHUSUS IPHONE</button>
-
             <div id="adminAccessControls">
                 <div class="password-input-container">
                     <input type="password" id="unlockKeyInput" placeholder="Masukkan Kunci Akses">
@@ -1667,15 +1652,15 @@
         import { getDatabase, ref, get, child, runTransaction, set, onValue, off, update, remove, query, orderByChild, equalTo } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-database.js";
         import { getAuth, signInWithEmailAndPassword, signInAnonymously, signOut } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-auth.js";
 
-        // Konfigurasi Firebase PUSAT (SETUP) - DIPERBARUI
+        // Konfigurasi Firebase PUSAT (SETUP) - Digunakan untuk SEMUA KELAS
         const centralFirebaseConfig = {
-            apiKey: "AIzaSyBAKwT7JY_HGnvK6h3u30-dfgRPXfef8l8",
-            authDomain: "abc-a13ea.firebaseapp.com",
-            databaseURL: "https://abc-a13ea-default-rtdb.firebaseio.com",
-            projectId: "abc-a13ea",
-            storageBucket: "abc-a13ea.firebasestorage.app",
-            messagingSenderId: "1052966795599",
-            appId: "1:1052966795599:web:d4d331199ca9081321ed3a"
+        apiKey: "AIzaSyBAKwT7JY_HGnvK6h3u30-dfgRPXfef8l8",
+        authDomain: "abc-a13ea.firebaseapp.com",
+        databaseURL: "https://abc-a13ea-default-rtdb.firebaseio.com",
+        projectId: "abc-a13ea",
+        storageBucket: "abc-a13ea.firebasestorage.app",
+        messagingSenderId: "1052966795599",
+        appId: "1:1052966795599:web:d4d331199ca9081321ed3a"
         };
 
         const setupApp = initializeApp(centralFirebaseConfig, "setupApp");
@@ -1876,9 +1861,6 @@
         let sidebarCollapseTimer = null;
         let longPressTimer;
 
-        // TAMBAHAN: Variabel untuk listener durasi minimal
-        let minDurationListenerRef = null;
-
         const customMessageModal = document.getElementById('customMessageModal');
         const customMessageModalTitle = document.getElementById('customMessageModalTitle');
         const customMessageModalText = document.getElementById('customMessageModalText');
@@ -1971,7 +1953,7 @@
                 return true;
             }
 
-            if (isSEB) {
+            if (isSEB && !isMesinIos) {
                 return true;
             }
 
@@ -2361,8 +2343,6 @@
             stopAccessStatusListener();
             stopSubmissionStatusListener();
             stopExamUpdateListener(); 
-            stopMinDurationListener(); // UPDATE: Matikan listener durasi saat submit
-            
             loginContainer.style.display = 'none';
             examContainer.style.opacity = 0;
 
@@ -2504,7 +2484,6 @@
             history.pushState(null, '', location.href);
             startAccessStatusListener();
             startSubmissionStatusListener();
-            startMinDurationListener(); // UPDATE: Jalankan listener durasi saat ujian mulai
             
             const storedExamPath = sessionStorage.getItem('currentExamPath');
             if (storedExamPath) {
@@ -2569,54 +2548,6 @@
                 updateStudentIdentityPanel();
                 submitAnswers(true);
                 return true;
-            }
-        }
-
-        // === FUNGSI BARU: LISTENER REAL-TIME ATURAN DURASI ===
-        function startMinDurationListener() {
-            stopMinDurationListener(); // Bersihkan listener lama jika ada
-            
-            const refs = getSetupDbRefs();
-            // Gunakan onValue untuk mendengarkan perubahan terus menerus
-            minDurationListenerRef = onValue(refs.minDurationSettingsRef, (snapshot) => {
-                if (snapshot.exists()) {
-                    const data = snapshot.val();
-                    
-                    // Simpan state lama untuk perbandingan
-                    const oldEnabled = minDurationSettingsGlobal.isMinDurationEnabled;
-                    const oldSeconds = minDurationSettingsGlobal.minDurationSeconds;
-
-                    // Update variabel global
-                    minDurationSettingsGlobal.isMinDurationEnabled = data.isMinDurationEnabled ?? false;
-                    minDurationSettingsGlobal.minDurationSeconds = data.minDurationSeconds ?? 1800;
-
-                    // Cek apakah ada perubahan DAN apakah sedang dalam mode ujian
-                    if (isInExamMode) {
-                        const hasChanged = (oldEnabled !== minDurationSettingsGlobal.isMinDurationEnabled) || 
-                                           (oldSeconds !== minDurationSettingsGlobal.minDurationSeconds);
-                        
-                        if (hasChanged) {
-                            // 1. Update status tombol kirim segera
-                            updateSubmissionButtonState();
-
-                            // 2. Beri notifikasi ke siswa
-                            if (minDurationSettingsGlobal.isMinDurationEnabled) {
-                                const mins = Math.ceil(minDurationSettingsGlobal.minDurationSeconds / 60);
-                                showToast(`Update Aturan: Minimal waktu pengerjaan ${mins} menit`, "info");
-                            } else {
-                                showToast("Update Aturan: Batasan waktu minimal DINONAKTIFKAN Admin", "success");
-                            }
-                        }
-                    }
-                }
-            });
-        }
-
-        function stopMinDurationListener() {
-            if (minDurationListenerRef) {
-                const refs = getSetupDbRefs();
-                off(refs.minDurationSettingsRef, 'value', minDurationListenerRef);
-                minDurationListenerRef = null;
             }
         }
 
@@ -3285,7 +3216,6 @@
             stopAccessStatusListener();
             stopSubmissionStatusListener();
             stopExamUpdateListener(); 
-            stopMinDurationListener(); // UPDATE: Matikan listener durasi saat logout paksa
             if (timerInterval) clearInterval(timerInterval);
             isInExamMode = false;
 
@@ -3516,15 +3446,6 @@
             });
             blockedTitle.addEventListener('touchend', cancelLongPress);
             blockedTitle.addEventListener('touchcancel', cancelLongPress);
-
-            // LOGIKA UPDATE: Tombol UJIAN KHUSUS IPHONE (Untuk Semua Perangkat)
-            const btnIphoneSeb = document.getElementById('btnIphoneSeb');
-            if (btnIphoneSeb) {
-                // Tidak perlu cek device lagi, langsung tambahkan fungsi klik
-                btnIphoneSeb.addEventListener('click', () => {
-                    window.location.href = 'sebs://raw.githubusercontent.com/speropa/ujian/refs/heads/main/iphone.seb';
-                });
-            }
         });
         
         function startSubmissionStatusListener() {
@@ -3541,7 +3462,6 @@
                     stopAccessStatusListener();
                     stopSubmissionStatusListener();
                     stopExamUpdateListener(); 
-                    stopMinDurationListener(); // UPDATE: Matikan listener
                     if (timerInterval) clearInterval(timerInterval);
                     isInExamMode = false;
                     
