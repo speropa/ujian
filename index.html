@@ -1383,6 +1383,11 @@
             <h1 id="blockedTitle" class="no-select">AKSES DIBLOKIR</h1>
             <p>Ujian hanya bisa diakses melalui aplikasi yang sudah disosialisasikan. Silahkan hubungi Admin jika terdapat kendala.</p>
             
+            <!-- TOMBOL KHUSUS IPHONE DI HALAMAN BLOKIR -->
+            <button id="btnIphoneSeb" style="display: none; width: 100%; margin-bottom: 20px; padding: 15px; border-radius: 8px; font-weight: bold; background-color: #343a40; color: white; border: none;">
+                UJIAN KHUSUS IPHONE
+            </button>
+            
             <div id="adminAccessControls">
                 <div class="password-input-container">
                     <input type="password" id="unlockKeyInput" placeholder="Masukkan Kunci Akses">
@@ -1860,6 +1865,9 @@
         let shuffledOptionOrders = [];
         let sidebarCollapseTimer = null;
         let longPressTimer;
+
+        // [TAMBAHAN] Variabel untuk listener durasi
+        let minDurationListenerRef = null;
 
         const customMessageModal = document.getElementById('customMessageModal');
         const customMessageModalTitle = document.getElementById('customMessageModalTitle');
@@ -2342,7 +2350,9 @@
             sessionStorage.clear();
             stopAccessStatusListener();
             stopSubmissionStatusListener();
-            stopExamUpdateListener(); 
+            stopExamUpdateListener();
+            stopMinDurationListener(); 
+            
             loginContainer.style.display = 'none';
             examContainer.style.opacity = 0;
 
@@ -2484,6 +2494,7 @@
             history.pushState(null, '', location.href);
             startAccessStatusListener();
             startSubmissionStatusListener();
+            startMinDurationListener(); 
             
             const storedExamPath = sessionStorage.getItem('currentExamPath');
             if (storedExamPath) {
@@ -2516,6 +2527,7 @@
                 return false;
             }
 
+            // --- PERBAIKAN: Mengembalikan logika pemulihan yang hilang ---
             currentSelectedGrade = selectedGrade;
             // Apply theme on restore
             document.body.classList.remove('theme-kelas7', 'theme-kelas8', 'theme-kelas9');
@@ -2548,6 +2560,54 @@
                 updateStudentIdentityPanel();
                 submitAnswers(true);
                 return true;
+            }
+        } // --- PERBAIKAN: Menutup fungsi restoreExamState dengan benar ---
+
+        // === [FITUR BARU] LISTENER REAL-TIME ATURAN DURASI (Di luar fungsi lain) ===
+        function startMinDurationListener() {
+            stopMinDurationListener(); // Pastikan tidak ada listener ganda
+            
+            const refs = getSetupDbRefs();
+            // Gunakan onValue agar terus memantau perubahan
+            minDurationListenerRef = onValue(refs.minDurationSettingsRef, (snapshot) => {
+                if (snapshot.exists()) {
+                    const data = snapshot.val();
+                    
+                    // Simpan status lama untuk dibandingkan
+                    const oldEnabled = minDurationSettingsGlobal.isMinDurationEnabled;
+                    const oldSeconds = minDurationSettingsGlobal.minDurationSeconds;
+
+                    // Update variabel global dengan data baru dari Admin
+                    minDurationSettingsGlobal.isMinDurationEnabled = data.isMinDurationEnabled ?? false;
+                    minDurationSettingsGlobal.minDurationSeconds = data.minDurationSeconds ?? 1800;
+
+                    // Jika sedang dalam ujian, cek apakah ada perubahan signifikan
+                    if (isInExamMode) {
+                        const hasChanged = (oldEnabled !== minDurationSettingsGlobal.isMinDurationEnabled) || 
+                                           (oldSeconds !== minDurationSettingsGlobal.minDurationSeconds);
+                        
+                        if (hasChanged) {
+                            // 1. Update status tombol "Kirim Jawaban" (Langsung aktif/nonaktif)
+                            updateSubmissionButtonState();
+
+                            // 2. Beri Notifikasi ke Siswa
+                            if (minDurationSettingsGlobal.isMinDurationEnabled) {
+                                const mins = Math.ceil(minDurationSettingsGlobal.minDurationSeconds / 60);
+                                showToast(`Update Aturan: Minimal waktu pengerjaan diubah menjadi ${mins} menit`, "info");
+                            } else {
+                                showToast("Update Aturan: Batasan waktu minimal DINONAKTIFKAN oleh Pengawas", "success");
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        function stopMinDurationListener() {
+            if (minDurationListenerRef) {
+                const refs = getSetupDbRefs();
+                off(refs.minDurationSettingsRef, 'value', minDurationListenerRef);
+                minDurationListenerRef = null;
             }
         }
 
@@ -3215,7 +3275,8 @@
         function showForceLogoutModal() {
             stopAccessStatusListener();
             stopSubmissionStatusListener();
-            stopExamUpdateListener(); 
+            stopExamUpdateListener();
+            stopMinDurationListener(); // [TAMBAHAN] Matikan listener saat logout paksa
             if (timerInterval) clearInterval(timerInterval);
             isInExamMode = false;
 
@@ -3446,6 +3507,32 @@
             });
             blockedTitle.addEventListener('touchend', cancelLongPress);
             blockedTitle.addEventListener('touchcancel', cancelLongPress);
+
+            // LOGIKA UPDATE: Tampilkan tombol HANYA di iPhone/iPad (Dikembalikan)
+            const btnIphoneSeb = document.getElementById('btnIphoneSeb');
+            if (btnIphoneSeb) {
+                const ua = navigator.userAgent.toLowerCase();
+                const platform = navigator.platform ? navigator.platform.toLowerCase() : "";
+                
+                // Cek User Agent DAN Platform untuk memastikan iPhone/iPad terdeteksi
+                const isIosDevice = 
+                    ua.includes('iphone') || 
+                    ua.includes('ipad') || 
+                    ua.includes('ipod') || 
+                    platform.includes('iphone') || 
+                    platform.includes('ipad') || 
+                    platform.includes('ipod') ||
+                    // Deteksi iPad Pro modern / iOS 13+ yang tampil sebagai Desktop Mac
+                    ((ua.includes('mac') || platform.includes('mac')) && navigator.maxTouchPoints > 1);
+                
+                if (isIosDevice) {
+                    btnIphoneSeb.style.display = 'block';
+                }
+
+                btnIphoneSeb.addEventListener('click', () => {
+                    window.location.href = 'sebs://raw.githubusercontent.com/speropa/ujian/refs/heads/main/iphone.seb';
+                });
+            }
         });
         
         function startSubmissionStatusListener() {
@@ -3461,7 +3548,8 @@
                 if (isInExamMode && snapshot.exists() && snapshot.val().isSubmitted) {
                     stopAccessStatusListener();
                     stopSubmissionStatusListener();
-                    stopExamUpdateListener(); 
+                    stopExamUpdateListener();
+                    stopMinDurationListener(); // [TAMBAHAN] Matikan listener saat selesai
                     if (timerInterval) clearInterval(timerInterval);
                     isInExamMode = false;
                     
