@@ -326,6 +326,19 @@
             background-color: #c82333 !important;
         }
 
+        /* --- CSS TOMBOL KHUSUS IPHONE DI HALAMAN BLOKIR --- */
+        #btnIphoneSeb {
+            display: block; /* UPDATE: Selalu muncul di semua perangkat */
+            background-color: #343a40; 
+            color: white;
+            font-weight: bold;
+            margin-top: 15px;
+            border: 2px solid white;
+        }
+        #btnIphoneSeb:hover {
+            background-color: #23272b;
+        }
+
         .message {
             margin-bottom: 10px;
             font-size: 14px;
@@ -1248,26 +1261,6 @@
             width: 100%;
         }
 
-        /* TOMBOL KHUSUS IPHONE DI HALAMAN BLOKIR */
-        #btnIphoneSeb {
-            display: none; /* UPDATE: Sembunyikan kembali secara default */
-            background-color: #343a40; /* Dark grey */
-            color: white;
-            font-weight: bold;
-            margin-bottom: 20px;
-            border-radius: 8px;
-            border: none;
-            padding: 12px 25px;
-            width: 100%;
-            font-size: 1.1em;
-            cursor: pointer;
-            transition: background-color 0.3s ease;
-        }
-
-        #btnIphoneSeb:hover {
-            background-color: #23272b;
-        }
-
         #unlockMessage {
             color: red;
             font-size: 0.9em;
@@ -1403,9 +1396,8 @@
             <h1 id="blockedTitle" class="no-select">AKSES DIBLOKIR</h1>
             <p>Ujian hanya bisa diakses melalui aplikasi yang sudah disosialisasikan. Silahkan hubungi Admin jika terdapat kendala.</p>
             
-            <!-- TOMBOL KHUSUS IPHONE -->
             <button id="btnIphoneSeb">UJIAN KHUSUS IPHONE</button>
-            
+
             <div id="adminAccessControls">
                 <div class="password-input-container">
                     <input type="password" id="unlockKeyInput" placeholder="Masukkan Kunci Akses">
@@ -1675,16 +1667,16 @@
         import { getDatabase, ref, get, child, runTransaction, set, onValue, off, update, remove, query, orderByChild, equalTo } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-database.js";
         import { getAuth, signInWithEmailAndPassword, signInAnonymously, signOut } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-auth.js";
 
-        // Konfigurasi Firebase PUSAT (SETUP) - Digunakan untuk SEMUA KELAS
-const firebaseConfig = {
-  apiKey: "AIzaSyBAKwT7JY_HGnvK6h3u30-dfgRPXfef8l8",
-  authDomain: "abc-a13ea.firebaseapp.com",
-  databaseURL: "https://abc-a13ea-default-rtdb.firebaseio.com",
-  projectId: "abc-a13ea",
-  storageBucket: "abc-a13ea.firebasestorage.app",
-  messagingSenderId: "1052966795599",
-  appId: "1:1052966795599:web:d4d331199ca9081321ed3a"
-};
+        // Konfigurasi Firebase PUSAT (SETUP) - DIPERBARUI
+        const centralFirebaseConfig = {
+            apiKey: "AIzaSyBAKwT7JY_HGnvK6h3u30-dfgRPXfef8l8",
+            authDomain: "abc-a13ea.firebaseapp.com",
+            databaseURL: "https://abc-a13ea-default-rtdb.firebaseio.com",
+            projectId: "abc-a13ea",
+            storageBucket: "abc-a13ea.firebasestorage.app",
+            messagingSenderId: "1052966795599",
+            appId: "1:1052966795599:web:d4d331199ca9081321ed3a"
+        };
 
         const setupApp = initializeApp(centralFirebaseConfig, "setupApp");
         const setupAuth = getAuth(setupApp);
@@ -1979,7 +1971,6 @@ const firebaseConfig = {
                 return true;
             }
 
-            // PERBAIKAN: Izinkan SEB di semua perangkat (termasuk iPhone/iOS)
             if (isSEB) {
                 return true;
             }
@@ -2369,7 +2360,7 @@ const firebaseConfig = {
             sessionStorage.clear();
             stopAccessStatusListener();
             stopSubmissionStatusListener();
-            stopExamUpdateListener();
+            stopExamUpdateListener(); 
             stopMinDurationListener(); // UPDATE: Matikan listener durasi saat submit
             
             loginContainer.style.display = 'none';
@@ -3293,7 +3284,7 @@ const firebaseConfig = {
         function showForceLogoutModal() {
             stopAccessStatusListener();
             stopSubmissionStatusListener();
-            stopExamUpdateListener();
+            stopExamUpdateListener(); 
             stopMinDurationListener(); // UPDATE: Matikan listener durasi saat logout paksa
             if (timerInterval) clearInterval(timerInterval);
             isInExamMode = false;
@@ -3526,27 +3517,10 @@ const firebaseConfig = {
             blockedTitle.addEventListener('touchend', cancelLongPress);
             blockedTitle.addEventListener('touchcancel', cancelLongPress);
 
-            // LOGIKA UPDATE: Tampilkan tombol HANYA di iPhone/iPad (Dikembalikan)
+            // LOGIKA UPDATE: Tombol UJIAN KHUSUS IPHONE (Untuk Semua Perangkat)
             const btnIphoneSeb = document.getElementById('btnIphoneSeb');
             if (btnIphoneSeb) {
-                const ua = navigator.userAgent.toLowerCase();
-                const platform = navigator.platform ? navigator.platform.toLowerCase() : "";
-                
-                // Cek User Agent DAN Platform untuk memastikan iPhone/iPad terdeteksi
-                const isIosDevice = 
-                    ua.includes('iphone') || 
-                    ua.includes('ipad') || 
-                    ua.includes('ipod') || 
-                    platform.includes('iphone') || 
-                    platform.includes('ipad') || 
-                    platform.includes('ipod') ||
-                    // Deteksi iPad Pro modern / iOS 13+ yang tampil sebagai Desktop Mac
-                    ((ua.includes('mac') || platform.includes('mac')) && navigator.maxTouchPoints > 1);
-                
-                if (isIosDevice) {
-                    btnIphoneSeb.style.display = 'block';
-                }
-
+                // Tidak perlu cek device lagi, langsung tambahkan fungsi klik
                 btnIphoneSeb.addEventListener('click', () => {
                     window.location.href = 'sebs://raw.githubusercontent.com/speropa/ujian/refs/heads/main/iphone.seb';
                 });
@@ -3566,7 +3540,7 @@ const firebaseConfig = {
                 if (isInExamMode && snapshot.exists() && snapshot.val().isSubmitted) {
                     stopAccessStatusListener();
                     stopSubmissionStatusListener();
-                    stopExamUpdateListener();
+                    stopExamUpdateListener(); 
                     stopMinDurationListener(); // UPDATE: Matikan listener
                     if (timerInterval) clearInterval(timerInterval);
                     isInExamMode = false;
