@@ -1961,6 +1961,10 @@
                 return true;
             }
 
+            // KEMBALI KE LOGIKA AWAL:
+            // Hanya izinkan SEB jika BUKAN iOS.
+            // Ini memaksa pengguna iOS (meski pakai SEB) untuk tetap kena blokir
+            // sehingga mereka bisa menekan tombol 'UJIAN KHUSUS IPHONE' untuk memuat config.
             if (isSEB && !isMesinIos) {
                 return true;
             }
@@ -3514,8 +3518,23 @@
                 // Tampilkan selalu tanpa cek device
                 btnIphoneSeb.style.display = 'block';
 
-                btnIphoneSeb.addEventListener('click', () => {
-                    window.location.href = 'sebs://speropa.github.io/ujian/iphone.seb';
+                btnIphoneSeb.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    
+                    const ua = navigator.userAgent.toLowerCase();
+                    const isSebApp = ua.includes('seb') || ua.includes('safeexambrowser');
+                    const targetPath = 'speropa.github.io/ujian/iphone.seb';
+                    
+                    if (isSebApp) {
+                        // JIKA SUDAH DI DALAM APLIKASI SEB:
+                        // Gunakan HTTPS biasa agar file langsung dimuat/dikonfigurasi
+                        // Menggunakan sebs:// di sini menyebabkan "Unsupported URL"
+                        window.location.href = 'https://' + targetPath;
+                    } else {
+                        // JIKA DI LUAR SEB (MISAL SAFARI):
+                        // Gunakan sebs:// untuk memancing aplikasi SEB terbuka
+                        window.location.href = 'sebs://' + targetPath;
+                    }
                 });
             }
         });
