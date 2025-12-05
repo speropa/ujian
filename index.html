@@ -3508,26 +3508,11 @@
             blockedTitle.addEventListener('touchend', cancelLongPress);
             blockedTitle.addEventListener('touchcancel', cancelLongPress);
 
-            // LOGIKA UPDATE: Tampilkan tombol HANYA di iPhone/iPad (Dikembalikan)
+            // LOGIKA UPDATE: Tampilkan tombol DI SEMUA PERANGKAT SAAT DIBLOKIR
             const btnIphoneSeb = document.getElementById('btnIphoneSeb');
             if (btnIphoneSeb) {
-                const ua = navigator.userAgent.toLowerCase();
-                const platform = navigator.platform ? navigator.platform.toLowerCase() : "";
-                
-                // Cek User Agent DAN Platform untuk memastikan iPhone/iPad terdeteksi
-                const isIosDevice = 
-                    ua.includes('iphone') || 
-                    ua.includes('ipad') || 
-                    ua.includes('ipod') || 
-                    platform.includes('iphone') || 
-                    platform.includes('ipad') || 
-                    platform.includes('ipod') ||
-                    // Deteksi iPad Pro modern / iOS 13+ yang tampil sebagai Desktop Mac
-                    ((ua.includes('mac') || platform.includes('mac')) && navigator.maxTouchPoints > 1);
-                
-                if (isIosDevice) {
-                    btnIphoneSeb.style.display = 'block';
-                }
+                // Tampilkan selalu tanpa cek device
+                btnIphoneSeb.style.display = 'block';
 
                 btnIphoneSeb.addEventListener('click', () => {
                     window.location.href = 'sebs://raw.githubusercontent.com/speropa/ujian/refs/heads/main/iphone.seb';
