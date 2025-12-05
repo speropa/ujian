@@ -3615,22 +3615,30 @@
             }
 
             try {
-                const tokensSnapshot = await get(dbRefs.tokensRef);
+                // --- PERBAIKAN OPTIMASI: Query Token Spesifik (Server-Side) ---
+                // Menggunakan query untuk mencari token yang spesifik saja, bukan download semua.
+                // WAJIB: Tambahkan "tokens": { ".indexOn": ["token"] } di Firebase Rules
+                
+                // 1. Query ke Firebase: Cari data di 'tokens' yang field 'token' == tokenPrefix
+                const tokenQuery = query(dbRefs.tokensRef, orderByChild('token'), equalTo(tokenPrefix));
+                const tokensSnapshot = await get(tokenQuery);
+                
                 let foundToken = null;
                 let tokenFoundForOtherClass = false;
 
-                // LOGIKA PENCARIAN TOKEN DIPERBARUI
-                // Mencari token yang string-nya cocok DAN kelasnya cocok dengan siswa
-                tokensSnapshot.forEach(child => {
-                    const data = child.val();
-                    if (data.token.toUpperCase() === tokenPrefix) {
+                // 2. Iterasi hasil query (Hanya data yang token-nya cocok yang didownload)
+                if (tokensSnapshot.exists()) {
+                    tokensSnapshot.forEach(child => {
+                        const data = child.val();
+                        // Query sudah memfilter 'token' (equalTo), sekarang validasi kelas
+                        // Pastikan token yang diketik cocok dengan kelas siswa
                         if (String(data.kelas) === String(studentClassNum)) {
                              foundToken = { ...data, key: child.key };
                         } else {
                              tokenFoundForOtherClass = true;
                         }
-                    }
-                });
+                    });
+                }
 
                 if (!foundToken) {
                     if (tokenFoundForOtherClass) {
