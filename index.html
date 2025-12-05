@@ -2165,14 +2165,19 @@
             message.innerHTML = `Mengunduh data ${selectedClass}... <span class="spinner"></span>`;
 
             try {
-                const snapshot = await get(dbRefs.studentsRef);
+                // --- PERBAIKAN OPTIMASI: Query Spesifik ---
+                // Mengganti pengambilan seluruh 'students' dengan query spesifik berdasarkan kelas.
+                // Ini mengurangi beban download data secara drastis.
+                const studentsQuery = query(dbRefs.studentsRef, orderByChild('class'), equalTo(selectedClass));
+                const snapshot = await get(studentsQuery);
+                
                 if (snapshot.exists()) {
                     allStudentsData = [];
                     snapshot.forEach(childSnapshot => {
                         const studentData = childSnapshot.val();
-                        if (studentData.class === selectedClass) {
-                            allStudentsData.push({ ...studentData, key: childSnapshot.key });
-                        }
+                        // Kita tidak perlu lagi memfilter dengan "if (studentData.class === selectedClass)"
+                        // karena Firebase sudah hanya mengembalikan data yang cocok.
+                        allStudentsData.push({ ...studentData, key: childSnapshot.key });
                     });
 
                     if (allStudentsData.length > 0) {
@@ -2186,14 +2191,19 @@
                     }
                 } else {
                     message.style.color = "orange";
-                    message.textContent = "Tidak ada data siswa ditemukan di database.";
+                    message.textContent = "Tidak ada data siswa ditemukan untuk kelas ini.";
                     studentModalList.innerHTML = '';
                     customSelectNamaSiswaDisplay.textContent = customSelectNamaSiswaDisplay.dataset.placeholder;
                 }
             } catch (error) {
                 console.error("Gagal memuat data siswa:", error);
                 message.style.color = "red";
-                message.textContent = "Gagal memuat data. Periksa koneksi internet.";
+                // Penanganan khusus jika index belum di-set di Firebase Rules
+                if (error.message && error.message.includes('Index not defined')) {
+                    message.textContent = "Error Database: Index 'class' belum diatur di Rules.";
+                } else {
+                    message.textContent = "Gagal memuat data. Periksa koneksi internet.";
+                }
             }
         }
 
