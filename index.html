@@ -1655,85 +1655,104 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-app.js";
         import { getDatabase, ref, get, child, runTransaction, set, onValue, off, update, remove, query, orderByChild, equalTo } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-database.js";
-        import { getAuth, signInWithEmailAndPassword, signInAnonymously, signOut } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-auth.js";
+        import { getAuth, signInAnonymously, signOut } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-auth.js";
 
-        // Konfigurasi Firebase PUSAT (SETUP) - Digunakan untuk SEMUA KELAS
-        const centralFirebaseConfig = {
-        apiKey: "AIzaSyBAKwT7JY_HGnvK6h3u30-dfgRPXfef8l8",
-        authDomain: "abc-a13ea.firebaseapp.com",
-        databaseURL: "https://abc-a13ea-default-rtdb.firebaseio.com",
-        projectId: "abc-a13ea",
-        storageBucket: "abc-a13ea.firebasestorage.app",
-        messagingSenderId: "1052966795599",
-        appId: "1:1052966795599:web:d4d331199ca9081321ed3a"
+        // --- KONFIGURASI MULTI-FIREBASE (Sama dengan Panel Admin) ---
+        
+        // 1. FIREBASE ATURAN
+        const configAturan = {
+            apiKey: "AIzaSyAoH-kHpL15GHnFa41ZdG7dWFUsUZ4QJKc",
+            authDomain: "aturan-694fe.firebaseapp.com",
+            databaseURL: "https://aturan-694fe-default-rtdb.asia-southeast1.firebasedatabase.app",
+            projectId: "aturan-694fe",
+            storageBucket: "aturan-694fe.firebasestorage.app",
+            messagingSenderId: "1008762962672",
+            appId: "1:1008762962672:web:57815d4f3c49f211ebf835"
         };
 
-        const setupApp = initializeApp(centralFirebaseConfig, "setupApp");
-        const setupAuth = getAuth(setupApp);
-        const setupDb = getDatabase(setupApp);
-
-        // DAFTAR KELAS - Semua diarahkan ke konfigurasi pusat
-        const allFirebaseConfigs = {
-            'kelas7-group1': {
-                ...centralFirebaseConfig,
-                allowedClasses: ['7A', '7B', '7C', '7D', '7E', '7F'] 
-            },
-            'kelas8-group1': {
-                ...centralFirebaseConfig,
-                allowedClasses: ['8A', '8B', '8C', '8D', '8E', '8F'] 
-            },
-            'kelas9-group1': {
-                ...centralFirebaseConfig,
-                allowedClasses: ['9A', '9B', '9C', '9D', '9E', '9F'] 
-            }
+        // 2. FIREBASE 7ABCDEF (Kelas 7)
+        const config7 = {
+            apiKey: "AIzaSyBkhBZw3oADXUAJ9FXY9-g7XBsSmQhzZVk",
+            authDomain: "def-ab5ee.firebaseapp.com",
+            databaseURL: "https://def-ab5ee-default-rtdb.firebaseio.com",
+            projectId: "def-ab5ee",
+            storageBucket: "def-ab5ee.firebasestorage.app",
+            messagingSenderId: "129712840107",
+            appId: "1:129712840107:web:ab10576fed95f735dd46ee"
         };
 
-        const firebaseApps = {};
-        const firebaseDBs = {};
-        const firebaseAuths = {};
+        // 3. FIREBASE 8ABCDEF (Kelas 8)
+        const config8 = {
+            apiKey: "AIzaSyAwilwwwEJ2MAdSf09BotxNH-z6RiXaHXY",
+            authDomain: "abc-43e73.firebaseapp.com",
+            databaseURL: "https://abc-43e73-default-rtdb.firebaseio.com",
+            projectId: "abc-43e73",
+            storageBucket: "abc-43e73.firebasestorage.app",
+            messagingSenderId: "1043754727577",
+            appId: "1:1043754727577:web:56c3732bf2a6ac900c2008"
+        };
+
+        // 4. FIREBASE 9ABCDEF (Kelas 9)
+        const config9 = {
+            apiKey: "AIzaSyBZ6JR3ggnUiZFQ-wdrewbfhzMUwFaGGzQ",
+            authDomain: "abc-d272a.firebaseapp.com",
+            databaseURL: "https://abc-d272a-default-rtdb.firebaseio.com",
+            projectId: "abc-d272a",
+            storageBucket: "abc-d272a.firebasestorage.app",
+            messagingSenderId: "1036605132828",
+            appId: "1:1036605132828:web:2b59f91290d50afe304fd9"
+        };
+
+        // Inisialisasi Apps
+        const appAturan = initializeApp(configAturan, "appAturan");
+        const app7 = initializeApp(config7, "app7");
+        const app8 = initializeApp(config8, "app8");
+        const app9 = initializeApp(config9, "app9");
+
+        // Inisialisasi Auth & Database untuk setiap App
+        const authAturan = getAuth(appAturan);
+        const dbAturan = getDatabase(appAturan);
+
+        const auth7 = getAuth(app7);
+        const db7 = getDatabase(app7);
+
+        const auth8 = getAuth(app8);
+        const db8 = getDatabase(app8);
+
+        const auth9 = getAuth(app9);
+        const db9 = getDatabase(app9);
+
+        // State Global untuk menyimpan DB aktif
         let currentDb = null;
         let currentAuth = null;
         let currentSelectedGrade = null;
-        let currentClassGroupKeys = [];
 
-        function getClassGroupKeysByGrade(grade) {
-            const keys = [];
-            for (const key in allFirebaseConfigs) {
-                if (key.startsWith(`kelas${grade}`)) {
-                    keys.push(key);
-                }
-            }
-            return keys;
+        // Fungsi Helper untuk memilih DB berdasarkan Jenjang Kelas
+        function getDbForGrade(grade) {
+            const g = String(grade);
+            if (g === '7') return { db: db7, auth: auth7 };
+            if (g === '8') return { db: db8, auth: auth8 };
+            if (g === '9') return { db: db9, auth: auth9 };
+            return null;
         }
 
-        async function getFirebaseInstanceForClass(className) {
-            let classGroupKey = null;
-            for (const key in allFirebaseConfigs) {
-                if (allFirebaseConfigs[key].allowedClasses.includes(className)) {
-                    classGroupKey = key;
-                    break;
-                }
+        // Fungsi Login Otomatis ke SEMUA Firebase (Anonim)
+        async function performAnonymousLogin() {
+            try {
+                // Login ke semua instance secara paralel
+                await Promise.all([
+                    signInAnonymously(authAturan),
+                    signInAnonymously(auth7),
+                    signInAnonymously(auth8),
+                    signInAnonymously(auth9)
+                ]);
+                console.log("Login otomatis ke semua server berhasil.");
+                return true;
+            } catch (error) {
+                console.error("Gagal login otomatis:", error);
+                window.showCustomMessageModal("Kesalahan Autentikasi", `Gagal mengautentikasi ke database. Mohon hubungi administrator.`, 'error');
+                return false;
             }
-
-            if (!classGroupKey || !allFirebaseConfigs[classGroupKey]) {
-                console.error(`Error: Tidak ada konfigurasi Firebase yang ditemukan untuk kelas: ${className}`);
-                return null;
-            }
-
-            if (!firebaseApps['central']) {
-                const appInstance = initializeApp(centralFirebaseConfig, 'centralApp');
-                firebaseApps['central'] = appInstance;
-                firebaseDBs['central'] = getDatabase(appInstance);
-                firebaseAuths['central'] = getAuth(appInstance);
-                try {
-                    await signInAnonymously(firebaseAuths['central']);
-                } catch (error) {
-                    console.error(`Gagal login anonim ke database pusat:`, error);
-                    window.showCustomMessageModal("Kesalahan Autentikasi", `Gagal mengautentikasi ke database pusat. Mohon hubungi administrator.`, 'error');
-                    return null;
-                }
-            }
-            return { db: firebaseDBs['central'], auth: firebaseAuths['central'] };
         }
 
         function getDbRefs() {
@@ -1752,12 +1771,13 @@
         }
         
         function getSetupDbRefs() {
+             // Menggunakan dbAturan untuk pengaturan global
              return {
-                settingsRef: ref(setupDb, 'setlokasi'),
-                minDurationSettingsRef: ref(setupDb, 'min_duration_settings'),
-                publicSettingsRef: ref(setupDb, 'publicSettings'),
-                shuffleSettingsRef: ref(setupDb, 'acaksoalpilgan'),
-                blockKeySettingsRef: ref(setupDb, 'block_key_settings')
+                settingsRef: ref(dbAturan, 'setlokasi'),
+                minDurationSettingsRef: ref(dbAturan, 'min_duration_settings'),
+                publicSettingsRef: ref(dbAturan, 'publicSettings'),
+                shuffleSettingsRef: ref(dbAturan, 'acaksoalpilgan'),
+                blockKeySettingsRef: ref(dbAturan, 'block_key_settings')
             };
         }
 
@@ -2122,6 +2142,7 @@
             }
         }
 
+        // Fungsi baru untuk mengambil list kelas langsung dari DB spesifik
         function loadClassDropdownForGrade(grade) {
             customSelectKelasDisplay.classList.add('disabled');
             customSelectNamaSiswaDisplay.classList.add('disabled');
@@ -2129,29 +2150,63 @@
             displayStudentId.value = "";
             message.innerHTML = `Memuat daftar kelas untuk kelas ${grade}... <span class="spinner"></span>`;
 
-            const classNames = [];
-            currentClassGroupKeys.forEach(groupKey => {
-                const config = allFirebaseConfigs[groupKey];
-                classNames.push(...config.allowedClasses);
-            });
-            classNames.sort();
-
+            // Reset dropdown
             classModalList.innerHTML = '';
-            classNames.forEach(cls => {
-                const listItem = document.createElement('li');
-                listItem.textContent = cls;
-                listItem.dataset.value = cls;
-                listItem.addEventListener('click', () => selectClass(cls));
-                classModalList.appendChild(listItem);
+            
+            // Set Database Aktif
+            const instances = getDbForGrade(grade);
+            if (!instances) {
+                message.style.color = "red";
+                message.textContent = "Gagal memuat database untuk kelas ini.";
+                return;
+            }
+            currentDb = instances.db;
+            currentAuth = instances.auth;
+
+            // Ambil semua siswa untuk mendapatkan list kelas yang unik
+            const studentsRef = ref(currentDb, 'students');
+            
+            // Mengambil semua siswa lalu memfilter kelas unik di client-side
+            // Ini karena structure DB students flat list
+            get(studentsRef).then((snapshot) => {
+                const classSet = new Set();
+                if (snapshot.exists()) {
+                    snapshot.forEach((childSnapshot) => {
+                        const studentData = childSnapshot.val();
+                        if (studentData.class) {
+                            classSet.add(studentData.class);
+                        }
+                    });
+                }
+
+                // Ubah Set ke Array dan Sortir
+                const classNames = Array.from(classSet).sort();
+
+                if (classNames.length > 0) {
+                    classNames.forEach(cls => {
+                        const listItem = document.createElement('li');
+                        listItem.textContent = cls;
+                        listItem.dataset.value = cls;
+                        listItem.addEventListener('click', () => selectClass(cls));
+                        classModalList.appendChild(listItem);
+                    });
+                    customSelectKelasDisplay.classList.remove('disabled');
+                    message.textContent = "";
+                } else {
+                    message.style.color = "orange";
+                    message.textContent = `Belum ada data kelas untuk Kelas ${grade}.`;
+                }
+            }).catch((error) => {
+                console.error("Gagal memuat list kelas:", error);
+                message.style.color = "red";
+                message.textContent = "Gagal memuat daftar kelas.";
             });
-            customSelectKelasDisplay.classList.remove('disabled');
-            message.textContent = "";
         }
 
         async function loadStudentsAndFilterByClass() {
             if (!currentDb) {
                 message.style.color = "red";
-                message.textContent = "Database belum diinisialisasi. Pilih kelas terlebih dahulu.";
+                message.textContent = "Database belum diinisialisasi. Pilih jenjang kelas terlebih dahulu.";
                 return;
             }
             const dbRefs = getDbRefs();
@@ -2165,9 +2220,7 @@
             message.innerHTML = `Mengunduh data ${selectedClass}... <span class="spinner"></span>`;
 
             try {
-                // --- PERBAIKAN OPTIMASI: Query Spesifik ---
-                // Mengganti pengambilan seluruh 'students' dengan query spesifik berdasarkan kelas.
-                // Ini mengurangi beban download data secara drastis.
+                // Query Siswa berdasarkan kelas
                 const studentsQuery = query(dbRefs.studentsRef, orderByChild('class'), equalTo(selectedClass));
                 const snapshot = await get(studentsQuery);
                 
@@ -2175,8 +2228,6 @@
                     allStudentsData = [];
                     snapshot.forEach(childSnapshot => {
                         const studentData = childSnapshot.val();
-                        // Kita tidak perlu lagi memfilter dengan "if (studentData.class === selectedClass)"
-                        // karena Firebase sudah hanya mengembalikan data yang cocok.
                         allStudentsData.push({ ...studentData, key: childSnapshot.key });
                     });
 
@@ -2258,19 +2309,7 @@
             inputTokenPrefix.disabled = true;
             displayStudentId.value = "";
             
-            message.innerHTML = `Menyiapkan data kelas ${className}... <span class="spinner"></span>`;
-
-            const instances = await getFirebaseInstanceForClass(className);
-            if (!instances) {
-                message.style.color = "red";
-                message.textContent = "Gagal memuat konfigurasi database.";
-                customSelectNamaSiswaDisplay.textContent = customSelectNamaSiswaDisplay.dataset.placeholder;
-                updateLoginButtonStatus();
-                return;
-            }
-            currentDb = instances.db;
-            currentAuth = instances.auth;
-
+            // Load siswa dari DB yang sudah di-set saat pilih Grade
             await loadStudentsAndFilterByClass();
             updateLoginButtonStatus();
         }
@@ -2541,13 +2580,13 @@
                 return false;
             }
 
-            // --- PERBAIKAN: Mengembalikan logika pemulihan yang hilang ---
+            // Restore Grade & Theme
             currentSelectedGrade = selectedGrade;
-            // Apply theme on restore
             document.body.classList.remove('theme-kelas7', 'theme-kelas8', 'theme-kelas9');
             document.body.classList.add(`theme-kelas${selectedGrade}`);
 
-            const instances = await getFirebaseInstanceForClass(selectedClass);
+            // Restore DB Connection based on Grade
+            const instances = getDbForGrade(selectedGrade);
             if (!instances) {
                 sessionStorage.clear();
                 return false;
@@ -2575,7 +2614,7 @@
                 submitAnswers(true);
                 return true;
             }
-        } // --- PERBAIKAN: Menutup fungsi restoreExamState dengan benar ---
+        } 
 
         // === [FITUR BARU] LISTENER REAL-TIME ATURAN DURASI (Di luar fungsi lain) ===
         function startMinDurationListener() {
@@ -3217,7 +3256,7 @@
         async function selectGrade(grade) {
             currentSelectedGrade = grade;
             
-            // === GANTI TEMA WARNA DINAMIS (TEKNIK CSS CLASS) ===
+            // === GANTI TEMA WARNA DINAMIS ===
             document.body.classList.remove('theme-kelas7', 'theme-kelas8', 'theme-kelas9');
             document.body.classList.add(`theme-kelas${grade}`);
 
@@ -3233,7 +3272,7 @@
             loginJudulUjian.textContent = `UJIAN KELAS ${grade}`;
             classModalTitle.textContent = `Pilih Kelas ${grade}`;
 
-            currentClassGroupKeys = getClassGroupKeysByGrade(grade);
+            // Reset dan Load Data Kelas dari DB Grade yang dipilih
             loadClassDropdownForGrade(grade);
         }
         
@@ -3351,46 +3390,51 @@
             }
 
             try {
-                // Mencoba Login ke Database Utama
-                await signInAnonymously(setupAuth);
-                await fetchGlobalSettings();
+                // Mencoba Login Otomatis ke SEMUA Database
+                const loginSuccess = await performAnonymousLogin();
+                
+                if (loginSuccess) {
+                    await fetchGlobalSettings();
 
-                // === LOGIKA RESTORE ATAU WELCOME ===
-                if (isBlockEnabled && !isAllowedEnvironment()) {
-                    unlockAccessBtn.onclick = async () => {
-                        if (unlockKeyInput.value === blockAccessKey) {
-                            accessBlockedOverlay.style.display = 'none';
-                            loadingSpinner.style.display = 'flex';
-                            const isRestored = await restoreExamState();
-                             if (!isRestored) {
-                                await loadAndRenderWelcomeButtons();
-                                loadingSpinner.style.display = 'none';
-                                welcomeScreen.style.display = 'flex';
+                    // === LOGIKA RESTORE ATAU WELCOME ===
+                    if (isBlockEnabled && !isAllowedEnvironment()) {
+                        unlockAccessBtn.onclick = async () => {
+                            if (unlockKeyInput.value === blockAccessKey) {
+                                accessBlockedOverlay.style.display = 'none';
+                                loadingSpinner.style.display = 'flex';
+                                const isRestored = await restoreExamState();
+                                 if (!isRestored) {
+                                    await loadAndRenderWelcomeButtons();
+                                    loadingSpinner.style.display = 'none';
+                                    welcomeScreen.style.display = 'flex';
+                                } else {
+                                    loadingSpinner.style.display = 'none';
+                                }
                             } else {
-                                loadingSpinner.style.display = 'none';
+                                unlockMessage.textContent = "Kunci yang dimasukkan salah.";
                             }
-                        } else {
-                            unlockMessage.textContent = "Kunci yang dimasukkan salah.";
-                        }
-                    };
-                    loadingSpinner.style.display = 'none';
-                    accessBlockedOverlay.style.display = 'flex';
-                } else {
-                    const isRestored = await restoreExamState();
-                    if (!isRestored) {
-                       await loadAndRenderWelcomeButtons();
-                       loadingSpinner.style.display = 'none';
-                       welcomeScreen.style.display = 'flex';
-                    } else {
+                        };
                         loadingSpinner.style.display = 'none';
+                        accessBlockedOverlay.style.display = 'flex';
+                    } else {
+                        const isRestored = await restoreExamState();
+                        if (!isRestored) {
+                           await loadAndRenderWelcomeButtons();
+                           loadingSpinner.style.display = 'none';
+                           welcomeScreen.style.display = 'flex';
+                        } else {
+                           loadingSpinner.style.display = 'none';
+                        }
                     }
+                } else {
+                    // Jika login gagal total
+                    throw new Error("Gagal login otomatis");
                 }
             } catch (error) {
-                console.error("Login otomatis (Anonymous) atau Fetch gagal:", error);
+                console.error("Inisialisasi aplikasi gagal:", error);
                 loadingSpinner.style.display = 'none';
 
                 // KILL SWITCH: Jika gagal login (karena kuota penuh, server down, atau sinyal mati)
-                // Langsung tampilkan modal permanen
                 document.getElementById('serverDownModal').classList.add('show');
                 isAnyModalOpen = true; 
             }
