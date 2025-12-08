@@ -1383,7 +1383,7 @@
             <h1 id="blockedTitle" class="no-select">AKSES DIBLOKIR</h1>
             <p>Ujian hanya bisa diakses melalui aplikasi yang sudah disosialisasikan. Silahkan hubungi Admin jika terdapat kendala.</p>
             
-            <!-- TOMBOL DOWNLOAD APLIKASI (MODAL IFRAME) -->
+            <!-- TOMBOL DOWNLOAD APLIKASI (TAB BARU) -->
             <button id="btnDownloadApp" style="display: block; width: 100%; margin-bottom: 20px; padding: 15px; border-radius: 8px; font-weight: bold; background-color: #343a40; color: white; border: none;">
                 DOWNLOAD APLIKASI
             </button>
@@ -1400,17 +1400,6 @@
             </div>
             
             <p id="unlockMessage"></p>
-        </div>
-    </div>
-
-    <!-- MODAL DOWNLOAD APLIKASI -->
-    <div id="appDownloadModal" class="custom-modal">
-        <div class="custom-modal-content" style="max-width: 95%; width: 500px; height: 80vh; padding: 0; display: flex; flex-direction: column; overflow: hidden;">
-            <div style="padding: 10px 15px; background: var(--primary-color); color: white; display: flex; justify-content: space-between; align-items: center;">
-                <h4 style="margin: 0; color: white; font-size: 1.1em; text-align: left;">Download Aplikasi</h4>
-                <button onclick="window.closeAppDownloadModal()" style="width: auto; padding: 5px 10px; margin: 0; background: transparent; border: 1px solid white; font-size: 0.8em; color: white; cursor: pointer;">Tutup</button>
-            </div>
-            <iframe id="appDownloadFrame" style="flex-grow: 1; border: none; width: 100%; height: 100%; background: white;"></iframe>
         </div>
     </div>
 
@@ -3614,29 +3603,13 @@
             blockedTitle.addEventListener('touchend', cancelLongPress);
             blockedTitle.addEventListener('touchcancel', cancelLongPress);
 
-            // LOGIKA BARU: TOMBOL DOWNLOAD APLIKASI (MODAL IFRAME)
+            // LOGIKA BARU: TOMBOL DOWNLOAD APLIKASI (TAB BARU)
             const btnDownloadApp = document.getElementById('btnDownloadApp');
             if (btnDownloadApp) {
                 btnDownloadApp.style.display = 'block';
                 btnDownloadApp.addEventListener('click', () => {
-                    const modal = document.getElementById('appDownloadModal');
-                    const iframe = document.getElementById('appDownloadFrame');
-                    if (modal && iframe) {
-                        iframe.src = 'https://appsperopa.pages.dev'; // Force HTTPS
-                        modal.classList.add('show');
-                        isAnyModalOpen = true;
-                    }
+                    window.open('https://appsperopa.pages.dev', '_blank');
                 });
-            }
-            
-            window.closeAppDownloadModal = function() {
-                const modal = document.getElementById('appDownloadModal');
-                const iframe = document.getElementById('appDownloadFrame');
-                if (modal) {
-                    modal.classList.remove('show');
-                    if(iframe) iframe.src = ''; // Clear src to stop playing/loading
-                    isAnyModalOpen = false;
-                }
             }
         });
         
