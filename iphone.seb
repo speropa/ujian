@@ -47,6 +47,35 @@
         :not(.hidden-modal) .modal-content-box {
             transform: scale(1) translateY(0);
         }
+
+        /* --- STYLE BARU: Loading Spinner --- */
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        .spinner {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-top-color: white;
+            animation: spin 1s ease-in-out infinite;
+            display: inline-block;
+        }
+        /* Spinner warna Biru (untuk tombol putih) */
+        .spinner-blue {
+            border-color: rgba(37, 99, 235, 0.2);
+            border-top-color: #2563eb;
+        }
+        /* Spinner warna Abu (untuk tombol putih border abu) */
+        .spinner-gray {
+            border-color: rgba(75, 85, 99, 0.2);
+            border-top-color: #4b5563;
+        }
+        /* Spinner Putih (untuk tombol background gelap) */
+        .spinner-white {
+            border-color: rgba(255, 255, 255, 0.3);
+            border-top-color: #ffffff;
+        }
     </style>
 </head>
 <body class="bg-gradient-to-br from-slate-100 to-slate-200 min-h-screen flex items-center justify-center p-4">
@@ -99,10 +128,13 @@
                 </button>
 
                 <!-- Tombol 2: Download APK (Android) -->
+                <!-- Menambahkan onclick="animateButton()" untuk efek loading -->
                 <a href="https://github.com/speropa/linkujian/raw/refs/heads/main/com.paijo.broexam_2.0.apk" 
+                   onclick="animateButton(this, 'spinner-white')"
                    class="btn-hover block w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-4 px-6 rounded-xl flex items-center justify-between group decoration-none">
                     <div class="flex items-center gap-4">
-                        <div class="w-10 h-10 bg-white/20 rounded-lg flex items-center justify-center text-xl">
+                        <!-- Icon Container yang akan diubah jadi spinner -->
+                        <div class="icon-container w-10 h-10 bg-white/20 rounded-lg flex items-center justify-center text-xl">
                             <i class="fa-brands fa-android"></i>
                         </div>
                         <div class="text-left">
@@ -158,9 +190,11 @@
             <!-- Body -->
             <div class="p-6 space-y-3">
                 <p class="text-sm text-gray-500 mb-2">Pilih cara untuk membuka ujian di Laptop/PC:</p>
-                <!-- Pilihan 1 -->
-                <a href="https://drive.google.com/uc?export=download&id=1ULZ2WyDJrs03BPkH5cmdPMVd-Vm-ib5P" class="btn-hover block w-full bg-white border-2 border-blue-100 hover:border-blue-500 hover:bg-blue-50 text-blue-700 font-semibold py-3 px-4 rounded-xl flex items-center gap-3 group decoration-none">
-                    <div class="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center text-blue-600 shrink-0">
+                <!-- Pilihan 1: Download File (Spinner Biru) -->
+                <a href="https://drive.google.com/uc?export=download&id=1ULZ2WyDJrs03BPkH5cmdPMVd-Vm-ib5P" 
+                   onclick="animateButton(this, 'spinner-blue')"
+                   class="btn-hover block w-full bg-white border-2 border-blue-100 hover:border-blue-500 hover:bg-blue-50 text-blue-700 font-semibold py-3 px-4 rounded-xl flex items-center gap-3 group decoration-none">
+                    <div class="icon-container w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center text-blue-600 shrink-0">
                         <i class="fa-solid fa-file-arrow-down"></i>
                     </div>
                     <div class="flex-1 text-left">
@@ -168,9 +202,11 @@
                         <div class="text-xs text-blue-600/70">Simpan file .seb</div>
                     </div>
                 </a>
-                <!-- Pilihan 2 -->
-                <a href="sebs://raw.githubusercontent.com/speropa/ujian/refs/heads/main/Ujian%20Online%20Speropa.seb" class="btn-hover block w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-4 rounded-xl flex items-center gap-3 group decoration-none">
-                    <div class="w-8 h-8 bg-white/20 rounded-lg flex items-center justify-center text-white shrink-0">
+                <!-- Pilihan 2: Langsung Buka (Spinner Putih) -->
+                <a href="sebs://raw.githubusercontent.com/speropa/ujian/refs/heads/main/Ujian%20Online%20Speropa.seb" 
+                   onclick="animateButton(this, 'spinner-white')"
+                   class="btn-hover block w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-4 rounded-xl flex items-center gap-3 group decoration-none">
+                    <div class="icon-container w-8 h-8 bg-white/20 rounded-lg flex items-center justify-center text-white shrink-0">
                         <i class="fa-solid fa-rocket"></i>
                     </div>
                     <div class="flex-1 text-left">
@@ -204,9 +240,11 @@
             <div class="p-6 space-y-3">
                 <p class="text-sm text-gray-500 mb-2">Pastikan aplikasi SEB sudah terinstall, lalu pilih:</p>
                 
-                <!-- Pilihan 1: Download Config -->
-                <a href="https://raw.githubusercontent.com/speropa/ujian/refs/heads/main/iphone.seb" class="btn-hover block w-full bg-white border-2 border-gray-200 hover:border-gray-500 hover:bg-gray-50 text-gray-700 font-semibold py-3 px-4 rounded-xl flex items-center gap-3 group decoration-none">
-                    <div class="w-8 h-8 bg-gray-100 rounded-lg flex items-center justify-center text-gray-600 shrink-0">
+                <!-- Pilihan 1: Download Config (Spinner Abu) -->
+                <a href="https://raw.githubusercontent.com/speropa/ujian/refs/heads/main/iphone.seb" 
+                   onclick="animateButton(this, 'spinner-gray')"
+                   class="btn-hover block w-full bg-white border-2 border-gray-200 hover:border-gray-500 hover:bg-gray-50 text-gray-700 font-semibold py-3 px-4 rounded-xl flex items-center gap-3 group decoration-none">
+                    <div class="icon-container w-8 h-8 bg-gray-100 rounded-lg flex items-center justify-center text-gray-600 shrink-0">
                         <i class="fa-solid fa-file-arrow-down"></i>
                     </div>
                     <div class="flex-1 text-left">
@@ -215,9 +253,11 @@
                     </div>
                 </a>
 
-                <!-- Pilihan 2: Langsung Buka (SEBS) -->
-                <a href="sebs://raw.githubusercontent.com/speropa/ujian/refs/heads/main/iphone.seb" class="btn-hover block w-full bg-gray-800 hover:bg-gray-900 text-white font-semibold py-3 px-4 rounded-xl flex items-center gap-3 group decoration-none">
-                    <div class="w-8 h-8 bg-white/20 rounded-lg flex items-center justify-center text-white shrink-0">
+                <!-- Pilihan 2: Langsung Buka (Spinner Putih) -->
+                <a href="sebs://raw.githubusercontent.com/speropa/ujian/refs/heads/main/iphone.seb" 
+                   onclick="animateButton(this, 'spinner-white')"
+                   class="btn-hover block w-full bg-gray-800 hover:bg-gray-900 text-white font-semibold py-3 px-4 rounded-xl flex items-center gap-3 group decoration-none">
+                    <div class="icon-container w-8 h-8 bg-white/20 rounded-lg flex items-center justify-center text-white shrink-0">
                         <i class="fa-solid fa-bolt"></i>
                     </div>
                     <div class="flex-1 text-left">
@@ -265,7 +305,34 @@
             }
         }
 
-        // Tutup dengan tombol ESC (Menutup semua modal yang aktif)
+        // --- ANTI SPAM & ANIMASI DOWNLOAD ---
+        function animateButton(element, spinnerClass) {
+            // Jika sedang loading/disabled, hentikan aksi
+            if (element.classList.contains('pointer-events-none')) return;
+
+            // 1. Matikan klik pada tombol
+            element.classList.add('pointer-events-none', 'opacity-75', 'cursor-not-allowed');
+
+            // 2. Cari container ikon di dalam tombol
+            const iconContainer = element.querySelector('.icon-container');
+            let originalIcon = '';
+
+            if (iconContainer) {
+                originalIcon = iconContainer.innerHTML;
+                // Ganti ikon dengan spinner
+                iconContainer.innerHTML = `<div class="spinner ${spinnerClass}"></div>`;
+            }
+
+            // 3. Reset tombol setelah 5 detik
+            setTimeout(() => {
+                element.classList.remove('pointer-events-none', 'opacity-75', 'cursor-not-allowed');
+                if (iconContainer) {
+                    iconContainer.innerHTML = originalIcon;
+                }
+            }, 5000); // Waktu jeda 5000ms (5 detik)
+        }
+
+        // Tutup dengan tombol ESC
         document.addEventListener('keydown', function(e) {
             if (e.key === "Escape") {
                 document.querySelectorAll('.modal-overlay:not(.hidden-modal)').forEach(modal => {
