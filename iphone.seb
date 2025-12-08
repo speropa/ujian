@@ -1,1636 +1,278 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE plist PUBLIC "-//Apple Computer//DTD PLIST 1.0//EN" "https://www.apple.com/DTDs/PropertyList-1.0.dtd">
-<plist version="1.0">
-  <dict>
-    <key>additionalDictionaries</key>
-    <array></array>
-    <key>additionalResources</key>
-    <array></array>
-    <key>allowApplicationLog</key>
-    <false />
-    <key>allowAudioCapture</key>
-    <false />
-    <key>allowBrowsingBackForward</key>
-    <false />
-    <key>allowCustomDownUploadLocation</key>
-    <false />
-    <key>allowDeveloperConsole</key>
-    <false />
-    <key>allowDictation</key>
-    <false />
-    <key>allowDictionaryLookup</key>
-    <false />
-    <key>allowDisplayMirroring</key>
-    <false />
-    <key>allowDownUploads</key>
-    <true />
-    <key>allowedDisplayBuiltin</key>
-    <true />
-    <key>allowedDisplayBuiltinEnforce</key>
-    <false />
-    <key>allowedDisplaysIgnoreFailure</key>
-    <false />
-    <key>allowedDisplaysMaxNumber</key>
-    <integer>1</integer>
-    <key>allowFind</key>
-    <false />
-    <key>allowFlashFullscreen</key>
-    <false />
-    <key>allowPDFPlugIn</key>
-    <false />
-    <key>allowPDFReaderToolbar</key>
-    <false />
-    <key>allowPreferencesWindow</key>
-    <true />
-    <key>allowPrint</key>
-    <false />
-    <key>allowQuit</key>
-    <true />
-    <key>allowScreenSharing</key>
-    <false />
-    <key>allowSiri</key>
-    <false />
-    <key>allowSpellCheck</key>
-    <false />
-    <key>allowSpellCheckDictionary</key>
-    <array></array>
-    <key>allowSwitchToApplications</key>
-    <false />
-    <key>allowUserAppFolderInstall</key>
-    <false />
-    <key>allowVideoCapture</key>
-    <false />
-    <key>allowVirtualMachine</key>
-    <false />
-    <key>allowWlan</key>
-    <true />
-    <key>audioControlEnabled</key>
-    <false />
-    <key>audioMute</key>
-    <false />
-    <key>audioSetVolumeLevel</key>
-    <false />
-    <key>audioVolumeLevel</key>
-    <integer>25</integer>
-    <key>backgroundOpenSEBConfig</key>
-    <false />
-    <key>blacklistURLFilter</key>
-    <string />
-    <key>blockPopUpWindows</key>
-    <false />
-    <key>browserExamKey</key>
-    <string />
-    <key>browserMessagingPingTime</key>
-    <integer>120000</integer>
-    <key>browserMessagingSocket</key>
-    <string>ws://localhost:8706</string>
-    <key>browserScreenKeyboard</key>
-    <false />
-    <key>browserShowFileSystemElementPath</key>
-    <true />
-    <key>browserURLSalt</key>
-    <true />
-    <key>browserUserAgent</key>
-    <string />
-    <key>browserUserAgentMac</key>
-    <integer>0</integer>
-    <key>browserUserAgentMacCustom</key>
-    <string />
-    <key>browserUserAgentWinDesktopMode</key>
-    <integer>0</integer>
-    <key>browserUserAgentWinDesktopModeCustom</key>
-    <string />
-    <key>browserUserAgentWinTouchMode</key>
-    <integer>0</integer>
-    <key>browserUserAgentWinTouchModeCustom</key>
-    <string />
-    <key>browserUserAgentWinTouchModeIPad</key>
-    <string>Mozilla/5.0 (iPad; CPU OS 11_3 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/11.3 Mobile/15E216 Safari/605.1.15</string>
-    <key>browserViewMode</key>
-    <integer>1</integer>
-    <key>browserWindowAllowAddressBar</key>
-    <false />
-    <key>browserWindowAllowReload</key>
-    <true />
-    <key>browserWindowShowURL</key>
-    <integer>0</integer>
-    <key>browserWindowTitleSuffix</key>
-    <string />
-    <key>chooseFileToUploadPolicy</key>
-    <integer>0</integer>
-    <key>clipboardPolicy</key>
-    <integer>2</integer>
-    <key>createNewDesktop</key>
-    <true />
-    <key>detectStoppedProcess</key>
-    <true />
-    <key>downloadAndOpenSebConfig</key>
-    <true />
-    <key>downloadDirectoryOSX</key>
-    <string>~/Downloads</string>
-    <key>downloadDirectoryWin</key>
-    <string />
-    <key>downloadPDFFiles</key>
-    <false />
-    <key>embeddedCertificates</key>
-    <array></array>
-    <key>enableAltEsc</key>
-    <false />
-    <key>enableAltF4</key>
-    <false />
-    <key>enableAltMouseWheel</key>
-    <false />
-    <key>enableAltTab</key>
-    <true />
-    <key>enableAppSwitcherCheck</key>
-    <true />
-    <key>enableBrowserWindowToolbar</key>
-    <false />
-    <key>enableChromeNotifications</key>
-    <false />
-    <key>enableCtrlEsc</key>
-    <false />
-    <key>enableEsc</key>
-    <true />
-    <key>enableF1</key>
-    <true />
-    <key>enableF10</key>
-    <true />
-    <key>enableF11</key>
-    <true />
-    <key>enableF12</key>
-    <true />
-    <key>enableF2</key>
-    <true />
-    <key>enableF3</key>
-    <true />
-    <key>enableF4</key>
-    <true />
-    <key>enableF5</key>
-    <true />
-    <key>enableF6</key>
-    <true />
-    <key>enableF7</key>
-    <true />
-    <key>enableF8</key>
-    <true />
-    <key>enableF9</key>
-    <true />
-    <key>enableFindPrinter</key>
-    <false />
-    <key>enableJava</key>
-    <false />
-    <key>enableJavaScript</key>
-    <true />
-    <key>enableLogging</key>
-    <true />
-    <key>enableMiddleMouse</key>
-    <false />
-    <key>enablePlugIns</key>
-    <true />
-    <key>enablePrintScreen</key>
-    <false />
-    <key>enablePrivateClipboard</key>
-    <true />
-    <key>enableRightMouse</key>
-    <true />
-    <key>enableSebBrowser</key>
-    <true />
-    <key>enableStartMenu</key>
-    <false />
-    <key>enableTouchExit</key>
-    <false />
-    <key>enableURLContentFilter</key>
-    <false />
-    <key>enableURLFilter</key>
-    <false />
-    <key>enableWindowsUpdate</key>
-    <false />
-    <key>enableZoomPage</key>
-    <false />
-    <key>enableZoomText</key>
-    <false />
-    <key>examKeySalt</key>
-    <data>k72KoaTZxSVq3QsKrdUwpPdfsbSt3BqxUDKf9+okyDg=</data>
-    <key>examSessionClearCookiesOnEnd</key>
-    <true />
-    <key>examSessionClearCookiesOnStart</key>
-    <true />
-    <key>examSessionReconfigureAllow</key>
-    <false />
-    <key>examSessionReconfigureConfigURL</key>
-    <string />
-    <key>exitKey1</key>
-    <integer>2</integer>
-    <key>exitKey2</key>
-    <integer>10</integer>
-    <key>exitKey3</key>
-    <integer>5</integer>
-    <key>forceAppFolderInstall</key>
-    <true />
-    <key>hashedAdminPassword</key>
-    <string />
-    <key>hashedQuitPassword</key>
-    <string />
-    <key>hideBrowserWindowToolbar</key>
-    <false />
-    <key>hookKeys</key>
-    <true />
-    <key>ignoreExitKeys</key>
-    <true />
-    <key>insideSebEnableChangeAPassword</key>
-    <false />
-    <key>insideSebEnableEaseOfAccess</key>
-    <false />
-    <key>insideSebEnableLockThisComputer</key>
-    <false />
-    <key>insideSebEnableLogOff</key>
-    <false />
-    <key>insideSebEnableNetworkConnectionSelector</key>
-    <false />
-    <key>insideSebEnableShutDown</key>
-    <false />
-    <key>insideSebEnableStartTaskManager</key>
-    <false />
-    <key>insideSebEnableSwitchUser</key>
-    <false />
-    <key>insideSebEnableVmWareClientShade</key>
-    <false />
-    <key>killExplorerShell</key>
-    <false />
-    <key>lockOnMessageSocketClose</key>
-    <true />
-    <key>logDirectoryOSX</key>
-    <string>~/Documents</string>
-    <key>logDirectoryWin</key>
-    <string />
-    <key>mainBrowserWindowHeight</key>
-    <string>100%</string>
-    <key>mainBrowserWindowPositioning</key>
-    <integer>1</integer>
-    <key>mainBrowserWindowWidth</key>
-    <string>100%</string>
-    <key>minMacOSVersion</key>
-    <integer>4</integer>
-    <key>monitorProcesses</key>
-    <true />
-    <key>newBrowserWindowAllowAddressBar</key>
-    <false />
-    <key>newBrowserWindowAllowReload</key>
-    <true />
-    <key>newBrowserWindowByLinkBlockForeign</key>
-    <false />
-    <key>newBrowserWindowByLinkHeight</key>
-    <string>100%</string>
-    <key>newBrowserWindowByLinkPolicy</key>
-    <integer>1</integer>
-    <key>newBrowserWindowByLinkPositioning</key>
-    <integer>2</integer>
-    <key>newBrowserWindowByLinkWidth</key>
-    <string>1000</string>
-    <key>newBrowserWindowByScriptBlockForeign</key>
-    <false />
-    <key>newBrowserWindowByScriptPolicy</key>
-    <integer>2</integer>
-    <key>newBrowserWindowNavigation</key>
-    <true />
-    <key>newBrowserWindowShowReloadWarning</key>
-    <true />
-    <key>newBrowserWindowShowURL</key>
-    <integer>0</integer>
-    <key>openDownloads</key>
-    <false />
-    <key>originatorVersion</key>
-    <string>SEB_Win_2.1.1</string>
-    <key>oskBehavior</key>
-    <integer>2</integer>
-    <key>permittedProcesses</key>
-    <array></array>
-    <key>pinEmbeddedCertificates</key>
-    <false />
-    <key>prohibitedProcesses</key>
-    <array>
-      <dict>
-        <key>active</key>
-        <true />
-        <key>currentUser</key>
-        <true />
-        <key>strongKill</key>
-        <false />
-        <key>os</key>
-        <integer>1</integer>
-        <key>executable</key>
-        <string>Guilded.exe</string>
-        <key>originalName</key>
-        <string>Guilded.exe</string>
-        <key>description</key>
-        <string />
-        <key>identifier</key>
-        <string />
-        <key>windowHandlingProcess</key>
-        <string />
-        <key>user</key>
-        <string />
-      </dict>
-      <dict>
-        <key>active</key>
-        <true />
-        <key>currentUser</key>
-        <true />
-        <key>strongKill</key>
-        <false />
-        <key>os</key>
-        <integer>1</integer>
-        <key>executable</key>
-        <string>sethc.exe</string>
-        <key>originalName</key>
-        <string>sethc.exe</string>
-        <key>description</key>
-        <string />
-        <key>identifier</key>
-        <string />
-        <key>windowHandlingProcess</key>
-        <string />
-        <key>user</key>
-        <string />
-      </dict>
-      <dict>
-        <key>active</key>
-        <true />
-        <key>currentUser</key>
-        <true />
-        <key>strongKill</key>
-        <false />
-        <key>os</key>
-        <integer>1</integer>
-        <key>executable</key>
-        <string>vlc.exe</string>
-        <key>originalName</key>
-        <string>vlc.exe</string>
-        <key>description</key>
-        <string />
-        <key>identifier</key>
-        <string />
-        <key>windowHandlingProcess</key>
-        <string />
-        <key>user</key>
-        <string />
-      </dict>
-      <dict>
-        <key>active</key>
-        <true />
-        <key>currentUser</key>
-        <true />
-        <key>strongKill</key>
-        <false />
-        <key>os</key>
-        <integer>1</integer>
-        <key>executable</key>
-        <string>Microsoft.Media.Player.exe</string>
-        <key>originalName</key>
-        <string>Microsoft.Media.Player.exe</string>
-        <key>description</key>
-        <string />
-        <key>identifier</key>
-        <string />
-        <key>windowHandlingProcess</key>
-        <string />
-        <key>user</key>
-        <string />
-      </dict>
-      <dict>
-        <key>active</key>
-        <true />
-        <key>currentUser</key>
-        <true />
-        <key>strongKill</key>
-        <false />
-        <key>os</key>
-        <integer>1</integer>
-        <key>executable</key>
-        <string>spotify.exe</string>
-        <key>originalName</key>
-        <string>spotify.exe</string>
-        <key>description</key>
-        <string />
-        <key>identifier</key>
-        <string />
-        <key>windowHandlingProcess</key>
-        <string />
-        <key>user</key>
-        <string />
-      </dict>
-      <dict>
-        <key>active</key>
-        <true />
-        <key>currentUser</key>
-        <true />
-        <key>strongKill</key>
-        <false />
-        <key>os</key>
-        <integer>1</integer>
-        <key>executable</key>
-        <string>DiscordCanary.exe</string>
-        <key>originalName</key>
-        <string>DiscordCanary.exe</string>
-        <key>description</key>
-        <string />
-        <key>identifier</key>
-        <string />
-        <key>windowHandlingProcess</key>
-        <string />
-        <key>user</key>
-        <string />
-      </dict>
-      <dict>
-        <key>active</key>
-        <true />
-        <key>currentUser</key>
-        <true />
-        <key>strongKill</key>
-        <false />
-        <key>os</key>
-        <integer>1</integer>
-        <key>executable</key>
-        <string>DiscordPTB.exe</string>
-        <key>originalName</key>
-        <string>DiscordPTB.exe</string>
-        <key>description</key>
-        <string />
-        <key>identifier</key>
-        <string />
-        <key>windowHandlingProcess</key>
-        <string />
-        <key>user</key>
-        <string />
-      </dict>
-      <dict>
-        <key>active</key>
-        <true />
-        <key>currentUser</key>
-        <true />
-        <key>description</key>
-        <string />
-        <key>executable</key>
-        <string>obs32.exe</string>
-        <key>identifier</key>
-        <string />
-        <key>originalName</key>
-        <string>obs32.exe</string>
-        <key>os</key>
-        <integer>1</integer>
-        <key>strongKill</key>
-        <false />
-        <key>user</key>
-        <string />
-        <key>windowHandlingProcess</key>
-        <string />
-      </dict>
-      <dict>
-        <key>active</key>
-        <true />
-        <key>currentUser</key>
-        <true />
-        <key>description</key>
-        <string />
-        <key>executable</key>
-        <string>obs64.exe</string>
-        <key>identifier</key>
-        <string />
-        <key>originalName</key>
-        <string>obs64.exe</string>
-        <key>os</key>
-        <integer>1</integer>
-        <key>strongKill</key>
-        <false />
-        <key>user</key>
-        <string />
-        <key>windowHandlingProcess</key>
-        <string />
-      </dict>
-      <dict>
-        <key>active</key>
-        <true />
-        <key>currentUser</key>
-        <true />
-        <key>description</key>
-        <string />
-        <key>executable</key>
-        <string>pcmontask.exe</string>
-        <key>identifier</key>
-        <string />
-        <key>originalName</key>
-        <string>pcmontask.exe</string>
-        <key>os</key>
-        <integer>1</integer>
-        <key>strongKill</key>
-        <false />
-        <key>user</key>
-        <string />
-        <key>windowHandlingProcess</key>
-        <string />
-      </dict>
-      <dict>
-        <key>active</key>
-        <true />
-        <key>currentUser</key>
-        <true />
-        <key>description</key>
-        <string />
-        <key>executable</key>
-        <string>PCMonitorSrv.exe</string>
-        <key>identifier</key>
-        <string />
-        <key>originalName</key>
-        <string>PCMonitorSrv.exe</string>
-        <key>os</key>
-        <integer>1</integer>
-        <key>strongKill</key>
-        <false />
-        <key>user</key>
-        <string />
-        <key>windowHandlingProcess</key>
-        <string />
-      </dict>
-      <dict>
-        <key>active</key>
-        <true />
-        <key>currentUser</key>
-        <true />
-        <key>description</key>
-        <string />
-        <key>executable</key>
-        <string>strwinclt.exe</string>
-        <key>identifier</key>
-        <string />
-        <key>originalName</key>
-        <string>strwinclt.exe</string>
-        <key>os</key>
-        <integer>1</integer>
-        <key>strongKill</key>
-        <false />
-        <key>user</key>
-        <string />
-        <key>windowHandlingProcess</key>
-        <string />
-      </dict>
-      <dict>
-        <key>active</key>
-        <true />
-        <key>currentUser</key>
-        <true />
-        <key>description</key>
-        <string />
-        <key>executable</key>
-        <string>SRServer.exe</string>
-        <key>identifier</key>
-        <string />
-        <key>originalName</key>
-        <string>SRServer.exe</string>
-        <key>os</key>
-        <integer>1</integer>
-        <key>strongKill</key>
-        <false />
-        <key>user</key>
-        <string />
-        <key>windowHandlingProcess</key>
-        <string />
-      </dict>
-      <dict>
-        <key>active</key>
-        <true />
-        <key>currentUser</key>
-        <true />
-        <key>description</key>
-        <string />
-        <key>executable</key>
-        <string>remoting_host.exe</string>
-        <key>identifier</key>
-        <string />
-        <key>originalName</key>
-        <string>remoting_host.exe</string>
-        <key>os</key>
-        <integer>1</integer>
-        <key>strongKill</key>
-        <false />
-        <key>user</key>
-        <string />
-        <key>windowHandlingProcess</key>
-        <string />
-      </dict>
-      <dict>
-        <key>active</key>
-        <true />
-        <key>currentUser</key>
-        <true />
-        <key>description</key>
-        <string />
-        <key>executable</key>
-        <string>CiscoWebExStart.exe</string>
-        <key>identifier</key>
-        <string />
-        <key>originalName</key>
-        <string>CiscoWebExStart.exe</string>
-        <key>os</key>
-        <integer>1</integer>
-        <key>strongKill</key>
-        <false />
-        <key>user</key>
-        <string />
-        <key>windowHandlingProcess</key>
-        <string />
-      </dict>
-      <dict>
-        <key>active</key>
-        <true />
-        <key>currentUser</key>
-        <true />
-        <key>description</key>
-        <string />
-        <key>executable</key>
-        <string>CiscoCollabHost.exe</string>
-        <key>identifier</key>
-        <string />
-        <key>originalName</key>
-        <string>CiscoCollabHost.exe</string>
-        <key>os</key>
-        <integer>1</integer>
-        <key>strongKill</key>
-        <false />
-        <key>user</key>
-        <string />
-        <key>windowHandlingProcess</key>
-        <string />
-      </dict>
-      <dict>
-        <key>active</key>
-        <true />
-        <key>currentUser</key>
-        <true />
-        <key>description</key>
-        <string />
-        <key>executable</key>
-        <string>AA_v3.exe</string>
-        <key>identifier</key>
-        <string />
-        <key>originalName</key>
-        <string>AA_v3.exe</string>
-        <key>os</key>
-        <integer>1</integer>
-        <key>strongKill</key>
-        <false />
-        <key>user</key>
-        <string />
-        <key>windowHandlingProcess</key>
-        <string />
-      </dict>
-      <dict>
-        <key>active</key>
-        <true />
-        <key>currentUser</key>
-        <true />
-        <key>description</key>
-        <string />
-        <key>executable</key>
-        <string>ptoneclk.exe</string>
-        <key>identifier</key>
-        <string />
-        <key>originalName</key>
-        <string>ptoneclk.exe</string>
-        <key>os</key>
-        <integer>1</integer>
-        <key>strongKill</key>
-        <false />
-        <key>user</key>
-        <string />
-        <key>windowHandlingProcess</key>
-        <string />
-      </dict>
-      <dict>
-        <key>active</key>
-        <true />
-        <key>currentUser</key>
-        <true />
-        <key>description</key>
-        <string />
-        <key>executable</key>
-        <string>webexmta.exe</string>
-        <key>identifier</key>
-        <string />
-        <key>originalName</key>
-        <string>webexmta.exe</string>
-        <key>os</key>
-        <integer>1</integer>
-        <key>strongKill</key>
-        <false />
-        <key>user</key>
-        <string />
-        <key>windowHandlingProcess</key>
-        <string />
-      </dict>
-      <dict>
-        <key>active</key>
-        <true />
-        <key>currentUser</key>
-        <true />
-        <key>description</key>
-        <string />
-        <key>executable</key>
-        <string>MS-Teams.exe</string>
-        <key>identifier</key>
-        <string />
-        <key>originalName</key>
-        <string>MS-Teams.exe</string>
-        <key>os</key>
-        <integer>1</integer>
-        <key>strongKill</key>
-        <false />
-        <key>user</key>
-        <string />
-        <key>windowHandlingProcess</key>
-        <string />
-      </dict>
-      <dict>
-        <key>active</key>
-        <true />
-        <key>currentUser</key>
-        <true />
-        <key>description</key>
-        <string />
-        <key>executable</key>
-        <string>Teams.exe</string>
-        <key>identifier</key>
-        <string />
-        <key>originalName</key>
-        <string>Teams.exe</string>
-        <key>os</key>
-        <integer>1</integer>
-        <key>strongKill</key>
-        <false />
-        <key>user</key>
-        <string />
-        <key>windowHandlingProcess</key>
-        <string />
-      </dict>
-      <dict>
-        <key>active</key>
-        <true />
-        <key>currentUser</key>
-        <true />
-        <key>description</key>
-        <string />
-        <key>executable</key>
-        <string>join.me.sentinel.exe</string>
-        <key>identifier</key>
-        <string />
-        <key>originalName</key>
-        <string>join.me.sentinel.exe</string>
-        <key>os</key>
-        <integer>1</integer>
-        <key>strongKill</key>
-        <false />
-        <key>user</key>
-        <string />
-        <key>windowHandlingProcess</key>
-        <string />
-      </dict>
-      <dict>
-        <key>active</key>
-        <true />
-        <key>currentUser</key>
-        <true />
-        <key>description</key>
-        <string />
-        <key>executable</key>
-        <string>join.me.exe</string>
-        <key>identifier</key>
-        <string />
-        <key>originalName</key>
-        <string>join.me.exe</string>
-        <key>os</key>
-        <integer>1</integer>
-        <key>strongKill</key>
-        <false />
-        <key>user</key>
-        <string />
-        <key>windowHandlingProcess</key>
-        <string />
-      </dict>
-      <dict>
-        <key>active</key>
-        <true />
-        <key>currentUser</key>
-        <true />
-        <key>description</key>
-        <string />
-        <key>executable</key>
-        <string>g2mstart.exe</string>
-        <key>identifier</key>
-        <string />
-        <key>originalName</key>
-        <string>g2mstart.exe</string>
-        <key>os</key>
-        <integer>1</integer>
-        <key>strongKill</key>
-        <false />
-        <key>user</key>
-        <string />
-        <key>windowHandlingProcess</key>
-        <string />
-      </dict>
-      <dict>
-        <key>active</key>
-        <true />
-        <key>currentUser</key>
-        <true />
-        <key>description</key>
-        <string />
-        <key>executable</key>
-        <string>g2mlauncher.exe</string>
-        <key>identifier</key>
-        <string />
-        <key>originalName</key>
-        <string>g2mlauncher.exe</string>
-        <key>os</key>
-        <integer>1</integer>
-        <key>strongKill</key>
-        <false />
-        <key>user</key>
-        <string />
-        <key>windowHandlingProcess</key>
-        <string />
-      </dict>
-      <dict>
-        <key>active</key>
-        <true />
-        <key>currentUser</key>
-        <true />
-        <key>description</key>
-        <string />
-        <key>executable</key>
-        <string>Telegram.exe</string>
-        <key>identifier</key>
-        <string />
-        <key>originalName</key>
-        <string>Telegram.exe</string>
-        <key>os</key>
-        <integer>1</integer>
-        <key>strongKill</key>
-        <false />
-        <key>user</key>
-        <string />
-        <key>windowHandlingProcess</key>
-        <string />
-      </dict>
-      <dict>
-        <key>active</key>
-        <true />
-        <key>currentUser</key>
-        <true />
-        <key>description</key>
-        <string />
-        <key>executable</key>
-        <string>Zoom.exe</string>
-        <key>identifier</key>
-        <string />
-        <key>originalName</key>
-        <string>Zoom.exe</string>
-        <key>os</key>
-        <integer>1</integer>
-        <key>strongKill</key>
-        <false />
-        <key>user</key>
-        <string />
-        <key>windowHandlingProcess</key>
-        <string />
-      </dict>
-      <dict>
-        <key>active</key>
-        <true />
-        <key>currentUser</key>
-        <true />
-        <key>description</key>
-        <string />
-        <key>executable</key>
-        <string>Element.exe</string>
-        <key>identifier</key>
-        <string />
-        <key>originalName</key>
-        <string>Element.exe</string>
-        <key>os</key>
-        <integer>1</integer>
-        <key>strongKill</key>
-        <false />
-        <key>user</key>
-        <string />
-        <key>windowHandlingProcess</key>
-        <string />
-      </dict>
-      <dict>
-        <key>active</key>
-        <true />
-        <key>currentUser</key>
-        <true />
-        <key>description</key>
-        <string />
-        <key>executable</key>
-        <string>slack.exe</string>
-        <key>identifier</key>
-        <string />
-        <key>originalName</key>
-        <string>slack.exe</string>
-        <key>os</key>
-        <integer>1</integer>
-        <key>strongKill</key>
-        <false />
-        <key>user</key>
-        <string />
-        <key>windowHandlingProcess</key>
-        <string />
-      </dict>
-      <dict>
-        <key>active</key>
-        <true />
-        <key>currentUser</key>
-        <true />
-        <key>description</key>
-        <string />
-        <key>executable</key>
-        <string>CamtasiaUtl.exe</string>
-        <key>identifier</key>
-        <string />
-        <key>originalName</key>
-        <string>CamtasiaUtl.exe</string>
-        <key>os</key>
-        <integer>1</integer>
-        <key>strongKill</key>
-        <false />
-        <key>user</key>
-        <string />
-        <key>windowHandlingProcess</key>
-        <string />
-      </dict>
-      <dict>
-        <key>active</key>
-        <true />
-        <key>currentUser</key>
-        <true />
-        <key>description</key>
-        <string />
-        <key>executable</key>
-        <string>CamRecorder.exe</string>
-        <key>identifier</key>
-        <string />
-        <key>originalName</key>
-        <string>CamRecorder.exe</string>
-        <key>os</key>
-        <integer>1</integer>
-        <key>strongKill</key>
-        <false />
-        <key>user</key>
-        <string />
-        <key>windowHandlingProcess</key>
-        <string />
-      </dict>
-      <dict>
-        <key>active</key>
-        <true />
-        <key>currentUser</key>
-        <true />
-        <key>description</key>
-        <string />
-        <key>executable</key>
-        <string>CamPlay.exe</string>
-        <key>identifier</key>
-        <string />
-        <key>originalName</key>
-        <string>CamPlay.exe</string>
-        <key>os</key>
-        <integer>1</integer>
-        <key>strongKill</key>
-        <false />
-        <key>user</key>
-        <string />
-        <key>windowHandlingProcess</key>
-        <string />
-      </dict>
-      <dict>
-        <key>active</key>
-        <true />
-        <key>currentUser</key>
-        <true />
-        <key>description</key>
-        <string />
-        <key>executable</key>
-        <string>Camtasia_Studio.exe</string>
-        <key>identifier</key>
-        <string />
-        <key>originalName</key>
-        <string>Camtasia_Studio.exe</string>
-        <key>os</key>
-        <integer>1</integer>
-        <key>strongKill</key>
-        <false />
-        <key>user</key>
-        <string />
-        <key>windowHandlingProcess</key>
-        <string />
-      </dict>
-      <dict>
-        <key>active</key>
-        <true />
-        <key>currentUser</key>
-        <true />
-        <key>description</key>
-        <string />
-        <key>executable</key>
-        <string>CamtasiaStudio.exe</string>
-        <key>identifier</key>
-        <string />
-        <key>originalName</key>
-        <string>CamtasiaStudio.exe</string>
-        <key>os</key>
-        <integer>1</integer>
-        <key>strongKill</key>
-        <false />
-        <key>user</key>
-        <string />
-        <key>windowHandlingProcess</key>
-        <string />
-      </dict>
-      <dict>
-        <key>active</key>
-        <true />
-        <key>currentUser</key>
-        <true />
-        <key>description</key>
-        <string />
-        <key>executable</key>
-        <string>Camtasia.exe</string>
-        <key>identifier</key>
-        <string />
-        <key>originalName</key>
-        <string>Camtasia.exe</string>
-        <key>os</key>
-        <integer>1</integer>
-        <key>strongKill</key>
-        <false />
-        <key>user</key>
-        <string />
-        <key>windowHandlingProcess</key>
-        <string />
-      </dict>
-      <dict>
-        <key>active</key>
-        <true />
-        <key>currentUser</key>
-        <true />
-        <key>description</key>
-        <string />
-        <key>executable</key>
-        <string>Discord.exe</string>
-        <key>identifier</key>
-        <string />
-        <key>originalName</key>
-        <string>Discord.exe</string>
-        <key>os</key>
-        <integer>1</integer>
-        <key>strongKill</key>
-        <false />
-        <key>user</key>
-        <string />
-        <key>windowHandlingProcess</key>
-        <string />
-      </dict>
-      <dict>
-        <key>active</key>
-        <true />
-        <key>currentUser</key>
-        <true />
-        <key>description</key>
-        <string />
-        <key>executable</key>
-        <string>RPCSuite.exe</string>
-        <key>identifier</key>
-        <string />
-        <key>originalName</key>
-        <string>RPCSuite.exe</string>
-        <key>os</key>
-        <integer>1</integer>
-        <key>strongKill</key>
-        <false />
-        <key>user</key>
-        <string />
-        <key>windowHandlingProcess</key>
-        <string />
-      </dict>
-      <dict>
-        <key>active</key>
-        <true />
-        <key>currentUser</key>
-        <true />
-        <key>description</key>
-        <string />
-        <key>executable</key>
-        <string>RPCService.exe</string>
-        <key>identifier</key>
-        <string />
-        <key>originalName</key>
-        <string>RPCService.exe</string>
-        <key>os</key>
-        <integer>1</integer>
-        <key>strongKill</key>
-        <false />
-        <key>user</key>
-        <string />
-        <key>windowHandlingProcess</key>
-        <string />
-      </dict>
-      <dict>
-        <key>active</key>
-        <true />
-        <key>currentUser</key>
-        <true />
-        <key>description</key>
-        <string />
-        <key>executable</key>
-        <string>RemotePCDesktop.exe</string>
-        <key>identifier</key>
-        <string />
-        <key>originalName</key>
-        <string>RemotePCDesktop.exe</string>
-        <key>os</key>
-        <integer>1</integer>
-        <key>strongKill</key>
-        <false />
-        <key>user</key>
-        <string />
-        <key>windowHandlingProcess</key>
-        <string />
-      </dict>
-      <dict>
-        <key>active</key>
-        <true />
-        <key>currentUser</key>
-        <true />
-        <key>description</key>
-        <string />
-        <key>executable</key>
-        <string>beamyourscreen-host.exe</string>
-        <key>identifier</key>
-        <string />
-        <key>originalName</key>
-        <string>beamyourscreen-host.exe</string>
-        <key>os</key>
-        <integer>1</integer>
-        <key>strongKill</key>
-        <false />
-        <key>user</key>
-        <string />
-        <key>windowHandlingProcess</key>
-        <string />
-      </dict>
-      <dict>
-        <key>active</key>
-        <true />
-        <key>currentUser</key>
-        <true />
-        <key>description</key>
-        <string />
-        <key>executable</key>
-        <string>AeroAdmin.exe</string>
-        <key>identifier</key>
-        <string />
-        <key>originalName</key>
-        <string>AeroAdmin.exe</string>
-        <key>os</key>
-        <integer>1</integer>
-        <key>strongKill</key>
-        <false />
-        <key>user</key>
-        <string />
-        <key>windowHandlingProcess</key>
-        <string />
-      </dict>
-      <dict>
-        <key>active</key>
-        <true />
-        <key>currentUser</key>
-        <true />
-        <key>description</key>
-        <string />
-        <key>executable</key>
-        <string>Mikogo-host.exe</string>
-        <key>identifier</key>
-        <string />
-        <key>originalName</key>
-        <string>Mikogo-host.exe</string>
-        <key>os</key>
-        <integer>1</integer>
-        <key>strongKill</key>
-        <false />
-        <key>user</key>
-        <string />
-        <key>windowHandlingProcess</key>
-        <string />
-      </dict>
-      <dict>
-        <key>active</key>
-        <true />
-        <key>currentUser</key>
-        <true />
-        <key>description</key>
-        <string />
-        <key>executable</key>
-        <string>chromoting.exe</string>
-        <key>identifier</key>
-        <string />
-        <key>originalName</key>
-        <string>chromoting.exe</string>
-        <key>os</key>
-        <integer>1</integer>
-        <key>strongKill</key>
-        <false />
-        <key>user</key>
-        <string />
-        <key>windowHandlingProcess</key>
-        <string />
-      </dict>
-      <dict>
-        <key>active</key>
-        <true />
-        <key>currentUser</key>
-        <true />
-        <key>description</key>
-        <string />
-        <key>executable</key>
-        <string>vncserverui.exe</string>
-        <key>identifier</key>
-        <string />
-        <key>originalName</key>
-        <string>vncserverui.exe</string>
-        <key>os</key>
-        <integer>1</integer>
-        <key>strongKill</key>
-        <false />
-        <key>user</key>
-        <string />
-        <key>windowHandlingProcess</key>
-        <string />
-      </dict>
-      <dict>
-        <key>active</key>
-        <true />
-        <key>currentUser</key>
-        <true />
-        <key>description</key>
-        <string />
-        <key>executable</key>
-        <string>vncviewer.exe</string>
-        <key>identifier</key>
-        <string />
-        <key>originalName</key>
-        <string>vncviewer.exe</string>
-        <key>os</key>
-        <integer>1</integer>
-        <key>strongKill</key>
-        <false />
-        <key>user</key>
-        <string />
-        <key>windowHandlingProcess</key>
-        <string />
-      </dict>
-      <dict>
-        <key>active</key>
-        <true />
-        <key>currentUser</key>
-        <true />
-        <key>description</key>
-        <string />
-        <key>executable</key>
-        <string>vncserver.exe</string>
-        <key>identifier</key>
-        <string />
-        <key>originalName</key>
-        <string>vncserver.exe</string>
-        <key>os</key>
-        <integer>1</integer>
-        <key>strongKill</key>
-        <false />
-        <key>user</key>
-        <string />
-        <key>windowHandlingProcess</key>
-        <string />
-      </dict>
-      <dict>
-        <key>active</key>
-        <true />
-        <key>currentUser</key>
-        <true />
-        <key>description</key>
-        <string />
-        <key>executable</key>
-        <string>TeamViewer.exe</string>
-        <key>identifier</key>
-        <string />
-        <key>originalName</key>
-        <string>TeamViewer.exe</string>
-        <key>os</key>
-        <integer>1</integer>
-        <key>strongKill</key>
-        <false />
-        <key>user</key>
-        <string />
-        <key>windowHandlingProcess</key>
-        <string />
-      </dict>
-      <dict>
-        <key>active</key>
-        <true />
-        <key>currentUser</key>
-        <true />
-        <key>description</key>
-        <string />
-        <key>executable</key>
-        <string>GotoMeetingWinStore.exe</string>
-        <key>identifier</key>
-        <string />
-        <key>originalName</key>
-        <string>GotoMeetingWinStore.exe</string>
-        <key>os</key>
-        <integer>1</integer>
-        <key>strongKill</key>
-        <false />
-        <key>user</key>
-        <string />
-        <key>windowHandlingProcess</key>
-        <string />
-      </dict>
-      <dict>
-        <key>active</key>
-        <true />
-        <key>currentUser</key>
-        <true />
-        <key>description</key>
-        <string />
-        <key>executable</key>
-        <string>g2mcomm.exe</string>
-        <key>identifier</key>
-        <string />
-        <key>originalName</key>
-        <string>g2mcomm.exe</string>
-        <key>os</key>
-        <integer>1</integer>
-        <key>strongKill</key>
-        <false />
-        <key>user</key>
-        <string />
-        <key>windowHandlingProcess</key>
-        <string />
-      </dict>
-      <dict>
-        <key>active</key>
-        <true />
-        <key>currentUser</key>
-        <true />
-        <key>description</key>
-        <string />
-        <key>executable</key>
-        <string>SkypeHost.exe</string>
-        <key>identifier</key>
-        <string />
-        <key>originalName</key>
-        <string>SkypeHost.exe</string>
-        <key>os</key>
-        <integer>1</integer>
-        <key>strongKill</key>
-        <false />
-        <key>user</key>
-        <string />
-        <key>windowHandlingProcess</key>
-        <string />
-      </dict>
-      <dict>
-        <key>active</key>
-        <true />
-        <key>currentUser</key>
-        <true />
-        <key>description</key>
-        <string />
-        <key>executable</key>
-        <string>SkypeApp.exe</string>
-        <key>identifier</key>
-        <string />
-        <key>originalName</key>
-        <string>SkypeApp.exe</string>
-        <key>os</key>
-        <integer>1</integer>
-        <key>strongKill</key>
-        <false />
-        <key>user</key>
-        <string />
-        <key>windowHandlingProcess</key>
-        <string />
-      </dict>
-      <dict>
-        <key>active</key>
-        <true />
-        <key>currentUser</key>
-        <true />
-        <key>description</key>
-        <string />
-        <key>executable</key>
-        <string>Skype.exe</string>
-        <key>identifier</key>
-        <string />
-        <key>originalName</key>
-        <string>Skype.exe</string>
-        <key>os</key>
-        <integer>1</integer>
-        <key>strongKill</key>
-        <false />
-        <key>user</key>
-        <string />
-        <key>windowHandlingProcess</key>
-        <string />
-      </dict>
-    </array>
-    <key>proxies</key>
-    <dict>
-      <key>AutoConfigurationEnabled</key>
-      <false />
-      <key>AutoConfigurationJavaScript</key>
-      <string />
-      <key>AutoConfigurationURL</key>
-      <string />
-      <key>AutoDiscoveryEnabled</key>
-      <false />
-      <key>ExceptionsList</key>
-      <array></array>
-      <key>ExcludeSimpleHostnames</key>
-      <false />
-      <key>FTPEnable</key>
-      <false />
-      <key>FTPPassive</key>
-      <true />
-      <key>FTPPassword</key>
-      <string />
-      <key>FTPPort</key>
-      <integer>21</integer>
-      <key>FTPProxy</key>
-      <string />
-      <key>FTPRequiresPassword</key>
-      <false />
-      <key>FTPUsername</key>
-      <string />
-      <key>HTTPEnable</key>
-      <false />
-      <key>HTTPPassword</key>
-      <string />
-      <key>HTTPPort</key>
-      <integer>80</integer>
-      <key>HTTPProxy</key>
-      <string />
-      <key>HTTPRequiresPassword</key>
-      <false />
-      <key>HTTPSEnable</key>
-      <false />
-      <key>HTTPSPassword</key>
-      <string />
-      <key>HTTPSPort</key>
-      <integer>443</integer>
-      <key>HTTPSProxy</key>
-      <string />
-      <key>HTTPSRequiresPassword</key>
-      <false />
-      <key>HTTPSUsername</key>
-      <string />
-      <key>HTTPUsername</key>
-      <string />
-      <key>RTSPEnable</key>
-      <false />
-      <key>RTSPPassword</key>
-      <string />
-      <key>RTSPPort</key>
-      <integer>554</integer>
-      <key>RTSPProxy</key>
-      <string />
-      <key>RTSPRequiresPassword</key>
-      <false />
-      <key>RTSPUsername</key>
-      <string />
-      <key>SOCKSEnable</key>
-      <false />
-      <key>SOCKSPassword</key>
-      <string />
-      <key>SOCKSPort</key>
-      <integer>1080</integer>
-      <key>SOCKSProxy</key>
-      <string />
-      <key>SOCKSRequiresPassword</key>
-      <false />
-      <key>SOCKSUsername</key>
-      <string />
-    </dict>
-    <key>proxySettingsPolicy</key>
-    <integer>0</integer>
-    <key>quitURL</key>
-    <string />
-    <key>quitURLConfirm</key>
-    <false />
-    <key>quitURLRestart</key>
-    <true />
-    <key>removeBrowserProfile</key>
-    <true />
-    <key>removeLocalStorage</key>
-    <false />
-    <key>restartExamPasswordProtected</key>
-    <true />
-    <key>restartExamText</key>
-    <string />
-    <key>restartExamURL</key>
-    <string />
-    <key>restartExamUseStartURL</key>
-    <true />
-    <key>sebConfigPurpose</key>
-    <integer>0</integer>
-    <key>sebMode</key>
-    <integer>0</integer>
-    <key>sebServerURL</key>
-    <string />
-    <key>sebServiceIgnore</key>
-    <true />
-    <key>sebServicePolicy</key>
-    <integer>1</integer>
-    <key>sendBrowserExamKey</key>
-    <false />
-    <key>setVmwareConfiguration</key>
-    <false />
-    <key>showApplicationLogButton</key>
-    <false />
-    <key>showInputLanguage</key>
-    <false />
-    <key>showMenuBar</key>
-    <false />
-    <key>showReloadButton</key>
-    <true />
-    <key>showReloadWarning</key>
-    <false />
-    <key>showSideMenu</key>
-    <false />
-    <key>showTaskBar</key>
-    <true />
-    <key>showTime</key>
-    <true />
-    <key>startResource</key>
-    <string />
-    <key>startURL</key>
-    <string>https://smp2pajangan.github.io/customlink</string>
-    <key>startURLAppendQueryParameter</key>
-    <false />
-    <key>taskBarHeight</key>
-    <integer>40</integer>
-    <key>touchOptimized</key>
-    <false />
-    <key>URLFilterEnable</key>
-    <false />
-    <key>URLFilterEnableContentFilter</key>
-    <false />
-    <key>urlFilterRegex</key>
-    <true />
-    <key>URLFilterRules</key>
-    <array></array>
-    <key>urlFilterTrustedContent</key>
-    <true />
-    <key>useAsymmetricOnlyEncryption</key>
-    <false />
-    <key>useTemporaryDownUploadDirectory</key>
-    <false />
-    <key>whitelistURLFilter</key>
-    <string />
-    <key>zoomMode</key>
-    <integer>1</integer>
-    <key>batteryChargeThresholdCritical</key>
-    <real>0.1</real>
-    <key>batteryChargeThresholdLow</key>
-    <real>0.2</real>
-    <key>allowDownloads</key>
-    <true />
-    <key>allowUploads</key>
-    <false />
-    <key>disableSessionChangeLockScreen</key>
-    <false />
-    <key>enableCursorVerification</key>
-    <true />
-    <key>enableSessionVerification</key>
-    <true />
-    <key>lockScreenBackgroundColor</key>
-    <string>#ff0000</string>
-    <key>allowStickyKeys</key>
-    <false />
-    <key>displayAlwaysOn</key>
-    <true />
-    <key>systemAlwaysOn</key>
-    <true />
-  </dict>
-</plist>
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ujian Online SPEROPA</title>
+    <!-- Tailwind CSS untuk styling modern -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome untuk Ikon -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        /* Animasi halus saat hover */
+        .btn-hover {
+            transition: all 0.3s ease;
+        }
+        .btn-hover:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+        
+        /* Animasi Modal Common */
+        .modal-overlay {
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+        }
+        .modal-overlay.hidden-modal {
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+        }
+        .modal-overlay:not(.hidden-modal) {
+            opacity: 1;
+            visibility: visible;
+            pointer-events: auto;
+        }
+        .modal-content-box {
+            transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        .hidden-modal .modal-content-box {
+            transform: scale(0.95) translateY(10px);
+        }
+        :not(.hidden-modal) .modal-content-box {
+            transform: scale(1) translateY(0);
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-slate-100 to-slate-200 min-h-screen flex items-center justify-center p-4">
+
+    <!-- Container Utama (Card) -->
+    <div class="bg-white w-full max-w-md rounded-2xl shadow-2xl overflow-hidden border border-gray-100 relative z-10">
+        
+        <!-- Header Bagian Atas -->
+        <div class="bg-blue-600 p-8 text-center relative overflow-hidden">
+            <!-- Dekorasi background circle -->
+            <div class="absolute top-0 left-0 w-full h-full opacity-10">
+                <div class="absolute -top-10 -right-10 w-40 h-40 bg-white rounded-full mix-blend-overlay"></div>
+                <div class="absolute -bottom-10 -left-10 w-40 h-40 bg-white rounded-full mix-blend-overlay"></div>
+            </div>
+            
+            <div class="relative z-10 flex flex-col items-center">
+                <!-- Logo Sekolah -->
+                <div class="w-24 h-24 bg-white p-2 rounded-full mb-4 shadow-lg flex items-center justify-center">
+                    <img src="http://raw.githubusercontent.com/smp2pajangan/gambar/refs/heads/main/logosmpn2pjg.png" 
+                         alt="Logo SMPN 2 Pajangan" 
+                         class="w-full h-full object-contain"
+                         onerror="this.src='https://via.placeholder.com/150?text=Logo+Sekolah'">
+                </div>
+                
+                <h1 class="text-2xl font-bold text-white tracking-wide">UJIAN ONLINE</h1>
+                <h2 class="text-xl font-semibold text-blue-100 mt-1">SPEROPA</h2>
+            </div>
+        </div>
+
+        <!-- Bagian Konten & Tombol -->
+        <div class="p-8">
+            <p class="text-gray-600 text-center mb-8 text-sm leading-relaxed">
+                Silakan pilih perangkat yang Anda gunakan untuk memulai ujian.
+            </p>
+
+            <div class="space-y-4">
+                <!-- Tombol 1: Versi Desktop (Memicu Modal Desktop) -->
+                <button onclick="openModal('modal-desktop')" 
+                   class="btn-hover w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-4 px-6 rounded-xl flex items-center justify-between group cursor-pointer text-left border-none">
+                    <div class="flex items-center gap-4">
+                        <div class="w-10 h-10 bg-white/20 rounded-lg flex items-center justify-center text-xl">
+                            <i class="fa-brands fa-windows"></i>
+                        </div>
+                        <div class="text-left">
+                            <div class="text-xs text-blue-100 font-medium">Laptop / PC</div>
+                            <div class="text-lg">Versi Desktop</div>
+                        </div>
+                    </div>
+                    <i class="fa-solid fa-chevron-right group-hover:translate-x-1 transition-transform"></i>
+                </button>
+
+                <!-- Tombol 2: Download APK (Android) -->
+                <a href="https://github.com/speropa/linkujian/raw/refs/heads/main/com.paijo.broexam_2.0.apk" 
+                   class="btn-hover block w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-4 px-6 rounded-xl flex items-center justify-between group decoration-none">
+                    <div class="flex items-center gap-4">
+                        <div class="w-10 h-10 bg-white/20 rounded-lg flex items-center justify-center text-xl">
+                            <i class="fa-brands fa-android"></i>
+                        </div>
+                        <div class="text-left">
+                            <div class="text-xs text-green-100 font-medium">HP Android</div>
+                            <div class="text-lg">Download APK</div>
+                        </div>
+                    </div>
+                    <i class="fa-solid fa-download group-hover:animate-bounce"></i>
+                </a>
+
+                <!-- Tombol 3: Versi iPhone (Memicu Modal iPhone) -->
+                <button onclick="openModal('modal-iphone')" 
+                   class="btn-hover w-full bg-gray-800 hover:bg-gray-900 text-white font-semibold py-4 px-6 rounded-xl flex items-center justify-between group cursor-pointer text-left border-none">
+                    <div class="flex items-center gap-4">
+                        <div class="w-10 h-10 bg-white/20 rounded-lg flex items-center justify-center text-xl">
+                            <i class="fa-brands fa-apple"></i>
+                        </div>
+                        <div class="text-left">
+                            <div class="text-xs text-gray-300 font-medium">HP iPhone</div>
+                            <div class="text-lg">Versi iOS</div>
+                        </div>
+                    </div>
+                    <i class="fa-solid fa-chevron-right group-hover:translate-x-1 transition-transform"></i>
+                </button>
+            </div>
+
+            <!-- Footer Info -->
+            <div class="mt-8 pt-6 border-t border-gray-100 text-center">
+                <p class="text-sm font-semibold text-gray-700 mb-2">
+                    @Admin SMP Negeri 2 Pajangan
+                </p>
+                <!-- Jam Realtime -->
+                <div id="realtime-clock" class="inline-block bg-blue-50 text-blue-700 text-xs font-mono font-bold py-2 px-4 rounded-full border border-blue-100 shadow-sm">
+                    Memuat Waktu...
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL DESKTOP -->
+    <div id="modal-desktop" class="modal-overlay fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm hidden-modal p-4" onclick="closeModal('modal-desktop')">
+        <div class="modal-content-box bg-white w-full max-w-sm rounded-2xl shadow-2xl overflow-hidden relative" onclick="event.stopPropagation()">
+            <!-- Header -->
+            <div class="bg-gray-50 p-4 border-b border-gray-100 flex justify-between items-center">
+                <h3 class="font-bold text-gray-800 text-lg flex items-center gap-2">
+                    <i class="fa-brands fa-windows text-blue-600"></i>
+                    Akses Desktop
+                </h3>
+                <button onclick="closeModal('modal-desktop')" class="text-gray-400 hover:text-red-500 transition-colors w-8 h-8 flex items-center justify-center rounded-full hover:bg-red-50">
+                    <i class="fa-solid fa-times text-lg"></i>
+                </button>
+            </div>
+            <!-- Body -->
+            <div class="p-6 space-y-3">
+                <p class="text-sm text-gray-500 mb-2">Pilih cara untuk membuka ujian di Laptop/PC:</p>
+                <!-- Pilihan 1 -->
+                <a href="https://drive.google.com/uc?export=download&id=1ULZ2WyDJrs03BPkH5cmdPMVd-Vm-ib5P" class="btn-hover block w-full bg-white border-2 border-blue-100 hover:border-blue-500 hover:bg-blue-50 text-blue-700 font-semibold py-3 px-4 rounded-xl flex items-center gap-3 group decoration-none">
+                    <div class="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center text-blue-600 shrink-0">
+                        <i class="fa-solid fa-file-arrow-down"></i>
+                    </div>
+                    <div class="flex-1 text-left">
+                        <div class="text-sm font-bold">Download File</div>
+                        <div class="text-xs text-blue-600/70">Simpan file .seb</div>
+                    </div>
+                </a>
+                <!-- Pilihan 2 -->
+                <a href="sebs://raw.githubusercontent.com/speropa/ujian/refs/heads/main/Ujian%20Online%20Speropa.seb" class="btn-hover block w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-4 rounded-xl flex items-center gap-3 group decoration-none">
+                    <div class="w-8 h-8 bg-white/20 rounded-lg flex items-center justify-center text-white shrink-0">
+                        <i class="fa-solid fa-rocket"></i>
+                    </div>
+                    <div class="flex-1 text-left">
+                        <div class="text-sm font-bold">Langsung Buka</div>
+                        <div class="text-xs text-blue-100">Buka otomatis di SEB</div>
+                    </div>
+                    <i class="fa-solid fa-arrow-up-right-from-square text-sm opacity-70"></i>
+                </a>
+            </div>
+            <!-- Footer -->
+            <div class="bg-gray-50 p-3 text-center">
+                <button onclick="closeModal('modal-desktop')" class="text-xs text-gray-500 hover:text-gray-800 font-medium underline">Batal</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL IPHONE (Baru) -->
+    <div id="modal-iphone" class="modal-overlay fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm hidden-modal p-4" onclick="closeModal('modal-iphone')">
+        <div class="modal-content-box bg-white w-full max-w-sm rounded-2xl shadow-2xl overflow-hidden relative" onclick="event.stopPropagation()">
+            <!-- Header -->
+            <div class="bg-gray-50 p-4 border-b border-gray-100 flex justify-between items-center">
+                <h3 class="font-bold text-gray-800 text-lg flex items-center gap-2">
+                    <i class="fa-brands fa-apple text-gray-800"></i>
+                    Akses iPhone (iOS)
+                </h3>
+                <button onclick="closeModal('modal-iphone')" class="text-gray-400 hover:text-red-500 transition-colors w-8 h-8 flex items-center justify-center rounded-full hover:bg-red-50">
+                    <i class="fa-solid fa-times text-lg"></i>
+                </button>
+            </div>
+            <!-- Body -->
+            <div class="p-6 space-y-3">
+                <p class="text-sm text-gray-500 mb-2">Pastikan aplikasi SEB sudah terinstall, lalu pilih:</p>
+                
+                <!-- Pilihan 1: Download Config -->
+                <a href="https://raw.githubusercontent.com/speropa/ujian/refs/heads/main/iphone.seb" class="btn-hover block w-full bg-white border-2 border-gray-200 hover:border-gray-500 hover:bg-gray-50 text-gray-700 font-semibold py-3 px-4 rounded-xl flex items-center gap-3 group decoration-none">
+                    <div class="w-8 h-8 bg-gray-100 rounded-lg flex items-center justify-center text-gray-600 shrink-0">
+                        <i class="fa-solid fa-file-arrow-down"></i>
+                    </div>
+                    <div class="flex-1 text-left">
+                        <div class="text-sm font-bold">Download Config</div>
+                        <div class="text-xs text-gray-500">Unduh file .seb manual</div>
+                    </div>
+                </a>
+
+                <!-- Pilihan 2: Langsung Buka (SEBS) -->
+                <a href="sebs://raw.githubusercontent.com/speropa/ujian/refs/heads/main/iphone.seb" class="btn-hover block w-full bg-gray-800 hover:bg-gray-900 text-white font-semibold py-3 px-4 rounded-xl flex items-center gap-3 group decoration-none">
+                    <div class="w-8 h-8 bg-white/20 rounded-lg flex items-center justify-center text-white shrink-0">
+                        <i class="fa-solid fa-bolt"></i>
+                    </div>
+                    <div class="flex-1 text-left">
+                        <div class="text-sm font-bold">Langsung Buka</div>
+                        <div class="text-xs text-gray-300">Buka otomatis via SEB</div>
+                    </div>
+                    <i class="fa-solid fa-arrow-up-right-from-square text-sm opacity-70"></i>
+                </a>
+            </div>
+            <!-- Footer -->
+            <div class="bg-gray-50 p-3 text-center">
+                <button onclick="closeModal('modal-iphone')" class="text-xs text-gray-500 hover:text-gray-800 font-medium underline">Batal</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Script Logika -->
+    <script>
+        // --- JAM REALTIME ---
+        function updateClock() {
+            const now = new Date();
+            const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+            const dateString = now.toLocaleDateString('id-ID', options);
+            const hours = String(now.getHours()).padStart(2, '0');
+            const minutes = String(now.getMinutes()).padStart(2, '0');
+            const seconds = String(now.getSeconds()).padStart(2, '0');
+            document.getElementById('realtime-clock').innerText = `${dateString} | ${hours}:${minutes}:${seconds} WIB`;
+        }
+        setInterval(updateClock, 1000);
+        updateClock();
+
+        // --- LOGIKA MODAL (Universal) ---
+        
+        function openModal(modalId) {
+            const modal = document.getElementById(modalId);
+            if (modal) {
+                modal.classList.remove('hidden-modal');
+            }
+        }
+
+        function closeModal(modalId) {
+            const modal = document.getElementById(modalId);
+            if (modal) {
+                modal.classList.add('hidden-modal');
+            }
+        }
+
+        // Tutup dengan tombol ESC (Menutup semua modal yang aktif)
+        document.addEventListener('keydown', function(e) {
+            if (e.key === "Escape") {
+                document.querySelectorAll('.modal-overlay:not(.hidden-modal)').forEach(modal => {
+                    modal.classList.add('hidden-modal');
+                });
+            }
+        });
+    </script>
+</body>
+</html>
