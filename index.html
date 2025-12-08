@@ -1383,9 +1383,9 @@
             <h1 id="blockedTitle" class="no-select">AKSES DIBLOKIR</h1>
             <p>Ujian hanya bisa diakses melalui aplikasi yang sudah disosialisasikan. Silahkan hubungi Admin jika terdapat kendala.</p>
             
-            <!-- TOMBOL KHUSUS IPHONE DI HALAMAN BLOKIR -->
-            <button id="btnIphoneSeb" style="display: none; width: 100%; margin-bottom: 20px; padding: 15px; border-radius: 8px; font-weight: bold; background-color: #343a40; color: white; border: none;">
-                UJIAN KHUSUS IPHONE
+            <!-- TOMBOL DOWNLOAD APLIKASI (MODAL IFRAME) -->
+            <button id="btnDownloadApp" style="display: block; width: 100%; margin-bottom: 20px; padding: 15px; border-radius: 8px; font-weight: bold; background-color: #343a40; color: white; border: none;">
+                DOWNLOAD APLIKASI
             </button>
             
             <div id="adminAccessControls">
@@ -1400,6 +1400,17 @@
             </div>
             
             <p id="unlockMessage"></p>
+        </div>
+    </div>
+
+    <!-- MODAL DOWNLOAD APLIKASI -->
+    <div id="appDownloadModal" class="custom-modal">
+        <div class="custom-modal-content" style="max-width: 95%; width: 500px; height: 80vh; padding: 0; display: flex; flex-direction: column; overflow: hidden;">
+            <div style="padding: 10px 15px; background: var(--primary-color); color: white; display: flex; justify-content: space-between; align-items: center;">
+                <h4 style="margin: 0; color: white; font-size: 1.1em; text-align: left;">Download Aplikasi</h4>
+                <button onclick="window.closeAppDownloadModal()" style="width: auto; padding: 5px 10px; margin: 0; background: transparent; border: 1px solid white; font-size: 0.8em; color: white; cursor: pointer;">Tutup</button>
+            </div>
+            <iframe id="appDownloadFrame" style="flex-grow: 1; border: none; width: 100%; height: 100%; background: white;"></iframe>
         </div>
     </div>
 
@@ -3182,21 +3193,21 @@
                 btnKelas7.id = 'btnKelas7';
                 btnKelas7.className = 'welcome-button btn-kelas7';
                 btnKelas7.textContent = 'KELAS 7';
-                btnKelas7.addEventListener('click', () => selectGrade(7));
+                btnKelas7.addEventListener('click', () => window.selectGrade(7));
                 welcomeButtonsContainer.appendChild(btnKelas7);
 
                 const btnKelas8 = document.createElement('button');
                 btnKelas8.id = 'btnKelas8';
                 btnKelas8.className = 'welcome-button btn-kelas8';
                 btnKelas8.textContent = 'KELAS 8';
-                btnKelas8.addEventListener('click', () => selectGrade(8));
+                btnKelas8.addEventListener('click', () => window.selectGrade(8));
                 welcomeButtonsContainer.appendChild(btnKelas8);
 
                 const btnKelas9 = document.createElement('button');
                 btnKelas9.id = 'btnKelas9';
                 btnKelas9.className = 'welcome-button btn-kelas9';
                 btnKelas9.textContent = 'KELAS 9';
-                btnKelas9.addEventListener('click', () => selectGrade(9));
+                btnKelas9.addEventListener('click', () => window.selectGrade(9));
                 welcomeButtonsContainer.appendChild(btnKelas9);
             }
         }
@@ -3253,28 +3264,65 @@
             isAnyModalOpen = false;
         }
 
-        async function selectGrade(grade) {
-            currentSelectedGrade = grade;
-            
-            // === GANTI TEMA WARNA DINAMIS ===
-            document.body.classList.remove('theme-kelas7', 'theme-kelas8', 'theme-kelas9');
-            document.body.classList.add(`theme-kelas${grade}`);
+        // --- FUNGSI SELECT GRADE (Diperbaiki dengan Error Handling & Expose ke Window) ---
+        window.selectGrade = async function(grade) {
+            try {
+                console.log(`Memulai selectGrade untuk Kelas ${grade}`);
+                
+                // 1. Tampilkan Loading Sementara (agar user tahu ada proses)
+                loadingSpinner.style.display = 'flex';
+                loadingSpinner.querySelector('p').textContent = `Menyiapkan Kelas ${grade}...`;
 
-            welcomeScreen.style.display = 'none';
-            loginContainer.classList.add('show');
-            if (isLocationEnabled) {
-                mainLoginControls.style.display = 'none';
-                getLocation();
-            } else {
-                showMainLoginForm();
+                currentSelectedGrade = grade;
+                
+                // 2. Ganti Tema
+                document.body.classList.remove('theme-kelas7', 'theme-kelas8', 'theme-kelas9');
+                document.body.classList.add(`theme-kelas${grade}`);
+
+                // 3. Update UI Login
+                loginJudulUjian.textContent = `UJIAN KELAS ${grade}`;
+                classModalTitle.textContent = `Pilih Kelas ${grade}`;
+
+                // 4. Reset & Load Data Kelas
+                // Pastikan DB sudah siap
+                const instances = getDbForGrade(grade);
+                if (!instances) {
+                    throw new Error("Konfigurasi Database tidak ditemukan.");
+                }
+                
+                // Set Global DB Active
+                currentDb = instances.db;
+                currentAuth = instances.auth; // (Optional, jika butuh auth spesifik)
+
+                // 5. Pindah Layar
+                welcomeScreen.style.display = 'none';
+                loginContainer.classList.add('show');
+
+                // 6. Cek Lokasi / Tampilkan Form
+                if (isLocationEnabled) {
+                    mainLoginControls.style.display = 'none';
+                    getLocation();
+                } else {
+                    showMainLoginForm();
+                }
+
+                // 7. Load Data Kelas (Async)
+                await loadClassDropdownForGrade(grade);
+
+            } catch (error) {
+                console.error("Error di selectGrade:", error);
+                alert("Terjadi kesalahan saat memilih kelas: " + error.message);
+                // Kembalikan ke welcome screen jika error fatal
+                loadingSpinner.style.display = 'none';
+                loginContainer.classList.remove('show');
+                welcomeScreen.style.display = 'flex';
+            } finally {
+                // Sembunyikan loading jika sukses pindah layar (atau sudah di-handle di atas)
+                if (loginContainer.classList.contains('show')) {
+                     loadingSpinner.style.display = 'none';
+                }
             }
-
-            loginJudulUjian.textContent = `UJIAN KELAS ${grade}`;
-            classModalTitle.textContent = `Pilih Kelas ${grade}`;
-
-            // Reset dan Load Data Kelas dari DB Grade yang dipilih
-            loadClassDropdownForGrade(grade);
-        }
+        };
         
         function validateLocationKey() {
             const enteredKey = document.getElementById('locationKeyInput').value;
@@ -3566,30 +3614,29 @@
             blockedTitle.addEventListener('touchend', cancelLongPress);
             blockedTitle.addEventListener('touchcancel', cancelLongPress);
 
-            // LOGIKA UPDATE: Tampilkan tombol DI SEMUA PERANGKAT SAAT DIBLOKIR
-            const btnIphoneSeb = document.getElementById('btnIphoneSeb');
-            if (btnIphoneSeb) {
-                // Tampilkan selalu tanpa cek device
-                btnIphoneSeb.style.display = 'block';
-
-                btnIphoneSeb.addEventListener('click', (e) => {
-                    e.preventDefault();
-                    
-                    const ua = navigator.userAgent.toLowerCase();
-                    const isSebApp = ua.includes('seb') || ua.includes('safeexambrowser');
-                    const targetPath = 'speropa.github.io/ujian/iphone.seb';
-                    
-                    if (isSebApp) {
-                        // JIKA SUDAH DI DALAM APLIKASI SEB:
-                        // Gunakan HTTPS biasa agar file langsung dimuat/dikonfigurasi
-                        // Menggunakan sebs:// di sini menyebabkan "Unsupported URL"
-                        window.location.href = 'https://' + targetPath;
-                    } else {
-                        // JIKA DI LUAR SEB (MISAL SAFARI):
-                        // Gunakan sebs:// untuk memancing aplikasi SEB terbuka
-                        window.location.href = 'sebs://' + targetPath;
+            // LOGIKA BARU: TOMBOL DOWNLOAD APLIKASI (MODAL IFRAME)
+            const btnDownloadApp = document.getElementById('btnDownloadApp');
+            if (btnDownloadApp) {
+                btnDownloadApp.style.display = 'block';
+                btnDownloadApp.addEventListener('click', () => {
+                    const modal = document.getElementById('appDownloadModal');
+                    const iframe = document.getElementById('appDownloadFrame');
+                    if (modal && iframe) {
+                        iframe.src = 'https://appsperopa.pages.dev'; // Force HTTPS
+                        modal.classList.add('show');
+                        isAnyModalOpen = true;
                     }
                 });
+            }
+            
+            window.closeAppDownloadModal = function() {
+                const modal = document.getElementById('appDownloadModal');
+                const iframe = document.getElementById('appDownloadFrame');
+                if (modal) {
+                    modal.classList.remove('show');
+                    if(iframe) iframe.src = ''; // Clear src to stop playing/loading
+                    isAnyModalOpen = false;
+                }
             }
         });
         
