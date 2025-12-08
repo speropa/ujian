@@ -654,6 +654,44 @@
             height: 16px;
         }
 
+        /* === TOMBOL PSS EXIT (KANAN ATAS) === */
+        #pssExitBtn {
+            display: flex;
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            background-color: #dc3545; /* Red */
+            color: white;
+            padding: 6px 10px;
+            border-radius: 5px;
+            font-weight: bold;
+            font-size: 0.85em;
+            border: none;
+            cursor: pointer;
+            align-items: center;
+            width: auto;
+            transition: background-color 0.2s;
+            z-index: 10;
+            margin: 0;
+        }
+        #pssExitBtn:hover { background-color: #c82333; }
+
+        /* Highlight kotak password di modal exit */
+        .password-box-highlight {
+            display: inline-block;
+            background-color: #f8f9fa;
+            border: 2px dashed #dc3545;
+            color: #dc3545;
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-family: 'Roboto Mono', monospace;
+            font-size: 1.4em;
+            margin: 10px 0;
+            font-weight: bold;
+            letter-spacing: 2px;
+        }
+
         /* === TOMBOL UPDATE SOAL (FLOATING) === */
         #updateSoalBtn {
             display: none;
@@ -1290,6 +1328,10 @@
             #submissionWarningMessage {
                 margin-bottom: 5px;
             }
+            /* Shift PSS Exit button left to make room for toggle on mobile */
+            #pssExitBtn {
+                right: 50px;
+            }
         }
 
         @media (max-width: 580px) {
@@ -1493,6 +1535,9 @@
                     
                     <span id="timerText">00:00</span>
                     
+                    <!-- NEW: Tombol PSS EXIT -->
+                    <button id="pssExitBtn">PSS EXIT</button>
+                    
                     <button id="mobileSidebarToggle">
                         <svg class="arrow-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
                     </button>
@@ -1649,6 +1694,20 @@
                 <p>Silahkan laporkan ke pengawas atau admin dan tunggu informasi berikutnya.</p>
             </div>
             <!-- TIDAK ADA TOMBOL -->
+        </div>
+    </div>
+    
+    <!-- NEW: Modal Informasi PSS Exit -->
+    <div id="pssExitInfoModal" class="custom-modal">
+        <div class="custom-modal-content" style="text-align: center;">
+            <h4 style="color: var(--danger-color);">INFORMASI EXIT</h4>
+            <p style="font-size: 1.1em; line-height: 1.6;">
+                Untuk keluar/exit silahkan klik tombol power dipojok kanan bawah, dan masukkan password:
+            </p>
+            <div style="margin: 15px 0;">
+                <span class="password-box-highlight">12345</span>
+            </div>
+            <button id="closePssExitModalBtn" style="margin-top: 15px; background-color: var(--primary-color);">Ya, Saya mengerti</button>
         </div>
     </div>
 
@@ -1898,6 +1957,10 @@
         const customConfirmModalText = document.getElementById('customConfirmModalText');
         const customConfirmModalConfirmBtn = document.getElementById('customConfirmModalConfirmBtn');
         const customConfirmModalCancelBtn = document.getElementById('customConfirmModalCancelBtn');
+        
+        const pssExitBtn = document.getElementById('pssExitBtn');
+        const pssExitInfoModal = document.getElementById('pssExitInfoModal');
+        const closePssExitModalBtn = document.getElementById('closePssExitModalBtn');
 
         let manualSubmissionInProgress = false;
         let submissionStatusListenerRef = null;
@@ -3522,6 +3585,18 @@
             
             if(refreshSoalBtn) {
                 refreshSoalBtn.addEventListener('click', handleRefreshSoalClick);
+            }
+            
+            // --- NEW: Event Listener PSS EXIT ---
+            if (pssExitBtn && pssExitInfoModal && closePssExitModalBtn) {
+                pssExitBtn.addEventListener('click', () => {
+                    pssExitInfoModal.classList.add('show');
+                    isAnyModalOpen = true;
+                });
+                closePssExitModalBtn.addEventListener('click', () => {
+                    pssExitInfoModal.classList.remove('show');
+                    isAnyModalOpen = false;
+                });
             }
 
             window.onpopstate = e => isInExamMode && history.pushState(null, '', location.href);
