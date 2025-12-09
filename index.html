@@ -3054,6 +3054,7 @@
                 await set(studentAnswersPath, payload);
             } catch (error) {
                 console.error("Gagal menyimpan jawaban siswa ke Firebase:", error);
+                showToast("Koneksi terputus! Jawaban gagal disimpan. Cek internet Anda!", "error");
             }
         }
 
