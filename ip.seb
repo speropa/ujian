@@ -5,7 +5,7 @@
     <key>originatorVersion</key>
     <string>SEB_Win_2.1.1</string>
     <key>startURL</key>
-    <string>https://speropa.github.io/ujian/kdksksjkytsjktskj/argvWREGVR/kjtsk%20nas%20hsn%20hntr/57362863286727/eanthnatbnwe4mofk.,as4/398.387+3798888888888888888888+-/ip.html</string>
+    <string>https://speropa.github.io/ujian/?bypass=true</string>
     <key>startResource</key>
     <string />
     <key>sebServerURL</key>
@@ -1631,4 +1631,5 @@
     <key>systemAlwaysOn</key>
     <true />
   </dict>
+
 </plist>
