@@ -576,6 +576,22 @@
             opacity: 0;
             transition: opacity 0.5s ease-in-out;
         }
+        
+        /* GAYA BARU: HEADER IDENTITAS DI ATAS */
+        #examTopBar {
+            background-color: #343a40;
+            color: white;
+            padding: 12px 15px;
+            text-align: center;
+            font-weight: bold;
+            font-size: 1.1em;
+            flex-shrink: 0; /* Tidak boleh menyusut */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            z-index: 502;
+        }
 
         #examBody {
             display: flex;
@@ -584,7 +600,9 @@
             gap: 15px;
             flex-grow: 1;
             overflow-y: auto; 
-            padding-bottom: 70px; 
+            /* PENTING: Padding bawah tetap 200px agar konten bisa discroll jauh ke atas
+               menghindari tombol navigasi iPhone/Browser di bagian bawah layar */
+            padding-bottom: 200px !important; 
         }
 
         #examMainContent {
@@ -652,44 +670,6 @@
         #refreshSoalBtn svg {
             width: 16px;
             height: 16px;
-        }
-
-        /* === TOMBOL PSS EXIT (KANAN ATAS) === */
-        #pssExitBtn {
-            display: flex;
-            position: absolute;
-            right: 10px;
-            top: 50%;
-            transform: translateY(-50%);
-            background-color: #dc3545; /* Red */
-            color: white;
-            padding: 6px 10px;
-            border-radius: 5px;
-            font-weight: bold;
-            font-size: 0.85em;
-            border: none;
-            cursor: pointer;
-            align-items: center;
-            width: auto;
-            transition: background-color 0.2s;
-            z-index: 10;
-            margin: 0;
-        }
-        #pssExitBtn:hover { background-color: #c82333; }
-
-        /* Highlight kotak password di modal exit */
-        .password-box-highlight {
-            display: inline-block;
-            background-color: #f8f9fa;
-            border: 2px dashed #dc3545;
-            color: #dc3545;
-            padding: 5px 10px;
-            border-radius: 5px;
-            font-family: 'Roboto Mono', monospace;
-            font-size: 1.4em;
-            margin: 10px 0;
-            font-weight: bold;
-            letter-spacing: 2px;
         }
 
         /* === TOMBOL UPDATE SOAL (FLOATING) === */
@@ -990,6 +970,7 @@
             padding: 10px;
             border-top: 1px solid var(--border-color);
         }
+        
         #submissionWarningMessage {
             color: red;
             font-weight: bold;
@@ -1012,30 +993,29 @@
              background-color: #cccccc;
              cursor: not-allowed;
         }
-        /* === [END] GAYA TAMPILAN UJIAN BARU === */
-
-        #examFooter {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            background-color: #343a40;
-            color: white;
-            padding: 8px 15px;
-            box-sizing: border-box;
-            z-index: 501; 
-            text-align: center;
-            font-size: 0.9em;
-            display: flex;
-            justify-content: center;
-            align-items: center;
+        
+        /* TOMBOL EXIT ADMIN */
+        #btnExitAdmin {
+            background-color: #6c757d; 
+            margin-top: 15px; 
+            font-size: 0.8em; 
+            padding: 8px;
+            opacity: 0.7;
         }
+        #btnExitAdmin:hover {
+            opacity: 1;
+            background-color: #5a6268;
+        }
+        /* === [END] GAYA TAMPILAN UJIAN BARU === */
+        
+        /* #examFooter DIHAPUS KARENA SUDAH PINDAH KE ATAS */
 
         #studentIdentityDisplay {
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
             max-width: 90%;
+            text-shadow: 1px 1px 2px black;
         }
 
 
@@ -1328,10 +1308,6 @@
             #submissionWarningMessage {
                 margin-bottom: 5px;
             }
-            /* Shift PSS Exit button left to make room for toggle on mobile */
-            #pssExitBtn {
-                right: 50px;
-            }
         }
 
         @media (max-width: 580px) {
@@ -1514,6 +1490,11 @@
 
     
     <div id="examContainer" style="display: none;">
+        <!-- Identitas Siswa PINDAH KE ATAS -->
+        <div id="examTopBar">
+            <span id="studentIdentityDisplay"></span>
+        </div>
+
         <!-- Tombol Update Soal Kembali ke Body (Floating) -->
         <button id="updateSoalBtn">
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
@@ -1535,9 +1516,6 @@
                     
                     <span id="timerText">00:00</span>
                     
-                    <!-- NEW: Tombol PSS EXIT -->
-                    <button id="pssExitBtn">PSS EXIT</button>
-                    
                     <button id="mobileSidebarToggle">
                         <svg class="arrow-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
                     </button>
@@ -1548,6 +1526,9 @@
                         <p id="submissionInfoMessage" style="font-size: 0.85em; color: var(--warning-color); margin-bottom: 8px; text-align: center; display: none;"></p>
                         <button id="submitAnswersButton" disabled>KIRIM JAWABAN</button>
                         <p id="submissionWarningMessage"></p>
+                        
+                        <!-- TOMBOL EXIT KHUSUS ADMIN (DITAMBAHKAN) -->
+                        <button id="btnExitAdmin">KELUAR (ADMIN)</button>
                     </div>
                 </div>
             </div>
@@ -1582,9 +1563,7 @@
             </div>
         </div>
         
-        <div id="examFooter">
-            <span id="studentIdentityDisplay"></span>
-        </div>
+        <!-- FOOTER DIHAPUS -->
     </div>
     
     <div id="confirmModal">
@@ -1696,18 +1675,20 @@
             <!-- TIDAK ADA TOMBOL -->
         </div>
     </div>
-    
-    <!-- NEW: Modal Informasi PSS Exit -->
-    <div id="pssExitInfoModal" class="custom-modal">
-        <div class="custom-modal-content" style="text-align: center;">
-            <h4 style="color: var(--danger-color);">INFORMASI EXIT</h4>
-            <p style="font-size: 1.1em; line-height: 1.6;">
-                Untuk keluar/exit silahkan klik tombol power dipojok kanan bawah, dan masukkan password:
-            </p>
-            <div style="margin: 15px 0;">
-                <span class="password-box-highlight">12345</span>
+
+    <!-- MODAL PASSWORD EXIT ADMIN (DITAMBAHKAN) -->
+    <div id="adminPasswordModal" class="custom-modal">
+        <div class="custom-modal-content">
+            <h4>Akses Admin</h4>
+            <p style="margin-bottom:10px;">Masukkan password untuk keluar paksa:</p>
+            <div class="password-input-container">
+                <input type="password" id="adminExitPasswordInput" placeholder="Password Admin" style="width:100%; box-sizing:border-box; padding:10px; border:1px solid #ccc; border-radius:5px;">
             </div>
-            <button id="closePssExitModalBtn" style="margin-top: 15px; background-color: var(--primary-color);">Ya, Saya mengerti</button>
+            <p id="adminExitMessage" style="color:red; font-size:0.9em; min-height:1.2em;"></p>
+            <div style="display: flex; justify-content: space-between; gap: 10px; margin-top: 15px;">
+                <button id="btnSubmitAdminExit" style="background-color: var(--primary-color);">OK</button>
+                <button onclick="document.getElementById('adminPasswordModal').classList.remove('show')" style="background-color: #6c757d;">Batal</button>
+            </div>
         </div>
     </div>
 
@@ -1923,6 +1904,13 @@
 
         const loginJudulUjian = document.getElementById('loginJudulUjian');
         
+        // ELEMENT KHUSUS TOMBOL EXIT ADMIN
+        const btnExitAdmin = document.getElementById('btnExitAdmin');
+        const adminPasswordModal = document.getElementById('adminPasswordModal');
+        const btnSubmitAdminExit = document.getElementById('btnSubmitAdminExit');
+        const adminExitPasswordInput = document.getElementById('adminExitPasswordInput');
+        const adminExitMessage = document.getElementById('adminExitMessage');
+        
         let allStudentsData = [];
         let selectedStudentData = null;
         let isLocationValid = false;
@@ -1957,10 +1945,6 @@
         const customConfirmModalText = document.getElementById('customConfirmModalText');
         const customConfirmModalConfirmBtn = document.getElementById('customConfirmModalConfirmBtn');
         const customConfirmModalCancelBtn = document.getElementById('customConfirmModalCancelBtn');
-        
-        const pssExitBtn = document.getElementById('pssExitBtn');
-        const pssExitInfoModal = document.getElementById('pssExitInfoModal');
-        const closePssExitModalBtn = document.getElementById('closePssExitModalBtn');
 
         let manualSubmissionInProgress = false;
         let submissionStatusListenerRef = null;
@@ -3586,18 +3570,6 @@
             if(refreshSoalBtn) {
                 refreshSoalBtn.addEventListener('click', handleRefreshSoalClick);
             }
-            
-            // --- NEW: Event Listener PSS EXIT ---
-            if (pssExitBtn && pssExitInfoModal && closePssExitModalBtn) {
-                pssExitBtn.addEventListener('click', () => {
-                    pssExitInfoModal.classList.add('show');
-                    isAnyModalOpen = true;
-                });
-                closePssExitModalBtn.addEventListener('click', () => {
-                    pssExitInfoModal.classList.remove('show');
-                    isAnyModalOpen = false;
-                });
-            }
 
             window.onpopstate = e => isInExamMode && history.pushState(null, '', location.href);
 
@@ -3667,6 +3639,26 @@
                     window.open('https://appsperopa.pages.dev', '_blank');
                 });
             }
+
+            // LOGIKA BARU: TOMBOL EXIT ADMIN
+            btnExitAdmin.addEventListener('click', () => {
+                adminExitPasswordInput.value = '';
+                adminExitMessage.textContent = '';
+                adminPasswordModal.classList.add('show');
+            });
+
+            btnSubmitAdminExit.addEventListener('click', () => {
+                const input = adminExitPasswordInput.value;
+                // Gunakan blockAccessKey dari firebase, atau default jika kosong
+                const validKey = blockAccessKey || "admin123"; 
+                
+                if (input === validKey) {
+                    sessionStorage.clear();
+                    window.location.reload();
+                } else {
+                    adminExitMessage.textContent = "Password salah!";
+                }
+            });
         });
         
         function startSubmissionStatusListener() {
