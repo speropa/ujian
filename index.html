@@ -577,6 +577,31 @@
             transition: opacity 0.5s ease-in-out;
         }
 
+        /* [MODIFIKASI] HEADER UJIAN DI ATAS (DIPERKECIL ~5mm) */
+        #examHeader {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 2px 5px;
+            text-align: center;
+            font-weight: bold;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            z-index: 10;
+            flex-shrink: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 24px; /* Sekitar 5-6mm */
+            font-size: 0.85em; /* Font diperkecil agar muat */
+        }
+
+        #studentIdentityDisplay {
+            font-size: 1em;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 95%;
+        }
+
         #examBody {
             display: flex;
             flex-direction: column;
@@ -584,7 +609,8 @@
             gap: 15px;
             flex-grow: 1;
             overflow-y: auto; 
-            padding-bottom: 70px; 
+            /* [MODIFIKASI] PADDING BAWAH SUPER BESAR (±10cm / 400px) */
+            padding-bottom: 400px; 
         }
 
         #examMainContent {
@@ -605,42 +631,45 @@
             flex-shrink: 0;
         }
         
+        /* [MODIFIKASI] SIDEBAR HEADER / TIMER (DIPERKECIL ~10mm) */
         .sidebar-header {
             display: flex;
             justify-content: center;
             align-items: center;
-            padding: 10px 15px;
+            padding: 2px 10px;
             position: relative;
             border-bottom: 1px solid var(--border-color);
             background-color: #f8f9fa;
-            min-height: 60px;
+            min-height: 40px; /* Sekitar 10mm */
+            height: 40px;
         }
         
         .sidebar-header #timerText {
             font-family: Arial, sans-serif;
             font-weight: bold;
-            font-size: 2.2em;
+            font-size: 1.6em; /* Font timer diperkecil */
             color: var(--danger-color);
             text-align: center;
+            line-height: 1;
         }
         
         /* === TOMBOL REFRESH (KIRI ATAS) === */
         #refreshSoalBtn {
             display: flex;
             position: absolute;
-            left: 10px;
+            left: 5px;
             top: 50%;
             transform: translateY(-50%);
             background-color: #17a2b8;
             color: white;
-            padding: 6px 10px;
-            border-radius: 5px;
+            padding: 4px 8px; /* Padding diperkecil */
+            border-radius: 4px;
             font-weight: bold;
-            font-size: 0.85em;
+            font-size: 0.75em; /* Font tombol diperkecil */
             border: none;
             cursor: pointer;
             align-items: center;
-            gap: 5px;
+            gap: 3px;
             width: auto;
             transition: background-color 0.2s;
             z-index: 10;
@@ -650,15 +679,15 @@
         #refreshSoalBtn:hover { background-color: #138496; }
 
         #refreshSoalBtn svg {
-            width: 16px;
-            height: 16px;
+            width: 12px; /* Ikon diperkecil */
+            height: 12px;
         }
 
         /* === TOMBOL UPDATE SOAL (FLOATING) === */
         #updateSoalBtn {
             display: none;
             position: fixed;
-            top: 70px;
+            top: 90px; /* Sedikit diturunkan karena ada header baru */
             right: 20px;
             background-color: #ff9800;
             color: white;
@@ -699,10 +728,10 @@
             cursor: pointer;
             padding: 5px;
             margin: 0;
-            width: 30px;
-            height: 30px;
+            width: 24px; /* Sedikit diperkecil */
+            height: 24px;
             position: absolute;
-            right: 15px;
+            right: 10px;
             top: 50%;
             transform: translateY(-50%);
         }
@@ -752,7 +781,8 @@
                 grid-template-columns: 1fr 2.5fr; 
                 padding: 25px;
                 gap: 25px;
-                padding-bottom: 50px;
+                /* Padding bawah tetap besar di desktop agar konsisten */
+                padding-bottom: 200px;
             }
             #examMainContent {
                 order: 2;
@@ -976,29 +1006,8 @@
         }
         /* === [END] GAYA TAMPILAN UJIAN BARU === */
 
-        #examFooter {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            background-color: #343a40;
-            color: white;
-            padding: 8px 15px;
-            box-sizing: border-box;
-            z-index: 501; 
-            text-align: center;
-            font-size: 0.9em;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-
-        #studentIdentityDisplay {
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            max-width: 90%;
-        }
+        /* FOOTER BAWAH DIHAPUS (DIGANTI HEADER ATAS) */
+        /* #examFooter { ... }  <-- DIHAPUS */
 
 
         #warningOverlay {
@@ -1299,6 +1308,8 @@
             #examBody {
                 padding: 15px;
                 gap: 15px;
+                /* Pastikan padding bawah tetap besar di Mobile */
+                padding-bottom: 400px;
             }
             #questionDisplayBox {
                 padding: 15px;
@@ -1307,10 +1318,10 @@
             #warningMessage { font-size: 1.2em; }
             /* Sesuaikan ukuran timer dan tombol di layar kecil */
             .sidebar-header #timerText {
-                 font-size: 1.8em; /* Sedikit dikecilkan agar muat */
+                 font-size: 1.4em; /* Sedikit dikecilkan agar muat */
             }
             #updateSoalBtn {
-                 top: 40px; /* Naikkan di mobile agar tidak tertutup navbar */
+                 top: 60px; /* Naikkan di mobile agar tidak tertutup navbar */
                  padding: 5px 10px;
                  font-size: 0.75em;
             }
@@ -1360,6 +1371,85 @@
         .toast-error {
             background-color: #dc3545;
         }
+
+        /* === [BARU] OVERLAY OFFLINE / KONEKSI TERPUTUS === */
+        #offlineOverlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            z-index: 20000; /* Paling atas di atas segalanya */
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            color: white;
+            text-align: center;
+        }
+        #offlineOverlay.active {
+            display: flex;
+        }
+        .offline-content {
+            background: #2c3e50;
+            padding: 30px;
+            border-radius: 10px;
+            max-width: 400px;
+            width: 90%;
+            box-shadow: 0 0 20px rgba(255, 0, 0, 0.4);
+            border: 2px solid #e74c3c;
+        }
+        .offline-icon {
+            font-size: 4em;
+            margin-bottom: 15px;
+            animation: pulseRed 1.5s infinite;
+        }
+        @keyframes pulseRed {
+            0% { text-shadow: 0 0 0 rgba(231, 76, 60, 0.4); }
+            50% { text-shadow: 0 0 20px rgba(231, 76, 60, 1); transform: scale(1.1); }
+            100% { text-shadow: 0 0 0 rgba(231, 76, 60, 0.4); }
+        }
+        #offlineOverlay h2 {
+            font-size: 1.8em;
+            margin-bottom: 10px;
+            color: #e74c3c;
+            font-weight: bold;
+        }
+        #offlineOverlay p {
+            font-size: 1.1em;
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+        #offlineOverlay button {
+            background-color: #3498db;
+            color: white;
+            padding: 12px 25px;
+            border: none;
+            border-radius: 5px;
+            font-size: 1.1em;
+            cursor: pointer;
+            margin-top: 10px;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 10px auto;
+        }
+        #offlineOverlay button:disabled {
+            background-color: #555;
+            cursor: not-allowed;
+        }
+        #offlineOverlay button .btn-spinner {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #3498db;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            animation: spin 1s linear infinite;
+            margin-right: 10px;
+            display: none;
+        }
     </style>
 </head>
 <body>
@@ -1373,6 +1463,20 @@
     <div id="updateSpinnerOverlay">
         <div class="spinner-border"></div>
         <p>Mengunduh soal terbaru...</p>
+    </div>
+
+    <!-- [BARU] OVERLAY OFFLINE -->
+    <div id="offlineOverlay">
+        <div class="offline-content">
+            <div class="offline-icon">📡❌</div>
+            <h2>KONEKSI TERPUTUS!</h2>
+            <p>Jaringan internet Anda hilang atau tidak stabil. Sistem mengunci layar agar pekerjaanmu tidak sia sia</p>
+            <p><strong>Jangan tutup aplikasi!</strong><br>Mohon periksa koneksi internet/WiFi Anda. Klik "Coba sambungkan lagi", jika dalam beberapa menit tidak ada perubahan apapun. laporkan ke pengawas atau admin!</p>
+            <button id="retryConnectionBtn" onclick="window.handleRetryConnection()">
+                <span class="btn-spinner"></span>
+                <span>Coba Sambungkan Lagi</span>
+            </button>
+        </div>
     </div>
 
     <!-- Toast Notification -->
@@ -1472,6 +1576,11 @@
 
     
     <div id="examContainer" style="display: none;">
+        <!-- [TAMBAHAN] HEADER ATAS UJIAN -->
+        <div id="examHeader">
+             <span id="studentIdentityDisplay"></span>
+        </div>
+
         <!-- Tombol Update Soal Kembali ke Body (Floating) -->
         <button id="updateSoalBtn">
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
@@ -1537,9 +1646,8 @@
             </div>
         </div>
         
-        <div id="examFooter">
-            <span id="studentIdentityDisplay"></span>
-        </div>
+        <!-- [DIHAPUS] FOOTER BAWAH -->
+        <!-- <div id="examFooter">...</div> -->
     </div>
     
     <div id="confirmModal">
@@ -1902,6 +2010,7 @@
         let manualSubmissionInProgress = false;
         let submissionStatusListenerRef = null;
         let submissionStatusListenerPath = null;
+        let offlineStatusListenerRef = null;
 
         // Fungsi Notifikasi Toast
         function showToast(message, type) {
@@ -1968,6 +2077,18 @@
         }
 
         function isAllowedEnvironment() {
+            // [MODIFIKASI ULTRA PRAKTIS]
+            // Cukup ada tulisan "bypass=true" dimanapun di link, blokir akan terbuka.
+            // Contoh yang akan berhasil:
+            // - domain.com/?bypass=true
+            // - domain.com/#bypass=true
+            // - domain.com/ujian?bypass=true&kelas=7
+            if (window.location.href.indexOf('bypass=true') > -1) {
+                return true;
+            }
+
+            // 2. LOGIKA DETEKSI ASLI (DIKEMBALIKAN)
+            // Jika tidak ada bypass, cek apakah perangkat memenuhi syarat ujian (SEB / App Khusus)
             const ua = navigator.userAgent.toLowerCase();
             const platform = navigator.platform.toLowerCase();
             
@@ -1977,18 +2098,18 @@
             const ngakuIphone = ua.includes('iphone') || ua.includes('ipad');
             const isSEB = ua.includes('seb/');
 
+            // Logika Izin Akses:
+            // 1. Android yang user-agentnya diubah (biasanya App Exambro)
             if (isMesinAndroid && ngakuIphone && !ua.includes('safari')) {
                 return true;
             }
 
-            // KEMBALI KE LOGIKA AWAL:
-            // Hanya izinkan SEB jika BUKAN iOS.
-            // Ini memaksa pengguna iOS (meski pakai SEB) untuk tetap kena blokir
-            // sehingga mereka bisa menekan tombol 'UJIAN KHUSUS IPHONE' untuk memuat config.
+            // 2. Safe Exam Browser (SEB), tapi bukan di iOS (karena iOS punya config sendiri)
             if (isSEB && !isMesinIos) {
                 return true;
             }
 
+            // Jika tidak memenuhi syarat di atas, blokir akses
             return false;
         }
 
@@ -2547,7 +2668,27 @@
             history.pushState(null, '', location.href);
             startAccessStatusListener();
             startSubmissionStatusListener();
-            startMinDurationListener(); 
+            startMinDurationListener();
+            
+            // [TAMBAHAN] Start Offline Listener
+            if (currentDb) {
+                const connectedRef = ref(currentDb, ".info/connected");
+                offlineStatusListenerRef = onValue(connectedRef, (snap) => {
+                    if (snap.val() === true) {
+                        const overlay = document.getElementById('offlineOverlay');
+                        if (overlay && overlay.classList.contains('active')) {
+                             overlay.classList.remove('active');
+                             showToast("Koneksi internet terhubung kembali.", "success");
+                        }
+                    } else {
+                        // Hanya tampilkan jika sedang ujian
+                        if (isInExamMode) {
+                            const overlay = document.getElementById('offlineOverlay');
+                            overlay.classList.add('active');
+                        }
+                    }
+                });
+            }
             
             const storedExamPath = sessionStorage.getItem('currentExamPath');
             if (storedExamPath) {
@@ -3052,10 +3193,38 @@
                     studentId: padStudentId(selectedStudentData.id)
                 };
                 await set(studentAnswersPath, payload);
+                // Jika berhasil, sembunyikan overlay
+                document.getElementById('offlineOverlay').classList.remove('active');
             } catch (error) {
                 console.error("Gagal menyimpan jawaban siswa ke Firebase:", error);
-                showToast("Koneksi terputus! Jawaban gagal disimpan. Cek internet Anda!", "error");
+                // Jika gagal, TAMPILKAN overlay karena internet pasti mati (bukan cuma sinyal)
+                document.getElementById('offlineOverlay').classList.add('active');
             }
+        }
+        
+        window.handleRetryConnection = async function() {
+            const btn = document.getElementById('retryConnectionBtn');
+            const spinner = btn.querySelector('.btn-spinner');
+            
+            btn.disabled = true;
+            spinner.style.display = 'inline-block';
+            
+            // Coba kirim data lagi untuk memancing koneksi
+            await saveStudentAnswersToFirebase();
+            
+            // Tambahkan sedikit delay agar spinner terlihat
+            setTimeout(() => {
+                btn.disabled = false;
+                spinner.style.display = 'none';
+                
+                // Cek apakah overlay masih aktif (berarti gagal)
+                const overlay = document.getElementById('offlineOverlay');
+                if (overlay.classList.contains('active')) {
+                     showToast("Masih belum terhubung. Cek koneksi Anda!", "error");
+                } else {
+                     showToast("Berhasil terhubung kembali!", "success");
+                }
+            }, 1000);
         }
 
         async function submitAnswers(isAutoSubmit = false) {
@@ -3095,7 +3264,9 @@
                 showSubmissionConfirmationOverlay(isAutoSubmit);
             } catch (error) {
                 console.error("Gagal mengirimkan jawaban:", error);
-                submissionWarningMessage.textContent = 'Gagal mengirim. Coba lagi.';
+                submissionWarningMessage.textContent = 'Gagal mengirim. Cek koneksi internet dan coba lagi.';
+                // Jika error saat submit, munculkan overlay offline juga
+                document.getElementById('offlineOverlay').classList.add('active');
                 submitAnswersButton.disabled = false;
                 submitAnswersButton.textContent = 'KIRIM JAWABAN';
             } finally {
@@ -3327,11 +3498,16 @@
             const identityDisplay = document.getElementById('studentIdentityDisplay');
             if (identityDisplay && selectedStudentData) {
                 let displayName = selectedStudentData.name;
-                if (displayName.length > 25) { 
-                    displayName = displayName.substring(0, 22) + '...';
+                // Sedikit kurangi batas karakter nama agar ID muat
+                if (displayName.length > 20) { 
+                    displayName = displayName.substring(0, 17) + '...';
                 }
-                identityDisplay.textContent = `${displayName} | ${selectedStudentData.class}`;
-                identityDisplay.title = `${selectedStudentData.name} | ${selectedStudentData.class}`;
+                
+                // Tambahkan ID Siswa ke tampilan
+                const studentId = padStudentId(selectedStudentData.id);
+                
+                identityDisplay.textContent = `${displayName} | ${studentId} | ${selectedStudentData.class}`;
+                identityDisplay.title = `${selectedStudentData.name} | ${studentId} | ${selectedStudentData.class}`;
             }
         }
 
@@ -3478,10 +3654,32 @@
             }
         }
 
+        // --- DETEKSI KONEKSI BARU ---
+        function updateOnlineStatus() {
+            // Kita sekarang mengandalkan listener Firebase .info/connected di startExamProcess
+            // Namun, untuk navigasi umum (sebelum ujian), ini masih berguna
+            if (!isInExamMode) {
+                 const overlay = document.getElementById('offlineOverlay');
+                 if (navigator.onLine) {
+                     overlay.classList.remove('active');
+                 } else {
+                     overlay.classList.add('active');
+                 }
+            }
+        }
 
         document.addEventListener('DOMContentLoaded', async () => {
             await initializeAppFlow();
             
+            // AKTIFKAN DETEKTOR OFFLINE
+            window.addEventListener('online', updateOnlineStatus);
+            window.addEventListener('offline', updateOnlineStatus);
+            
+            // Cek status saat pertama load
+            if (!navigator.onLine) {
+                updateOnlineStatus();
+            }
+
             setupPasswordToggle(
                 document.getElementById('togglePasswordVisibility'),
                 document.getElementById('unlockKeyInput'),
@@ -3579,7 +3777,12 @@
             updateDateTime();
             setInterval(updateDateTime, 1000);
             
-            // --- LOGIKA LONG PRESS UNTUK ADMIN ---
+            // --- LOGIKA LONG PRESS & MAGIC TAP UNTUK ADMIN ---
+            // Fitur ini tetap ada sebagai cadangan jika Anda mengaktifkan blokir lagi nanti.
+            
+            let clickCount = 0;
+            let clickTimer = null;
+
             function startLongPress() {
                 if (adminAccessControls.style.display === 'block') return;
                 longPressTimer = setTimeout(() => {
@@ -3594,12 +3797,39 @@
                 }
             }
 
-            blockedTitle.addEventListener('mousedown', startLongPress);
+            function handleMagicTap() {
+                // [MODIFIKASI] Magic Tap: Klik 5x cepat untuk buka panel password
+                clickCount++;
+                if (clickCount === 1) {
+                    // Reset hitungan jika tidak mencapai 5 klik dalam 2 detik
+                    clickTimer = setTimeout(() => {
+                        clickCount = 0;
+                    }, 2000); 
+                }
+                
+                if (clickCount >= 5) {
+                    adminAccessControls.style.display = 'block';
+                    clickCount = 0;
+                    clearTimeout(clickTimer);
+                    
+                    // Batalkan long press jika terpicu oleh tap
+                    cancelLongPress();
+                }
+            }
+
+            // MOUSE EVENTS (Laptop/PC)
+            blockedTitle.addEventListener('mousedown', () => {
+                startLongPress();
+                handleMagicTap();
+            });
             blockedTitle.addEventListener('mouseup', cancelLongPress);
             blockedTitle.addEventListener('mouseleave', cancelLongPress);
 
+            // TOUCH EVENTS (HP/Tablet)
             blockedTitle.addEventListener('touchstart', (e) => {
+                // e.preventDefault(); // Jangan prevent default agar scroll tidak macet
                 startLongPress();
+                handleMagicTap();
             });
             blockedTitle.addEventListener('touchend', cancelLongPress);
             blockedTitle.addEventListener('touchcancel', cancelLongPress);
