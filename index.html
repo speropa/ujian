@@ -3173,6 +3173,7 @@
             }
         }
 
+        // [OPTIMASI DATA] FUNGSI PENYIMPANAN HEMAT KUOTA
         async function saveStudentAnswersToFirebase() {
             if (!foundTokenGlobal || !selectedStudentData || !currentDb) return;
             const dbRefs = getDbRefs();
@@ -3183,7 +3184,6 @@
 
             try {
                 // CEK APAKAH INI PENYIMPANAN PERTAMA KALI?
-                // Kita gunakan sessionStorage sebagai penanda sederhana
                 const isInitialSave = !sessionStorage.getItem('data_statis_terkirim');
 
                 if (isInitialSave) {
@@ -3193,7 +3193,7 @@
                         answers: JSON.stringify(studentAnswers),
                         ragu: JSON.stringify(raguRaguStatus),
                         shuffledQuestionIndices: JSON.stringify(shuffledQuestionIndices), // <--- Berat
-                        shuffledOptionOrders: JSON.stringify(shuffledOptionOrders),       // <--- Berat
+                        shuffledOptionOrders: JSON.stringify(shuffledOptionOrders),        // <--- Berat
                         timestamp: Date.now(),
                         studentName: selectedStudentData.name,
                         studentClass: selectedStudentData.class,
@@ -3635,14 +3635,34 @@
                     await fetchGlobalSettings();
 
                     // === LOGIKA RESTORE ATAU WELCOME ===
-                    // [MODIFIKASI] BLOKIR DIMATIKAN TOTAL (SELALU IZINKAN AKSES)
-                    const isRestored = await restoreExamState();
-                    if (!isRestored) {
-                        await loadAndRenderWelcomeButtons();
+                    if (isBlockEnabled && !isAllowedEnvironment()) {
+                        unlockAccessBtn.onclick = async () => {
+                            if (unlockKeyInput.value === blockAccessKey) {
+                                accessBlockedOverlay.style.display = 'none';
+                                loadingSpinner.style.display = 'flex';
+                                const isRestored = await restoreExamState();
+                                 if (!isRestored) {
+                                    await loadAndRenderWelcomeButtons();
+                                    loadingSpinner.style.display = 'none';
+                                    welcomeScreen.style.display = 'flex';
+                                } else {
+                                    loadingSpinner.style.display = 'none';
+                                }
+                            } else {
+                                unlockMessage.textContent = "Kunci yang dimasukkan salah.";
+                            }
+                        };
                         loadingSpinner.style.display = 'none';
-                        welcomeScreen.style.display = 'flex';
+                        accessBlockedOverlay.style.display = 'flex';
                     } else {
-                        loadingSpinner.style.display = 'none';
+                        const isRestored = await restoreExamState();
+                        if (!isRestored) {
+                           await loadAndRenderWelcomeButtons();
+                           loadingSpinner.style.display = 'none';
+                           welcomeScreen.style.display = 'flex';
+                        } else {
+                           loadingSpinner.style.display = 'none';
+                        }
                     }
                 } else {
                     // Jika login gagal total
@@ -3782,6 +3802,8 @@
             setInterval(updateDateTime, 1000);
             
             // --- LOGIKA LONG PRESS & MAGIC TAP UNTUK ADMIN ---
+            // Fitur ini tetap ada sebagai cadangan jika Anda mengaktifkan blokir lagi nanti.
+            
             let clickCount = 0;
             let clickTimer = null;
 
@@ -3800,7 +3822,7 @@
             }
 
             function handleMagicTap() {
-                // Magic Tap: Klik 5x cepat untuk buka panel password
+                // [MODIFIKASI] Magic Tap: Klik 5x cepat untuk buka panel password
                 clickCount++;
                 if (clickCount === 1) {
                     // Reset hitungan jika tidak mencapai 5 klik dalam 2 detik
