@@ -3178,26 +3178,50 @@
             const dbRefs = getDbRefs();
             if (!dbRefs) return;
 
-            const studentAnswersPath = child(dbRefs.studentAnswersRef, `${foundTokenGlobal.key}/${padStudentId(selectedStudentData.id)}`);
+            const studentIdPadded = padStudentId(selectedStudentData.id);
+            const studentAnswersPath = child(dbRefs.studentAnswersRef, `${foundTokenGlobal.key}/${studentIdPadded}`);
+
             try {
-                const payload = {
-                    answers: JSON.stringify(studentAnswers),
-                    ragu: JSON.stringify(raguRaguStatus),
-                    shuffledQuestionIndices: JSON.stringify(shuffledQuestionIndices),
-                    shuffledOptionOrders: JSON.stringify(shuffledOptionOrders),
-                    timestamp: Date.now(),
-                    studentName: selectedStudentData.name,
-                    studentClass: selectedStudentData.class,
-                    token: foundTokenGlobal.token,
-                    subject: foundTokenGlobal.subject,
-                    studentId: padStudentId(selectedStudentData.id)
-                };
-                await set(studentAnswersPath, payload);
-                // Jika berhasil, sembunyikan overlay
+                // CEK APAKAH INI PENYIMPANAN PERTAMA KALI?
+                // Kita gunakan sessionStorage sebagai penanda sederhana
+                const isInitialSave = !sessionStorage.getItem('data_statis_terkirim');
+
+                if (isInitialSave) {
+                    // --- MODE 1: SIMPAN PERTAMA (PAKAI SET) ---
+                    // Kirim SEMUA data termasuk konfigurasi acak soal yang berat
+                    const payload = {
+                        answers: JSON.stringify(studentAnswers),
+                        ragu: JSON.stringify(raguRaguStatus),
+                        shuffledQuestionIndices: JSON.stringify(shuffledQuestionIndices), // <--- Berat
+                        shuffledOptionOrders: JSON.stringify(shuffledOptionOrders),       // <--- Berat
+                        timestamp: Date.now(),
+                        studentName: selectedStudentData.name,
+                        studentClass: selectedStudentData.class,
+                        token: foundTokenGlobal.token,
+                        subject: foundTokenGlobal.subject,
+                        studentId: studentIdPadded
+                    };
+                    await set(studentAnswersPath, payload);
+                    
+                    // Tandai bahwa data berat sudah terkirim
+                    sessionStorage.setItem('data_statis_terkirim', 'true');
+                    
+                } else {
+                    // --- MODE 2: UPDATE JAWABAN (PAKAI UPDATE) ---
+                    // HANYA kirim jawaban yang berubah. Sangat ringan (hemat bytes).
+                    const payload = {
+                        answers: JSON.stringify(studentAnswers),
+                        ragu: JSON.stringify(raguRaguStatus),
+                        timestamp: Date.now()
+                    };
+                    await update(studentAnswersPath, payload);
+                }
+
+                // Hilangkan overlay offline jika berhasil
                 document.getElementById('offlineOverlay').classList.remove('active');
+                
             } catch (error) {
                 console.error("Gagal menyimpan jawaban siswa ke Firebase:", error);
-                // Jika gagal, TAMPILKAN overlay karena internet pasti mati (bukan cuma sinyal)
                 document.getElementById('offlineOverlay').classList.add('active');
             }
         }
@@ -3611,34 +3635,14 @@
                     await fetchGlobalSettings();
 
                     // === LOGIKA RESTORE ATAU WELCOME ===
-                    if (isBlockEnabled && !isAllowedEnvironment()) {
-                        unlockAccessBtn.onclick = async () => {
-                            if (unlockKeyInput.value === blockAccessKey) {
-                                accessBlockedOverlay.style.display = 'none';
-                                loadingSpinner.style.display = 'flex';
-                                const isRestored = await restoreExamState();
-                                 if (!isRestored) {
-                                    await loadAndRenderWelcomeButtons();
-                                    loadingSpinner.style.display = 'none';
-                                    welcomeScreen.style.display = 'flex';
-                                } else {
-                                    loadingSpinner.style.display = 'none';
-                                }
-                            } else {
-                                unlockMessage.textContent = "Kunci yang dimasukkan salah.";
-                            }
-                        };
+                    // [MODIFIKASI] BLOKIR DIMATIKAN TOTAL (SELALU IZINKAN AKSES)
+                    const isRestored = await restoreExamState();
+                    if (!isRestored) {
+                        await loadAndRenderWelcomeButtons();
                         loadingSpinner.style.display = 'none';
-                        accessBlockedOverlay.style.display = 'flex';
+                        welcomeScreen.style.display = 'flex';
                     } else {
-                        const isRestored = await restoreExamState();
-                        if (!isRestored) {
-                           await loadAndRenderWelcomeButtons();
-                           loadingSpinner.style.display = 'none';
-                           welcomeScreen.style.display = 'flex';
-                        } else {
-                           loadingSpinner.style.display = 'none';
-                        }
+                        loadingSpinner.style.display = 'none';
                     }
                 } else {
                     // Jika login gagal total
@@ -3778,8 +3782,6 @@
             setInterval(updateDateTime, 1000);
             
             // --- LOGIKA LONG PRESS & MAGIC TAP UNTUK ADMIN ---
-            // Fitur ini tetap ada sebagai cadangan jika Anda mengaktifkan blokir lagi nanti.
-            
             let clickCount = 0;
             let clickTimer = null;
 
@@ -3798,7 +3800,7 @@
             }
 
             function handleMagicTap() {
-                // [MODIFIKASI] Magic Tap: Klik 5x cepat untuk buka panel password
+                // Magic Tap: Klik 5x cepat untuk buka panel password
                 clickCount++;
                 if (clickCount === 1) {
                     // Reset hitungan jika tidak mencapai 5 klik dalam 2 detik
