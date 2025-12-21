@@ -1898,6 +1898,9 @@
         let isSoalAcakEnabled = true;
         let isPilganAcakEnabled = true;
         let publicSettings = null;
+        
+        // [MODIFIKASI] Variabel Global Kode Bypass Server
+        let serverBypassCode = ""; 
 
         const allowedLatitude = -7.8589546;
         const allowedLongitude = 110.2655596;
@@ -2077,14 +2080,15 @@
         }
 
         function isAllowedEnvironment() {
-            // [MODIFIKASI ULTRA PRAKTIS]
-            // Cukup ada tulisan "bypass=true" dimanapun di link, blokir akan terbuka.
-            // Contoh yang akan berhasil:
-            // - domain.com/?bypass=true
-            // - domain.com/#bypass=true
-            // - domain.com/ujian?bypass=true&kelas=7
-            if (window.location.href.indexOf('bypass=true') > -1) {
-                return true;
+            // [MODIFIKASI DINAMIS]
+            // Cek apakah URL mengandung parameter bypass yang SESUAI dengan data Firebase
+            // Contoh: Jika di Firebase 'akses/bypass' isinya 'kuncirahasia',
+            // maka URL harus mengandung 'bypass=kuncirahasia'
+            
+            if (serverBypassCode && serverBypassCode !== "") {
+                if (window.location.href.indexOf(`bypass=${serverBypassCode}`) > -1) {
+                    return true;
+                }
             }
 
             // 2. LOGIKA DETEKSI ASLI (DIKEMBALIKAN)
@@ -3592,12 +3596,18 @@
 
             async function fetchGlobalSettings() {
                 const refs = getSetupDbRefs();
-                const [locSnap, minDurSnap, pubSetSnap, shuffleSnap, blockKeySnap] = await Promise.all([
+                
+                // [MODIFIKASI] Tambahkan ref khusus untuk bypass
+                const bypassRef = ref(dbAturan, 'akses/bypass');
+
+                // Tambahkan bypassSnap ke Promise.all
+                const [locSnap, minDurSnap, pubSetSnap, shuffleSnap, blockKeySnap, bypassSnap] = await Promise.all([
                     get(refs.settingsRef), 
                     get(refs.minDurationSettingsRef), 
                     get(refs.publicSettingsRef),
                     get(refs.shuffleSettingsRef),
-                    get(refs.blockKeySettingsRef)
+                    get(refs.blockKeySettingsRef),
+                    get(bypassRef) // <--- AMBIL DATA BYPASS
                 ]);
 
                 if (locSnap.exists()) {
@@ -3624,6 +3634,13 @@
                 } else {
                     isSoalAcakEnabled = true;
                     isPilganAcakEnabled = true;
+                }
+                
+                // [MODIFIKASI] Simpan nilai bypass dari server ke variabel global
+                if (bypassSnap.exists()) {
+                    // Mengubah nilai menjadi string agar aman
+                    serverBypassCode = String(bypassSnap.val());
+                    console.log("Kode Bypass Server Dimuat.");
                 }
             }
 
