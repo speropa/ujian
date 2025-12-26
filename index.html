@@ -2080,40 +2080,37 @@
         }
 
         function isAllowedEnvironment() {
-            // [MODIFIKASI DINAMIS]
-            // Cek apakah URL mengandung parameter bypass yang SESUAI dengan data Firebase
-            // Contoh: Jika di Firebase 'akses/bypass' isinya 'kuncirahasia',
-            // maka URL harus mengandung 'bypass=kuncirahasia'
-            
-            if (serverBypassCode && serverBypassCode !== "") {
-                if (window.location.href.indexOf(`bypass=${serverBypassCode}`) > -1) {
-                    return true;
-                }
+            // 1. CEK BYPASS (Prioritas Tertinggi)
+            // Mengambil nilai parameter ?bypass=... dari URL browser
+            const urlParams = new URLSearchParams(window.location.search);
+            const bypassParam = urlParams.get('bypass');
+
+            // Jika kode bypass di server ada isinya, dan cocok dengan URL
+            if (serverBypassCode && serverBypassCode !== "" && bypassParam === serverBypassCode) {
+                console.log("Akses diizinkan via Bypass URL");
+                return true; 
             }
 
-            // 2. LOGIKA DETEKSI ASLI (DIKEMBALIKAN)
-            // Jika tidak ada bypass, cek apakah perangkat memenuhi syarat ujian (SEB / App Khusus)
-            const ua = navigator.userAgent.toLowerCase();
-            const platform = navigator.platform.toLowerCase();
-            
-            const isMesinAndroid = platform.includes('linux') || platform.includes('android');
-            const isMesinIos = platform.includes('iphone') || platform.includes('ipad') || (platform.includes('mac') && navigator.maxTouchPoints > 1);
+            // Ambil User Agent Browser/Aplikasi
+            const ua = navigator.userAgent;
 
-            const ngakuIphone = ua.includes('iphone') || ua.includes('ipad');
-            const isSEB = ua.includes('seb/');
-
-            // Logika Izin Akses:
-            // 1. Android yang user-agentnya diubah (biasanya App Exambro)
-            if (isMesinAndroid && ngakuIphone && !ua.includes('safari')) {
+            // 2. CEK SAFE EXAM BROWSER (SEB)
+            // Browser SEB pasti mengandung kata "SEB" di user agent-nya (baik Desktop maupun iOS)
+            if (ua.indexOf("SEB") > -1) {
+                console.log("Akses diizinkan via SEB");
                 return true;
             }
 
-            // 2. Safe Exam Browser (SEB), tapi bukan di iOS (karena iOS punya config sendiri)
-            if (isSEB && !isMesinIos) {
+            // 3. CEK USER AGENT KHUSUS "speropa"
+            // Ini untuk Aplikasi Android/iOS buatan sendiri.
+            // Pastikan di Android Studio/Project Anda, User Agent mengandung kata "speropa"
+            if (ua.indexOf("speropa") > -1) {
+                console.log("Akses diizinkan via Aplikasi Speropa");
                 return true;
             }
 
-            // Jika tidak memenuhi syarat di atas, blokir akses
+            // Jika tidak memenuhi 3 syarat di atas, BLOKIR AKSES
+            console.warn("Akses Ditolak: Lingkungan tidak dikenali (" + ua + ")");
             return false;
         }
 
