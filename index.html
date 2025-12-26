@@ -3579,6 +3579,18 @@
             isAnyModalOpen = true;
         }
 
+        // [MODIFIKASI] Fungsi helper untuk menangani sukses login (Restore state atau tampilkan Welcome)
+        async function processLoginSuccess() {
+            const isRestored = await restoreExamState();
+            if (!isRestored) {
+               await loadAndRenderWelcomeButtons();
+               loadingSpinner.style.display = 'none';
+               welcomeScreen.style.display = 'flex';
+            } else {
+               loadingSpinner.style.display = 'none';
+            }
+        }
+
         async function initializeAppFlow() {
             loadingSpinner.style.display = 'flex';
             
@@ -3613,11 +3625,15 @@
                     firebaseAllowedRadiusKm = s.allowedRadiusKm ?? 0.075;
                     locationAccessKey = s.currentKey || "";
                 }
+                
+                // [MODIFIKASI] Kita tetap ambil kunci admin, tapi abaikan flag 'isEnabled'
                 if (blockKeySnap.exists()) {
                     const s = blockKeySnap.val();
-                    isBlockEnabled = s.isEnabled ?? false;
-                    blockAccessKey = s.key || "";
+                    // isBlockEnabled kita abaikan untuk deteksi lingkungan otomatis, 
+                    // tapi blockAccessKey tetap disimpan untuk fitur "Buka Akses" admin.
+                    blockAccessKey = s.key || ""; 
                 }
+                
                 if (minDurSnap.exists()) {
                     const s = minDurSnap.val();
                     minDurationSettingsGlobal.isMinDurationEnabled = s.isMinDurationEnabled ?? false;
@@ -3648,36 +3664,36 @@
                 if (loginSuccess) {
                     await fetchGlobalSettings();
 
-                    // === LOGIKA RESTORE ATAU WELCOME ===
-                    if (isBlockEnabled && !isAllowedEnvironment()) {
+                    // === [PERBAIKAN LOGIKA UTAMA: VALIDASI LINGKUNGAN WAJIB] ===
+                    
+                    // Cek apakah lingkungan valid (Aplikasi Speropa / SEB / Bypass URL)
+                    // Kita HAPUS syarat "isBlockEnabled" agar pengecekan selalu berjalan.
+                    if (!isAllowedEnvironment()) { 
+                        
+                        // JIKA DI BROWSER BIASA -> BLOKIR AKSES
+                        
+                        // Setup tombol buka kunci admin (jika guru ingin membuka paksa di browser)
                         unlockAccessBtn.onclick = async () => {
+                            // Cek kunci admin dari Firebase
                             if (unlockKeyInput.value === blockAccessKey) {
                                 accessBlockedOverlay.style.display = 'none';
                                 loadingSpinner.style.display = 'flex';
-                                const isRestored = await restoreExamState();
-                                 if (!isRestored) {
-                                    await loadAndRenderWelcomeButtons();
-                                    loadingSpinner.style.display = 'none';
-                                    welcomeScreen.style.display = 'flex';
-                                } else {
-                                    loadingSpinner.style.display = 'none';
-                                }
+                                
+                                // Lanjut proses login normal karena admin sudah mengizinkan
+                                await processLoginSuccess();
                             } else {
                                 unlockMessage.textContent = "Kunci yang dimasukkan salah.";
                             }
                         };
+                        
                         loadingSpinner.style.display = 'none';
-                        accessBlockedOverlay.style.display = 'flex';
+                        accessBlockedOverlay.style.display = 'flex'; // Tampilkan layar blokir
+
                     } else {
-                        const isRestored = await restoreExamState();
-                        if (!isRestored) {
-                           await loadAndRenderWelcomeButtons();
-                           loadingSpinner.style.display = 'none';
-                           welcomeScreen.style.display = 'flex';
-                        } else {
-                           loadingSpinner.style.display = 'none';
-                        }
+                        // JIKA DI APLIKASI SPEROPA / SEB / BYPASS -> LANJUT
+                        await processLoginSuccess();
                     }
+
                 } else {
                     // Jika login gagal total
                     throw new Error("Gagal login otomatis");
