@@ -358,16 +358,17 @@
             padding-bottom: 10px;
         }
 
-        /* TAMBAHAN STYLE UNTUK DEBUG USER AGENT DI LAYAR BLOKIR */
-        .debug-ua-info {
-            font-size: 0.75em; 
-            color: #777; 
-            margin-top: 20px; 
-            padding-top: 10px;
-            border-top: 1px solid #eee;
-            word-break: break-all;
-            font-family: monospace;
-            line-height: 1.2;
+        .custom-modal {
+            display: none;
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            opacity: 0;
+            transition: opacity 0.3s ease-in-out;
         }
 
         .custom-modal.show {
@@ -1491,12 +1492,6 @@
                 DOWNLOAD APLIKASI
             </button>
             
-            <!-- TAMBAHAN: INFO DEBUG USER AGENT AGAR ADMIN TAHU IDENTITAS PERANGKAT -->
-            <div class="debug-ua-info">
-                <strong>Deteksi Perangkat (User Agent):</strong><br>
-                <span id="blockedUserAgentDisplay">Memuat...</span>
-            </div>
-
             <div id="adminAccessControls">
                 <div class="password-input-container">
                     <input type="password" id="unlockKeyInput" placeholder="Masukkan Kunci Akses">
@@ -1576,8 +1571,6 @@
         <div class="footer">
             © Admin SMPN 2 Pajangan<br>
             <span id="datetime"></span>
-            <!-- TAMBAHAN: INFO DEBUG LINGKUNGAN DI FOOTER LOGIN -->
-            <br><span id="environmentDebug" style="font-size: 9px; color: #aaa; opacity: 0.7;"></span>
         </div>
     </div>
 
@@ -2086,9 +2079,6 @@
             document.getElementById('datetime').textContent = now.toLocaleDateString('id-ID', options);
         }
 
-        // Variabel global untuk menyimpan jenis lingkungan yang terdeteksi
-        let detectedEnvType = "UNKNOWN";
-
         function isAllowedEnvironment() {
             // 1. CEK BYPASS (Prioritas Tertinggi)
             // Mengambil nilai parameter ?bypass=... dari URL browser
@@ -2098,7 +2088,6 @@
             // Jika kode bypass di server ada isinya, dan cocok dengan URL
             if (serverBypassCode && serverBypassCode !== "" && bypassParam === serverBypassCode) {
                 console.log("Akses diizinkan via Bypass URL");
-                detectedEnvType = "BYPASS_CODE";
                 return true; 
             }
 
@@ -2109,21 +2098,19 @@
             // Browser SEB pasti mengandung kata "SEB" di user agent-nya (baik Desktop maupun iOS)
             if (ua.indexOf("SEB") > -1) {
                 console.log("Akses diizinkan via SEB");
-                detectedEnvType = "SEB_BROWSER";
                 return true;
             }
 
             // 3. CEK USER AGENT KHUSUS "exambroku"
             // Ini untuk Aplikasi Android/iOS buatan sendiri.
+            // Pastikan di Android Studio/Project Anda, User Agent mengandung kata "exambroku"
             if (ua.indexOf("exambroku") > -1) {
                 console.log("Akses diizinkan via Aplikasi Exambroku");
-                detectedEnvType = "APP_EXAMBROKU";
                 return true;
             }
 
             // Jika tidak memenuhi 3 syarat di atas, BLOKIR AKSES
             console.warn("Akses Ditolak: Lingkungan tidak dikenali (" + ua + ")");
-            detectedEnvType = "BLOCKED";
             return false;
         }
 
@@ -3594,10 +3581,6 @@
 
         // [MODIFIKASI] Fungsi helper untuk menangani sukses login (Restore state atau tampilkan Welcome)
         async function processLoginSuccess() {
-            // Tampilkan Info Debug di Footer Login agar admin tahu lewat jalur mana siswa masuk
-            const debugEl = document.getElementById('environmentDebug');
-            if(debugEl) debugEl.textContent = "Env: " + detectedEnvType;
-
             const isRestored = await restoreExamState();
             if (!isRestored) {
                await loadAndRenderWelcomeButtons();
@@ -3689,9 +3672,6 @@
                         
                         // JIKA DI BROWSER BIASA -> BLOKIR AKSES
                         
-                        // Tampilkan identitas perangkat di layar blokir untuk debugging
-                        document.getElementById('blockedUserAgentDisplay').textContent = navigator.userAgent;
-
                         // Setup tombol buka kunci admin (jika guru ingin membuka paksa di browser)
                         unlockAccessBtn.onclick = async () => {
                             // Cek kunci admin dari Firebase
