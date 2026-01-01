@@ -2080,7 +2080,7 @@
         }
 
         function isAllowedEnvironment() {
-            // 1. CEK BYPASS (Prioritas Tertinggi)
+            // 1. CEK BYPASS (SATU-SATUNYA AKSES YANG DIIZINKAN)
             // Mengambil nilai parameter ?bypass=... dari URL browser
             const urlParams = new URLSearchParams(window.location.search);
             const bypassParam = urlParams.get('bypass');
@@ -2091,26 +2091,13 @@
                 return true; 
             }
 
-            // Ambil User Agent Browser/Aplikasi
+            // Ambil User Agent Browser/Aplikasi untuk keperluan logging (debug)
             const ua = navigator.userAgent;
 
-            // 2. CEK SAFE EXAM BROWSER (SEB)
-            // Browser SEB pasti mengandung kata "SEB" di user agent-nya (baik Desktop maupun iOS)
-            if (ua.indexOf("SEB") > -1) {
-                console.log("Akses diizinkan via SEB");
-                return true;
-            }
-
-            // 3. CEK USER AGENT KHUSUS "exambroku"
-            // Ini untuk Aplikasi Android/iOS buatan sendiri.
-            // Pastikan di Android Studio/Project Anda, User Agent mengandung kata "exambroku"
-            if (ua.indexOf("ujian") > -1) {
-                console.log("Akses diizinkan via Aplikasi Exambroku");
-                return true;
-            }
-
-            // Jika tidak memenuhi 3 syarat di atas, BLOKIR AKSES
-            console.warn("Akses Ditolak: Lingkungan tidak dikenali (" + ua + ")");
+            // BLOKIR SEMUA AKSES LAINNYA
+            // Tidak peduli apakah itu SEB, Exambroku, atau iPhone (BroExam), semua akan ditolak
+            // kecuali memiliki kode bypass yang valid.
+            console.warn("Akses Ditolak: Hanya diizinkan via Bypass URL (" + ua + ")");
             return false;
         }
 
