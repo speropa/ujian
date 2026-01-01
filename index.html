@@ -2094,7 +2094,14 @@
             // Ambil User Agent Browser/Aplikasi
             const ua = navigator.userAgent;
 
-            // 2. CEK USER AGENT KHUSUS "exambroku"
+            // 2. CEK SAFE EXAM BROWSER (SEB)
+            // Browser SEB pasti mengandung kata "SEB" di user agent-nya (baik Desktop maupun iOS)
+            if (ua.indexOf("SEB") > -1) {
+                console.log("Akses diizinkan via SEB");
+                return true;
+            }
+
+            // 3. CEK USER AGENT KHUSUS "exambroku"
             // Ini untuk Aplikasi Android/iOS buatan sendiri.
             // Pastikan di Android Studio/Project Anda, User Agent mengandung kata "exambroku"
             if (ua.indexOf("exambroku") > -1) {
@@ -2102,7 +2109,7 @@
                 return true;
             }
 
-            // Jika tidak memenuhi syarat di atas, BLOKIR AKSES
+            // Jika tidak memenuhi 3 syarat di atas, BLOKIR AKSES
             console.warn("Akses Ditolak: Lingkungan tidak dikenali (" + ua + ")");
             return false;
         }
