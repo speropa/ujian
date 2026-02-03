@@ -1585,7 +1585,7 @@
     <key>startResource</key>
     <string />
     <key>startURL</key>
-    <string>http://smp2pajangan.github.io/customlink</string>
+    <string>http://speropa.pages.dev/?bypass=true</string>
     <key>startURLAppendQueryParameter</key>
     <false />
     <key>taskBarHeight</key>
@@ -1633,4 +1633,5 @@
     <key>systemAlwaysOn</key>
     <true />
   </dict>
+
 </plist>
