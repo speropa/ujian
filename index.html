@@ -1104,7 +1104,7 @@
             color: #4CAF50;
         }
 
-        #submissionConfirmationOverlay p {
+        #submissionOverlayMessage {
             font-size: 1.1em;
             color: #333;
             margin-bottom: 20px;
@@ -1215,16 +1215,92 @@
             line-height: 1.5;
         }
 
-        /* Container kontrol akses admin yang tersembunyi */
-        #adminAccessControls {
-            display: none;
-            animation: fadeIn 0.5s;
+        /* === GAYA 3 TOMBOL PILIHAN PERANGKAT === */
+        .device-btn-group {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin-bottom: 25px;
         }
 
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(-10px); }
-            to { opacity: 1; transform: translateY(0); }
+        .btn-premium {
+            position: relative;
+            overflow: hidden;
+            transition: all 0.2s ease;
+            display: block;
+            width: 100%;
+            border-radius: 12px;
+            padding: 4px;
+            border: none;
+            cursor: pointer;
+            text-align: left;
+            text-decoration: none;
+            margin: 0 !important;
+            box-sizing: border-box;
         }
+
+        .btn-premium:hover { transform: translateY(-2px); }
+        .btn-premium:active { transform: translateY(0); filter: brightness(0.9); }
+
+        .btn-windows { background: linear-gradient(to right, #2563eb, #3b82f6); box-shadow: 0 10px 15px -3px rgba(59, 130, 246, 0.3); }
+        .btn-android { background: linear-gradient(to right, #059669, #10b981); box-shadow: 0 10px 15px -3px rgba(16, 185, 129, 0.3); }
+        .btn-iphone { background: linear-gradient(to right, #1e293b, #334155); box-shadow: 0 10px 15px -3px rgba(30, 41, 59, 0.3); }
+
+        .btn-premium-inner {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 15px 20px;
+            background-color: transparent;
+            border-radius: 8px;
+        }
+
+        .btn-premium-content { display: flex; align-items: center; gap: 15px; }
+
+        .btn-premium-icon {
+            width: 45px;
+            height: 45px;
+            background-color: rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            flex-shrink: 0;
+        }
+        .btn-premium-icon svg { width: 24px; height: 24px; fill: currentColor; }
+
+        .btn-premium-text { display: flex; flex-direction: column; justify-content: center; }
+
+        .btn-premium-title {
+            font-weight: bold; font-size: 1.1em; line-height: 1.2; color: white; margin: 0; text-align: left;
+        }
+
+        .btn-premium-subtitle {
+            font-size: 0.75em; font-weight: normal; margin: 0; margin-top: 3px; text-align: left;
+        }
+
+        .subtitle-blue { color: #dbeafe; }
+        .subtitle-emerald { color: #d1fae5; }
+        .subtitle-slate { color: #cbd5e1; }
+
+        .btn-premium-arrow { color: white; opacity: 0.5; display: flex; align-items: center;}
+        .btn-premium-arrow svg { width: 14px; height: 14px; fill: currentColor; }
+        
+        /* Tombol di dalam Modal Petunjuk */
+        .modal-action-btn {
+            padding: 15px; font-weight: bold; border-radius: 10px; font-size: 0.9em;
+            letter-spacing: 0.5px; margin: 0 !important; margin-bottom: 10px !important; display: block; width: 100%; box-sizing: border-box; text-align: center; text-decoration: none;
+        }
+        .modal-btn-light { background-color: #f1f5f9 !important; color: #334155 !important; }
+        .modal-btn-light:hover { background-color: #e2e8f0 !important; }
+        .modal-btn-primary { background-color: #2563eb !important; color: white !important; box-shadow: 0 4px 6px -1px rgba(37, 99, 235, 0.3); }
+        .modal-btn-primary:hover { background-color: #1d4ed8 !important; }
+        .modal-btn-close {
+            background-color: transparent !important; color: #94a3b8 !important; text-transform: uppercase;
+            letter-spacing: 1px; font-size: 0.75em !important; box-shadow: none !important; padding: 10px !important;
+        }
+        .modal-btn-close:hover { color: #475569 !important; }
 
         .password-input-container {
             position: relative;
@@ -1487,23 +1563,63 @@
             <h1 id="blockedTitle" class="no-select">AKSES DIBLOKIR</h1>
             <p>Ujian hanya bisa diakses melalui aplikasi yang sudah disosialisasikan. Silahkan hubungi Admin jika terdapat kendala.</p>
             
-            <!-- TOMBOL DOWNLOAD APLIKASI (TAB BARU) -->
-            <button id="btnDownloadApp" style="display: block; width: 100%; margin-bottom: 20px; padding: 15px; border-radius: 8px; font-weight: bold; background-color: #343a40; color: white; border: none;">
-                DOWNLOAD APLIKASI
-            </button>
-            
-            <div id="adminAccessControls">
-                <div class="password-input-container">
-                    <input type="password" id="unlockKeyInput" placeholder="Masukkan Kunci Akses">
-                    <span class="password-toggle-icon" id="togglePasswordVisibility">
-                         <svg id="eye-open" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"></path><circle cx="12" cy="12" r="3"></circle></svg>
-                         <svg id="eye-closed" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display: none;"><path d="M9.88 9.88a3 3 0 1 0 4.24 4.24"></path><path d="M10.73 5.08A10.43 10.43 0 0 1 12 5c7 0 10 7 10 7a13.16 13.16 0 0 1-1.67 2.68"></path><path d="M6.61 6.61A13.526 13.526 0 0 0 2 12s3 7 10 7a9.74 9.74 0 0 0 5.39-1.61"></path><line x1="2" x2="22" y1="2" y2="22"></line></svg>
-                    </span>
-                </div>
-                <button id="unlockAccessBtn">BUKA AKSES</button>
+            <!-- 3 TOMBOL PILIHAN PERANGKAT (PREMIUM UI) -->
+            <div class="device-btn-group">
+                <!-- Tombol Windows -->
+                <button id="btnWinPremium" class="btn-premium btn-windows">
+                    <div class="btn-premium-inner">
+                        <div class="btn-premium-content">
+                            <div class="btn-premium-icon">
+                                <svg viewBox="0 0 448 512"><path d="M0 93.7l183.6-25.3v177.4H0V93.7zm0 324.6l183.6 25.3V268.4H0v149.9zm203.8 28L448 480V268.4H203.8v177.9zm0-380.6v180.1H448V32L203.8 65.7z"/></svg>
+                            </div>
+                            <div class="btn-premium-text">
+                                <div class="btn-premium-title">Laptop / PC</div>
+                                <div class="btn-premium-subtitle subtitle-blue">Windows Version</div>
+                            </div>
+                        </div>
+                        <div class="btn-premium-arrow">
+                            <svg viewBox="0 0 320 512"><path d="M96 480c-8.188 0-16.38-3.125-22.62-9.375-12.5-12.5-12.5-32.75 0-45.25L242.8 256 73.38 86.63c-12.5-12.5-12.5-32.75 0-45.25s32.75-12.5 45.25 0l192 192c12.5 12.5 12.5 32.75 0 45.25l-192 192C112.4 476.9 104.2 480 96 480z"/></svg>
+                        </div>
+                    </div>
+                </button>
+
+                <!-- Tombol Android -->
+                <a href="https://drive.google.com/uc?export=download&id=1XZPd23NADOmC0PBcsIQadyjPkKQUlyP6" target="_blank" class="btn-premium btn-android">
+                    <div class="btn-premium-inner">
+                        <div class="btn-premium-content">
+                            <div class="btn-premium-icon">
+                                <svg viewBox="0 0 576 512"><path d="M420.2 92.9l31.5-54.6c1.3-2.3.5-5.3-1.8-6.6-2.3-1.3-5.3-.5-6.6 1.8L411.4 88.5c-35-15.8-74.4-24.5-115.4-24.5-41 0-80.4 8.7-115.4 24.5L148.8 33.6c-1.3-2.3-4.3-3.1-6.6-1.8-2.3 1.3-3.1 4.3-1.8 6.6l31.5 54.6C89.5 139.9 29.5 220.1 16 313.6h544c-13.5-93.5-73.5-173.7-155.8-220.7zM181.3 226.7c-12.4 0-22.4-10-22.4-22.4s10-22.4 22.4-22.4 22.4 10 22.4 22.4-10 22.4-22.4 22.4zm213.4 0c-12.4 0-22.4-10-22.4-22.4s10-22.4 22.4-22.4 22.4 10 22.4 22.4-10 22.4-22.4 22.4z"/></svg>
+                            </div>
+                            <div class="btn-premium-text">
+                                <div class="btn-premium-title">HP Android</div>
+                                <div class="btn-premium-subtitle subtitle-emerald">Download Aplikasi APK</div>
+                            </div>
+                        </div>
+                        <div class="btn-premium-arrow">
+                            <svg viewBox="0 0 512 512"><path d="M288 32c0-17.7-14.3-32-32-32s-32 14.3-32 32V274.7l-73.4-73.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3l128 128c12.5 12.5 32.8 12.5 45.3 0l128-128c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L288 274.7V32zM64 352c-35.3 0-64 28.7-64 64v32c0 35.3 28.7 64 64 64H448c35.3 0 64-28.7 64-64V416c0-35.3-28.7-64-64-64H346.5l-45.3 45.3c-25 25-65.5 25-90.5 0L165.5 352H64zm368 56a24 24 0 1 1 0 48 24 24 0 1 1 0-48z"/></svg>
+                        </div>
+                    </div>
+                </a>
+
+                <!-- Tombol iPhone -->
+                <button id="btnIosPremium" class="btn-premium btn-iphone">
+                    <div class="btn-premium-inner">
+                        <div class="btn-premium-content">
+                            <div class="btn-premium-icon">
+                                <svg viewBox="0 0 384 512"><path d="M318.7 268.7c-.2-36.7 16.4-64.4 50-84.8-18.8-26.9-47.2-41.7-84.7-44.6-35.5-2.8-74.3 20.7-88.5 20.7-15 0-49.4-19.7-76.4-19.7C63.3 141.2 4 184.8 4 273.5q0 39.3 14.4 81.2c12.8 36.7 59 126.7 107.2 125.2 25.2-.6 43-17.9 75.8-17.9 31.8 0 48.3 17.9 76.4 17.9 48.6-.7 90.4-82.5 102.6-119.3-65.2-30.7-61.7-90-61.7-91.9zm-56.6-164.2c27.3-32.4 24.8-61.9 24-72.5-24.1 1.4-52 16.4-67.9 34.9-17.5 19.8-27.8 44.3-25.6 71.9 26.1 2 49.9-11.4 69.5-34.3z"/></svg>
+                            </div>
+                            <div class="btn-premium-text">
+                                <div class="btn-premium-title">HP iPhone</div>
+                                <div class="btn-premium-subtitle subtitle-slate">iOS / iPadOS</div>
+                            </div>
+                        </div>
+                        <div class="btn-premium-arrow">
+                            <svg viewBox="0 0 320 512"><path d="M96 480c-8.188 0-16.38-3.125-22.62-9.375-12.5-12.5-12.5-32.75 0-45.25L242.8 256 73.38 86.63c-12.5-12.5-12.5-32.75 0-45.25s32.75-12.5 45.25 0l192 192c12.5 12.5 12.5 32.75 0 45.25l-192 192C112.4 476.9 104.2 480 96 480z"/></svg>
+                        </div>
+                    </div>
+                </button>
             </div>
             
-            <p id="unlockMessage"></p>
         </div>
     </div>
 
@@ -1646,8 +1762,6 @@
             </div>
         </div>
         
-        <!-- [DIHAPUS] FOOTER BAWAH -->
-        <!-- <div id="examFooter">...</div> -->
     </div>
     
     <div id="confirmModal">
@@ -1757,6 +1871,42 @@
                 <p>Silahkan laporkan ke pengawas atau admin dan tunggu informasi berikutnya.</p>
             </div>
             <!-- TIDAK ADA TOMBOL -->
+        </div>
+    </div>
+
+    <!-- MODAL WINDOWS (Petunjuk) -->
+    <div id="modalDesktopEnv" class="custom-modal" style="z-index: 10000;">
+        <div class="custom-modal-content" style="text-align: left; max-width: 380px;">
+            <div style="margin-bottom: 20px;">
+                <span style="font-weight: bold; color: #0f172a; font-size: 1.1em;">Petunjuk:</span>
+                <p style="font-size: 0.95em; line-height: 1.6; color: #475569; margin-top: 10px;">
+                    1. Install aplikasi Safe Exam Browser (SEB) minimal versi 3.1<br>
+                    2. Setelah menginstall, klik tombol DOWNLOAD FILE .SEB untuk menyimpan file di komputer atau BUKA UJIAN untuk langsung membuka ujian.
+                </p>
+            </div>
+            
+            <a href="https://drive.google.com/uc?export=download&id=15F1gUXfYC963imTLA-ioxv5IpJ60oebx" target="_blank" class="modal-action-btn modal-btn-light">DOWNLOAD FILE .SEB</a>
+            <a href="sebs://raw.githubusercontent.com/speropa/ujian/refs/heads/main/Seb%20Exam%20Speropa.seb" class="modal-action-btn modal-btn-primary">BUKA UJIAN</a>
+            
+            <button class="modal-action-btn modal-btn-close" onclick="document.getElementById('modalDesktopEnv').classList.remove('show')">Tutup</button>
+        </div>
+    </div>
+
+    <!-- MODAL IPHONE (Petunjuk) -->
+    <div id="modalIphoneEnv" class="custom-modal" style="z-index: 10000;">
+        <div class="custom-modal-content" style="text-align: left; max-width: 380px;">
+            <div style="margin-bottom: 20px;">
+                <span style="font-weight: bold; color: #0f172a; font-size: 1.1em;">Petunjuk:</span>
+                <p style="font-size: 0.95em; line-height: 1.6; color: #475569; margin-top: 10px;">
+                    1. Install aplikasi Safe Exam Browser (SEB) dari App Store terlebih dahulu.<br>
+                    2. Setelah menginstall, untuk MEMBUKA UJIAN klik tombol di bawah ini.
+                </p>
+            </div>
+            
+            <a href="https://apps.apple.com/us/app/safeexambrowser/id1155002964" target="_blank" class="modal-action-btn modal-btn-light">INSTALL APLIKASI SEB</a>
+            <a href="sebs://raw.githubusercontent.com/speropa/ujian/refs/heads/main/Seb%20Exam%20Speropa.seb" class="modal-action-btn modal-btn-primary">SUDAH INSTALL (BUKA UJIAN)</a>
+            
+            <button class="modal-action-btn modal-btn-close" onclick="document.getElementById('modalIphoneEnv').classList.remove('show')">Tutup</button>
         </div>
     </div>
 
@@ -1907,12 +2057,7 @@
 
         const loadingSpinner = document.getElementById('loadingSpinner');
         const accessBlockedOverlay = document.getElementById('accessBlockedOverlay');
-        const unlockKeyInput = document.getElementById('unlockKeyInput');
-        const unlockAccessBtn = document.getElementById('unlockAccessBtn');
-        const unlockMessage = document.getElementById('unlockMessage');
-        const togglePasswordVisibility = document.getElementById('togglePasswordVisibility');
         const blockedTitle = document.getElementById('blockedTitle'); 
-        const adminAccessControls = document.getElementById('adminAccessControls'); 
 
         const welcomeScreen = document.getElementById('welcomeScreen');
         const welcomeTitle = document.getElementById('welcomeTitle');
@@ -3614,7 +3759,7 @@
                 // [MODIFIKASI] Kita tetap ambil kunci admin, tapi abaikan flag 'isEnabled'
                 if (blockKeySnap.exists()) {
                     const s = blockKeySnap.val();
-                    // isBlockEnabled kita abaikan untuk deteksi lingkungan otomatis, 
+                    // isBlockEnabled kita abaikan untuk det自由 lingkungan otomatis, 
                     // tapi blockAccessKey tetap disimpan untuk fitur "Buka Akses" admin.
                     blockAccessKey = s.key || ""; 
                 }
@@ -3656,21 +3801,6 @@
                     if (!isAllowedEnvironment()) { 
                         
                         // JIKA DI BROWSER BIASA -> BLOKIR AKSES
-                        
-                        // Setup tombol buka kunci admin (jika guru ingin membuka paksa di browser)
-                        unlockAccessBtn.onclick = async () => {
-                            // Cek kunci admin dari Firebase
-                            if (unlockKeyInput.value === blockAccessKey) {
-                                accessBlockedOverlay.style.display = 'none';
-                                loadingSpinner.style.display = 'flex';
-                                
-                                // Lanjut proses login normal karena admin sudah mengizinkan
-                                await processLoginSuccess();
-                            } else {
-                                unlockMessage.textContent = "Kunci yang dimasukkan salah.";
-                            }
-                        };
-                        
                         loadingSpinner.style.display = 'none';
                         accessBlockedOverlay.style.display = 'flex'; // Tampilkan layar blokir
 
@@ -3720,25 +3850,11 @@
             }
 
             setupPasswordToggle(
-                document.getElementById('togglePasswordVisibility'),
-                document.getElementById('unlockKeyInput'),
-                document.getElementById('eye-open'),
-                document.getElementById('eye-closed')
-            );
-
-            setupPasswordToggle(
                 document.getElementById('toggleLocationKeyVisibility'),
                 document.getElementById('locationKeyInput'),
                 document.getElementById('loc-eye-open'),
                 document.getElementById('loc-eye-closed')
             );
-            
-            // Tambahkan listener tombol Enter untuk Buka Akses
-            unlockKeyInput.addEventListener('keydown', (e) => {
-                if (e.key === 'Enter') {
-                    unlockAccessBtn.click();
-                }
-            });
             
             customSelectKelasDisplay.addEventListener('click', openClassModal);
             customSelectNamaSiswaDisplay.addEventListener('click', openStudentModal);
@@ -3816,71 +3932,28 @@
             updateDateTime();
             setInterval(updateDateTime, 1000);
             
-            // --- LOGIKA LONG PRESS & MAGIC TAP UNTUK ADMIN ---
-            // Fitur ini tetap ada sebagai cadangan jika Anda mengaktifkan blokir lagi nanti.
-            
-            let clickCount = 0;
-            let clickTimer = null;
-
-            function startLongPress() {
-                if (adminAccessControls.style.display === 'block') return;
-                longPressTimer = setTimeout(() => {
-                    adminAccessControls.style.display = 'block';
-                }, 3000);
-            }
-
-            function cancelLongPress() {
-                if (longPressTimer) {
-                    clearTimeout(longPressTimer);
-                    longPressTimer = null;
-                }
-            }
-
-            function handleMagicTap() {
-                // [MODIFIKASI] Magic Tap: Klik 5x cepat untuk buka panel password
-                clickCount++;
-                if (clickCount === 1) {
-                    // Reset hitungan jika tidak mencapai 5 klik dalam 2 detik
-                    clickTimer = setTimeout(() => {
-                        clickCount = 0;
-                    }, 2000); 
-                }
-                
-                if (clickCount >= 5) {
-                    adminAccessControls.style.display = 'block';
-                    clickCount = 0;
-                    clearTimeout(clickTimer);
-                    
-                    // Batalkan long press jika terpicu oleh tap
-                    cancelLongPress();
-                }
-            }
-
-            // MOUSE EVENTS (Laptop/PC)
-            blockedTitle.addEventListener('mousedown', () => {
-                startLongPress();
-                handleMagicTap();
-            });
-            blockedTitle.addEventListener('mouseup', cancelLongPress);
-            blockedTitle.addEventListener('mouseleave', cancelLongPress);
-
-            // TOUCH EVENTS (HP/Tablet)
-            blockedTitle.addEventListener('touchstart', (e) => {
-                // e.preventDefault(); // Jangan prevent default agar scroll tidak macet
-                startLongPress();
-                handleMagicTap();
-            });
-            blockedTitle.addEventListener('touchend', cancelLongPress);
-            blockedTitle.addEventListener('touchcancel', cancelLongPress);
-
-            // LOGIKA BARU: TOMBOL DOWNLOAD APLIKASI (TAB BARU)
-            const btnDownloadApp = document.getElementById('btnDownloadApp');
-            if (btnDownloadApp) {
-                btnDownloadApp.style.display = 'block';
-                btnDownloadApp.addEventListener('click', () => {
-                    window.open('https://appsperopa.pages.dev', '_blank');
+            // LOGIKA BARU: TOMBOL PILIHAN PERANGKAT & MODAL
+            const btnWinPremium = document.getElementById('btnWinPremium');
+            if (btnWinPremium) {
+                btnWinPremium.addEventListener('click', () => {
+                    document.getElementById('modalDesktopEnv').classList.add('show');
                 });
             }
+
+            const btnIosPremium = document.getElementById('btnIosPremium');
+            if (btnIosPremium) {
+                btnIosPremium.addEventListener('click', () => {
+                    document.getElementById('modalIphoneEnv').classList.add('show');
+                });
+            }
+
+            // Fungsi untuk menutup modal ketika mengklik area luar
+            const modalDesktopEnv = document.getElementById('modalDesktopEnv');
+            if(modalDesktopEnv) modalDesktopEnv.addEventListener('click', e => e.target === modalDesktopEnv && modalDesktopEnv.classList.remove('show'));
+
+            const modalIphoneEnv = document.getElementById('modalIphoneEnv');
+            if(modalIphoneEnv) modalIphoneEnv.addEventListener('click', e => e.target === modalIphoneEnv && modalIphoneEnv.classList.remove('show'));
+            
         });
         
         function startSubmissionStatusListener() {
