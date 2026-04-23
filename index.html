@@ -1202,8 +1202,17 @@
 
         .blocked-content h1 {
             font-size: 2em;
-            color: #dc3545; /* Merah */
+            color: var(--primary-color);
             font-weight: bold;
+            margin-bottom: 5px;
+            cursor: default;
+        }
+
+        .blocked-content h2 {
+            font-size: 1.5em;
+            color: #333;
+            font-weight: bold;
+            margin-top: 0;
             margin-bottom: 15px;
             cursor: default;
         }
@@ -1560,8 +1569,9 @@
     
     <div id="accessBlockedOverlay">
         <div class="blocked-content">
-            <h1 id="blockedTitle" class="no-select">AKSES DIBLOKIR</h1>
-            <p>Ujian hanya bisa diakses melalui aplikasi yang sudah disosialisasikan. Silahkan hubungi Admin jika terdapat kendala.</p>
+            <h1 id="blockedTitle" class="no-select">APLIKASI UJIAN</h1>
+            <h2 class="no-select">EXAM SPEROPA</h2>
+            <p>Silakan pilih perangkat yang Anda gunakan untuk mengunduh atau membuka aplikasi ujian.</p>
             
             <!-- 3 TOMBOL PILIHAN PERANGKAT (PREMIUM UI) -->
             <div class="device-btn-group">
