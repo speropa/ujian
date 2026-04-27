@@ -781,8 +781,8 @@
                 grid-template-columns: 1fr 2.5fr; 
                 padding: 25px;
                 gap: 25px;
-                /* Padding bawah tetap besar di desktop agar konsisten */
-                padding-bottom: 200px;
+                /* [PERBAIKAN] Padding bawah dikembalikan normal untuk Desktop/Laptop agar tidak ada ruang kosong raksasa */
+                padding-bottom: 25px;
             }
             #examMainContent {
                 order: 2;
@@ -1554,9 +1554,9 @@
     <div id="offlineOverlay">
         <div class="offline-content">
             <div class="offline-icon">📡❌</div>
-            <h2>KONEKSI TERPUTUS!</h2>
-            <p>Jaringan internet Anda hilang atau tidak stabil. Sistem mengunci layar agar pekerjaanmu tidak sia sia</p>
-            <p><strong>Jangan tutup aplikasi!</strong><br>Mohon periksa koneksi internet/WiFi Anda. Klik "Coba sambungkan lagi", jika dalam beberapa menit tidak ada perubahan apapun. laporkan ke pengawas atau admin!</p>
+            <h2>GAGAL MENYIMPAN!</h2>
+            <p>Sistem gagal menuliskan jawaban Anda ke server. Layar dikunci sementara untuk mencegah jawaban Anda hilang/kosong.</p>
+            <p><strong>Jangan tutup aplikasi!</strong><br>Mohon periksa koneksi internet/WiFi Anda. Klik "Coba sambungkan lagi", jika dalam beberapa menit tidak ada perubahan apapun, laporkan ke pengawas!</p>
             <button id="retryConnectionBtn" onclick="window.handleRetryConnection()">
                 <span class="btn-spinner"></span>
                 <span>Coba Sambungkan Lagi</span>
@@ -1797,6 +1797,10 @@
                 <tr>
                     <td>Waktu Ujian</td>
                     <td>: <span id="modalExamDuration"></span></td>
+                </tr>
+                <tr id="trSisaWaktu" style="display: none;">
+                    <td>Sisa Waktu</td>
+                    <td>: <span id="modalSisaWaktu"></span></td>
                 </tr>
             </table>
 
@@ -2151,6 +2155,18 @@
         let shuffledOptionOrders = [];
         let sidebarCollapseTimer = null;
         let longPressTimer;
+
+        // [TAMBAHAN] Variabel untuk menunda penyimpanan (Debounce)
+        let saveAnswerTimeout = null;
+
+        // --- FUNGSI BARU UNTUK MEMAKSA SIMPAN JIKA PINDAH SOAL CEPAT ---
+        function forceSaveIfPending() {
+            if (saveAnswerTimeout) {
+                clearTimeout(saveAnswerTimeout);
+                saveAnswerTimeout = null;
+                saveStudentAnswersToFirebase(); // Eksekusi langsung tanpa tunggu 1 detik
+            }
+        }
 
         // [TAMBAHAN] Variabel untuk listener durasi
         let minDurationListenerRef = null;
@@ -3225,6 +3241,9 @@
         }
         
         function displayQuestion(shuffledIndex) {
+            // Paksa simpan jika ada jawaban yang masih mengantre (belum 1 detik) sebelum pindah soal
+            forceSaveIfPending();
+
             if (shuffledIndex < 0 || shuffledIndex >= currentExamQuestions.length) return;
             currentQuestionIndex = shuffledIndex;
             sessionStorage.setItem('lastQuestionIndex', shuffledIndex);
@@ -3248,7 +3267,8 @@
                     radio.type = 'radio';
                     radio.name = `question_${shuffledIndex}`;
                     radio.value = opt;
-                    radio.onchange = () => selectAnswer(originalIndex, opt);
+                    // MENGUBAH EVENT LISTENER MENJADI ASYNC
+                    radio.onchange = async () => await selectAnswer(originalIndex, opt);
 
                     if (studentAnswers[originalIndex] === opt) {
                         radio.checked = true;
@@ -3281,11 +3301,11 @@
             startSidebarCollapseTimer(); 
         }
         
-        function selectAnswer(originalIndex, choice) {
+        async function selectAnswer(originalIndex, choice) {
             studentAnswers[originalIndex] = choice;
             sessionStorage.setItem('studentAnswers', JSON.stringify(studentAnswers));
-            saveStudentAnswersToFirebase();
             
+            // 1. Update UI secara langsung (Optimistic UI) agar terasa responsif
             const shuffledIndex = shuffledQuestionIndices.indexOf(originalIndex);
             if (shuffledIndex === currentQuestionIndex) {
                 document.querySelectorAll('.cbt-option-label').forEach(label => label.classList.remove('selected'));
@@ -3294,93 +3314,41 @@
                     selectedRadio.parentElement.classList.add('selected');
                 }
             }
-            
             renderQuestionGrid();
             updateSubmissionButtonState();
+
+            // 2. Teknik DEBOUNCE: Tunda penyimpanan ke server selama 1 detik (1000ms)
+            // Jika siswa gonta-ganti jawaban dalam waktu 1 detik, timer di-reset
+            if (saveAnswerTimeout) clearTimeout(saveAnswerTimeout);
+            
+            saveAnswerTimeout = setTimeout(async () => {
+                // Coba simpan ke Server dan tangkap hasilnya
+                const isSaved = await saveStudentAnswersToFirebase();
+                
+                // Jika gagal simpan, beri tahu siswa secara eksplisit (Layar terkunci)
+                if (!isSaved) {
+                    showToast("Gagal menyimpan ke server! Layar dikunci.", "error");
+                }
+            }, 1000); // Angka 1000 = 1 detik penundaan
         }
 
-        function toggleRaguRagu() {
+        async function toggleRaguRagu() {
             const originalIndex = shuffledQuestionIndices[currentQuestionIndex];
             raguRaguStatus[originalIndex] = !raguRaguStatus[originalIndex];
             sessionStorage.setItem('raguRaguStatus', JSON.stringify(raguRaguStatus));
-            saveStudentAnswersToFirebase();
+            
             renderQuestionGrid();
+
+            // Gunakan Debounce juga untuk tombol ragu-ragu
+            if (saveAnswerTimeout) clearTimeout(saveAnswerTimeout);
+            saveAnswerTimeout = setTimeout(async () => {
+                const isSaved = await saveStudentAnswersToFirebase();
+                if (!isSaved) {
+                    showToast("Gagal menyimpan status ragu-ragu!", "error");
+                }
+            }, 1000);
         }
 
-        function renderQuestionGrid() {
-            questionGridContainer.innerHTML = '';
-            for (let i = 0; i < shuffledQuestionIndices.length; i++) {
-                const originalIndex = shuffledQuestionIndices[i];
-                const box = document.createElement('div');
-                box.className = 'question-nav-box';
-                box.textContent = i + 1;
-                if (studentAnswers[originalIndex]) {
-                    box.classList.add('answered');
-                }
-                if (raguRaguStatus[originalIndex]) {
-                    box.classList.add('ragu');
-                }
-                if (i === currentQuestionIndex) {
-                    box.classList.add('current');
-                }
-                box.onclick = () => displayQuestion(i);
-                questionGridContainer.appendChild(box);
-            }
-        }
-
-        // [OPTIMASI DATA] FUNGSI PENYIMPANAN HEMAT KUOTA
-        async function saveStudentAnswersToFirebase() {
-            if (!foundTokenGlobal || !selectedStudentData || !currentDb) return;
-            const dbRefs = getDbRefs();
-            if (!dbRefs) return;
-
-            const studentIdPadded = padStudentId(selectedStudentData.id);
-            const studentAnswersPath = child(dbRefs.studentAnswersRef, `${foundTokenGlobal.key}/${studentIdPadded}`);
-
-            try {
-                // CEK APAKAH INI PENYIMPANAN PERTAMA KALI?
-                const isInitialSave = !sessionStorage.getItem('data_statis_terkirim');
-
-                if (isInitialSave) {
-                    // --- MODE 1: SIMPAN PERTAMA (PAKAI SET) ---
-                    // Kirim SEMUA data termasuk konfigurasi acak soal yang berat
-                    const payload = {
-                        answers: JSON.stringify(studentAnswers),
-                        ragu: JSON.stringify(raguRaguStatus),
-                        shuffledQuestionIndices: JSON.stringify(shuffledQuestionIndices), // <--- Berat
-                        shuffledOptionOrders: JSON.stringify(shuffledOptionOrders),        // <--- Berat
-                        timestamp: Date.now(),
-                        studentName: selectedStudentData.name,
-                        studentClass: selectedStudentData.class,
-                        token: foundTokenGlobal.token,
-                        subject: foundTokenGlobal.subject,
-                        studentId: studentIdPadded
-                    };
-                    await set(studentAnswersPath, payload);
-                    
-                    // Tandai bahwa data berat sudah terkirim
-                    sessionStorage.setItem('data_statis_terkirim', 'true');
-                    
-                } else {
-                    // --- MODE 2: UPDATE JAWABAN (PAKAI UPDATE) ---
-                    // HANYA kirim jawaban yang berubah. Sangat ringan (hemat bytes).
-                    const payload = {
-                        answers: JSON.stringify(studentAnswers),
-                        ragu: JSON.stringify(raguRaguStatus),
-                        timestamp: Date.now()
-                    };
-                    await update(studentAnswersPath, payload);
-                }
-
-                // Hilangkan overlay offline jika berhasil
-                document.getElementById('offlineOverlay').classList.remove('active');
-                
-            } catch (error) {
-                console.error("Gagal menyimpan jawaban siswa ke Firebase:", error);
-                document.getElementById('offlineOverlay').classList.add('active');
-            }
-        }
-        
         window.handleRetryConnection = async function() {
             const btn = document.getElementById('retryConnectionBtn');
             const spinner = btn.querySelector('.btn-spinner');
@@ -3408,6 +3376,13 @@
 
         async function submitAnswers(isAutoSubmit = false) {
             submissionWarningMessage.textContent = '';
+            
+            // Bersihkan antrean timer jika ada, karena di bawah ini akan disingkronkan secara manual
+            if (saveAnswerTimeout) {
+                clearTimeout(saveAnswerTimeout);
+                saveAnswerTimeout = null;
+            }
+
             if (!foundTokenGlobal || !selectedStudentData || !currentDb) {
                 submissionWarningMessage.textContent = 'Error: Data tidak lengkap.';
                 return;
@@ -4130,6 +4105,36 @@
                 document.getElementById("modalKelas").textContent = selectedStudentData.class;
                 document.getElementById("modalMapel").textContent = foundToken.subject;
                 modalExamDuration.textContent = `${foundToken.durationMinutes} Menit`;
+                
+                // --- LOGIKA SISA WAKTU (RESUME) ---
+                const trSisaWaktu = document.getElementById("trSisaWaktu");
+                const modalSisaWaktu = document.getElementById("modalSisaWaktu");
+                
+                if (accessStatus && accessStatus.examStartTime) {
+                    const now = Date.now();
+                    const examStartTime = accessStatus.examStartTime;
+                    let elapsedMs = 0;
+                    
+                    // Hitung waktu yang sudah berlalu (jika dijeda ambil dari lastResetTime)
+                    if (accessStatus.lastResetTime) {
+                        elapsedMs = accessStatus.lastResetTime - examStartTime;
+                    } else {
+                        elapsedMs = now - examStartTime; 
+                    }
+                    
+                    const totalDurationMs = foundToken.durationMinutes * 60 * 1000;
+                    let remainingMs = totalDurationMs - elapsedMs;
+                    if (remainingMs < 0) remainingMs = 0;
+                    
+                    const remainingMinutes = Math.floor(remainingMs / 60000);
+                    const remainingSeconds = Math.floor((remainingMs % 60000) / 1000);
+                    
+                    modalSisaWaktu.textContent = `${remainingMinutes} Menit ${remainingSeconds} Detik`;
+                    if (trSisaWaktu) trSisaWaktu.style.display = 'table-row';
+                } else {
+                    // Jika pertama kali masuk, sembunyikan baris sisa waktu
+                    if (trSisaWaktu) trSisaWaktu.style.display = 'none';
+                }
                 
                 document.getElementById("btnLanjut").onclick = () => handleLanjutClick(foundToken);
 
