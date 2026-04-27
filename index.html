@@ -781,8 +781,8 @@
                 grid-template-columns: 1fr 2.5fr; 
                 padding: 25px;
                 gap: 25px;
-                /* Padding bawah tetap besar di desktop agar konsisten */
-                padding-bottom: 200px;
+                /* [PERBAIKAN] Padding bawah dikembalikan normal (kecil) khusus untuk Desktop/Laptop */
+                padding-bottom: 25px;
             }
             #examMainContent {
                 order: 2;
@@ -1353,6 +1353,8 @@
             #examBody {
                 display: flex;
                 flex-direction: column;
+                /* [PERBAIKAN] Padding bawah sedang untuk ukuran Tablet/iPad */
+                padding-bottom: 120px;
             }
             #examMainContent {
                 order: 2;
@@ -1393,7 +1395,7 @@
             #examBody {
                 padding: 15px;
                 gap: 15px;
-                /* Pastikan padding bawah tetap besar di Mobile */
+                /* Pastikan padding bawah tetap super besar HANYA di Mobile Portrait (HP Berdiri) */
                 padding-bottom: 400px;
             }
             #questionDisplayBox {
@@ -1409,6 +1411,13 @@
                  top: 60px; /* Naikkan di mobile agar tidak tertutup navbar */
                  padding: 5px 10px;
                  font-size: 0.75em;
+            }
+        }
+
+        /* [PERBAIKAN BARU] Jika HP diputar menjadi Lanskap / Mendatar, padding bawah dinormalkan agar soal tetap terbaca */
+        @media (max-height: 500px) and (orientation: landscape) {
+            #examBody {
+                padding-bottom: 50px !important;
             }
         }
 
