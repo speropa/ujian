@@ -2996,13 +2996,27 @@
                 const transactionResult = await runTransaction(accessStatusRef, (currentAccess) => {
                     const now = Date.now();
                     if (currentAccess === null || !currentAccess.isLoggedIn) {
+                        let newExamStartTime = currentAccess?.examStartTime || now;
+                        
+                        // [FITUR BARU] JEDA & LANJUTKAN: Koreksi waktu mulai jika ada lastResetTime
+                        if (currentAccess && currentAccess.lastResetTime) {
+                            const waktuOffline = now - currentAccess.lastResetTime;
+                            newExamStartTime = newExamStartTime + waktuOffline;
+                            
+                            // Safety Check: jangan sampai waktu bergeser melebihi waktu sekarang
+                            if (newExamStartTime > now) {
+                                newExamStartTime = now;
+                            }
+                        }
+
                         return {
                             accessCount: (currentAccess?.accessCount || 0) + 1,
                             firstLoginTimestamp: currentAccess?.firstLoginTimestamp || now,
                             lastAccessTimestamp: now,
                             isLoggedIn: true,
-                            examStartTime: currentAccess?.examStartTime || now,
+                            examStartTime: newExamStartTime,
                             studentId: studentId,
+                            lastResetTime: null // Hapus flag dari database karena sudah resume
                         };
                     }
                     return;
@@ -3688,7 +3702,8 @@
                 if (isInExamMode && snapshot.exists()) {
                     const data = snapshot.val();
                     if (data.isLoggedIn === false && !manualSubmissionInProgress) {
-                        showForceLogoutModal();
+                        // [MODIFIKASI] Lempar parameter true jika sedang dijeda (ada lastResetTime)
+                        showForceLogoutModal(!!data.lastResetTime);
                     }
                 }
             }, (error) => {
@@ -3704,7 +3719,8 @@
             }
         }
 
-        function showForceLogoutModal() {
+        // [MODIFIKASI] Menerima parameter isPaused agar pesan bisa disesuaikan
+        function showForceLogoutModal(isPaused = false) {
             stopAccessStatusListener();
             stopSubmissionStatusListener();
             stopExamUpdateListener();
@@ -3714,6 +3730,17 @@
 
             document.querySelectorAll('#examContainer button, #examContainer input').forEach(el => el.disabled = true);
             document.getElementById('examBody').style.filter = 'blur(5px)';
+            
+            const titleEl = document.getElementById('forceLogoutModalTitle');
+            const textEl = document.getElementById('forceLogoutModalText');
+            
+            if (isPaused) {
+                titleEl.textContent = "Ujian Dijeda";
+                textEl.textContent = "Ujian Anda dijeda oleh Administrator. Waktu Anda dihentikan sementara. Silakan login kembali untuk melanjutkan.";
+            } else {
+                titleEl.textContent = "Sesi Direset";
+                textEl.textContent = "Sesi ujian Anda telah direset oleh administrator. Silakan login kembali.";
+            }
 
             forceLogoutModal.classList.add('show');
             isAnyModalOpen = true;
