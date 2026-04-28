@@ -873,6 +873,51 @@
             gap: 15px;
         }
 
+        /* Tambahan untuk soal hibrid (PG Kompleks & Benar/Salah) */
+        .petunjuk-soal {
+            font-size: 0.85em; /* Diperkecil */
+            color: #666;
+            margin-bottom: 10px;
+            text-align: left; /* Rata Kiri */
+        }
+        .bs-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 5px;
+            background-color: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        .bs-table th, .bs-table td {
+            border: 1px solid var(--border-color);
+            padding: 15px 10px;
+            text-align: left;
+        }
+        .bs-table th {
+            background-color: #f8f9fa;
+            text-align: center;
+            font-weight: bold;
+        }
+        .bs-table td:nth-child(2), .bs-table td:nth-child(3) {
+            text-align: center;
+            width: 80px;
+        }
+        .bs-table input[type="radio"] {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+            margin: 0;
+            display: inline-block;
+        }
+        .cbt-option-label input[type="checkbox"] {
+            margin: 0; 
+            flex-shrink: 0;
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+        }
+
         .cbt-option-label {
             display: flex;
             align-items: center;
@@ -1004,11 +1049,6 @@
              background-color: #cccccc;
              cursor: not-allowed;
         }
-        /* === [END] GAYA TAMPILAN UJIAN BARU === */
-
-        /* FOOTER BAWAH DIHAPUS (DIGANTI HEADER ATAS) */
-        /* #examFooter { ... }  <-- DIHAPUS */
-
 
         #warningOverlay {
             display: none;
@@ -1572,10 +1612,7 @@
             </button>
         </div>
     </div>
-
-    <!-- Toast Notification -->
-    <div id="toastNotification"></div>
-    
+    <!-- Gaya untuk Overlay Blokir Akses -->
     <div id="accessBlockedOverlay">
         <div class="blocked-content">
             <h1 id="blockedTitle" class="no-select">APLIKASI UJIAN</h1>
@@ -2123,7 +2160,6 @@
         const updateSoalBtn = document.getElementById('updateSoalBtn');
         const refreshSoalBtn = document.getElementById('refreshSoalBtn');
         const updateSpinnerOverlay = document.getElementById('updateSpinnerOverlay');
-        const toastNotification = document.getElementById('toastNotification');
 
         const classModal = document.getElementById('classModal');
         const classModalList = document.getElementById('classModalList');
@@ -2183,15 +2219,18 @@
         let submissionStatusListenerPath = null;
         let offlineStatusListenerRef = null;
 
-        // Fungsi Notifikasi Toast
+        // Fungsi Notifikasi Toast Diperbaiki
         function showToast(message, type) {
+            const toastNotification = document.getElementById('toastNotification');
+            if (!toastNotification) return; // Mencegah error 'null' jika elemen belum ready
+            
             toastNotification.textContent = message;
             toastNotification.className = ''; // Reset class
             toastNotification.classList.add(type === 'success' ? 'toast-success' : 'toast-error');
             toastNotification.classList.add('toast-show');
             setTimeout(() => {
                 toastNotification.classList.remove('toast-show');
-            }, 1500);
+            }, 3000);
         }
 
         function setupPasswordToggle(toggleEl, inputEl, openIcon, closedIcon) {
@@ -2610,11 +2649,79 @@
             updateLoginButtonStatus();
         }
         
+        // --- FUNGSI PARSING MASTER KUNCI JAWABAN ---
+        function parseKunjabString(str) {
+            if (!str) return [];
+            const matches = String(str).match(/\[.*?\]|[^,]+/g) || [];
+            return matches.map(m => m.replace(/\[|\]/g, ''));
+        }
+
+        // --- FUNGSI BARU UNTUK MENDETEKSI TIPE SOAL ---
+        function getTipeSoalSiswa(questionObj) {
+            // 1. Cek tipe eksplisit (jika admin menyimpan data tipe_soal ke database)
+            const tipeEksplisit = questionObj.tipe_soal || questionObj.jenis_soal || questionObj.tipe;
+            if (tipeEksplisit) {
+                const t = String(tipeEksplisit).toUpperCase();
+                if (t === 'PGK' || t === 'PG KOMPLEKS' || t === '2') return 'PGK';
+                if (t === 'BS' || t === 'BENAR/SALAH' || t === 'BENAR SALAH' || t === '3') return 'BS';
+                if (t === 'PG' || t === 'PILIHAN GANDA' || t === '1') return 'PG';
+            }
+
+            // 2. Fallback: Deteksi dari Kunci Jawaban (Diperbarui untuk JSON Admin)
+            const kunci = questionObj.jawaban || questionObj.kunci || questionObj.kunjab || questionObj.kunciJawaban || "";
+            if (!kunci) return 'PG'; // Default jika benar-benar kosong
+
+            // Bersihkan spasi dan kurung siku
+            const cleanKunci = String(kunci).replace(/\[|\]|\s/g, '');
+            const parts = cleanKunci.split(',');
+
+            // Deteksi Benar/Salah: Jika isinya hanya B atau S dan jumlahnya lebih dari 1
+            const isBS = parts.every(p => p === 'B' || p === 'S');
+            if (isBS && parts.length >= 2) return 'BS';
+            
+            // Deteksi PG Kompleks: Jika ada koma tapi bukan BS
+            if (parts.length > 1) return 'PGK';
+            
+            // Default Pilihan Ganda Biasa
+            return 'PG';
+        }
+
+        async function postAnswerUpdate(originalIndex) {
+            sessionStorage.setItem('studentAnswers', JSON.stringify(studentAnswers));
+            
+            // Update visual pada UI secara langsung (Optimistic UI)
+            const shuffledIndex = shuffledQuestionIndices.indexOf(originalIndex);
+            if (shuffledIndex === currentQuestionIndex) {
+                document.querySelectorAll('.cbt-option-label').forEach(label => {
+                    const input = label.querySelector('input');
+                    if (input && input.checked) {
+                        label.classList.add('selected');
+                    } else {
+                        label.classList.remove('selected');
+                    }
+                });
+            }
+            renderQuestionGrid();
+            updateSubmissionButtonState();
+
+            // Simpan ke Server
+            const isSaved = await saveStudentAnswersToFirebase();
+            if (!isSaved) {
+                showToast("Gagal menyimpan ke server! Layar dikunci.", "error");
+            }
+        }
+
         function updateSubmissionButtonState() {
             if (!submitAnswersButton || !nextQuestionBtn) return;
 
             let isDisabled = true;
-            const allAnswered = !studentAnswers.includes(null);
+            // Validasi Ketat: Semua soal harus terjawab (termasuk baris di tabel BS tidak boleh ada strip "-")
+            const allAnswered = studentAnswers.every(ans => {
+                if (ans === null || ans === undefined || ans === "") return false;
+                if (typeof ans === 'string' && ans.includes('-')) return false; 
+                return true;
+            });
+            
             const infoEl = document.getElementById('submissionInfoMessage');
             let timeConstraintActive = false;
 
@@ -2761,10 +2868,29 @@
                 shuffledQuestionIndices = Array.from({ length: currentExamQuestions.length }, (_, i) => i);
                 if (isSoalAcakEnabled) shuffleArray(shuffledQuestionIndices);
 
-                shuffledOptionOrders = currentExamQuestions.map(() => {
-                    const options = ['A', 'B', 'C', 'D'];
-                    if (isPilganAcakEnabled) shuffleArray(options);
-                    return options;
+                shuffledOptionOrders = currentExamQuestions.map((q) => {
+                    // Deteksi tipe soal untuk mengacak opsi yang sesuai
+                    const tipeSoal = getTipeSoalSiswa(q);
+                    
+                    if (tipeSoal === 'BS') {
+                         // Ambil opsi yang ada isinya (bisa sampai E)
+                         const bsOptions = [];
+                         ['A', 'B', 'C', 'D', 'E'].forEach(opt => {
+                             if (q[`pilihan${opt}`] && q[`pilihan${opt}`].trim() !== "") {
+                                 bsOptions.push(opt);
+                             }
+                         });
+                         // Acak baris pernyataan untuk Benar/Salah jika pengaturan acak diaktifkan
+                         if (isPilganAcakEnabled) shuffleArray(bsOptions);
+                         return bsOptions;
+                    } else {
+                         // PG Biasa dan PGK biasanya A-D (sesuaikan jika ada E)
+                         const options = ['A', 'B', 'C', 'D'];
+                         if (q.pilihanE && q.pilihanE.trim() !== "") options.push('E');
+                         
+                         if (isPilganAcakEnabled) shuffleArray(options);
+                         return options;
+                    }
                 });
                 await saveStudentAnswersToFirebase();
             }
@@ -2997,7 +3123,21 @@
                     throw new Error("Struktur bank soal tidak valid atau kosong.");
                 }
                 
-                currentExamQuestions = examData.soal.slice(1);
+                // --- PARSING MASTER KUNCI JAWABAN JIKA ADA (Format: A,B,[A,D],[B,S,B],C) ---
+                let parsedMasterKeys = [];
+                const masterKeyString = examData.kunjab || examData.kunciJawaban || examData.kunci_jawaban || examData.kunci || "";
+                if (masterKeyString) {
+                    parsedMasterKeys = parseKunjabString(masterKeyString);
+                }
+
+                currentExamQuestions = examData.soal.slice(1).map((q, idx) => {
+                    // Injeksikan kunci dari master jika soal tidak punya kunci mandiri (Diperbarui untuk JSON)
+                    if (!q.jawaban && !q.kunci && !q.kunjab && !q.kunciJawaban && parsedMasterKeys[idx]) {
+                        q.kunjab = parsedMasterKeys[idx];
+                    }
+                    return q;
+                });
+                
                 localTerakhirUpdate = examData.terakhirUpdate || "";
                 
                 loadingSpinner.querySelector('p').textContent = 'Mempersiapkan sesi ujian...';
@@ -3251,33 +3391,178 @@
             cbtAnswerOptions.innerHTML = '';
             const optionOrder = shuffledOptionOrders[originalIndex];
 
-            optionOrder.forEach(opt => {
-                const optionKey = `pilihan${opt}`;
-                if (question[optionKey]) {
-                    const label = document.createElement('label');
-                    label.className = 'cbt-option-label';
-                    
-                    const radio = document.createElement('input');
-                    radio.type = 'radio';
-                    radio.name = `question_${shuffledIndex}`;
-                    radio.value = opt;
-                    // MENGUBAH EVENT LISTENER MENJADI ASYNC
-                    radio.onchange = async () => await selectAnswer(originalIndex, opt);
+            // Deteksi tipe soal (menggunakan fungsi deteksi yang sudah diupgrade)
+            const tipeSoal = getTipeSoalSiswa(question);
+            let currentAnswer = studentAnswers[originalIndex] || "";
 
-                    if (studentAnswers[originalIndex] === opt) {
-                        radio.checked = true;
-                        label.classList.add('selected');
+            if (tipeSoal === 'PG') {
+                // --- 1. RENDER PILIHAN GANDA BIASA (RADIO) ---
+                optionOrder.forEach(opt => {
+                    const optionKey = `pilihan${opt}`;
+                    if (question[optionKey]) {
+                        const label = document.createElement('label');
+                        label.className = 'cbt-option-label';
+                        
+                        const radio = document.createElement('input');
+                        radio.type = 'radio';
+                        radio.name = `question_${shuffledIndex}`;
+                        radio.value = opt;
+                        
+                        if (currentAnswer === opt) {
+                            radio.checked = true;
+                            label.classList.add('selected');
+                        }
+
+                        radio.onchange = async () => {
+                            studentAnswers[originalIndex] = opt;
+                            await postAnswerUpdate(originalIndex);
+                        };
+
+                        const textDiv = document.createElement('div');
+                        textDiv.className = 'option-text';
+                        textDiv.innerHTML = question[optionKey];
+                        
+                        label.appendChild(radio);
+                        label.appendChild(textDiv);
+                        cbtAnswerOptions.appendChild(label);
                     }
+                });
+            } else if (tipeSoal === 'PGK') {
+                // --- 2. RENDER PG KOMPLEKS (CHECKBOX) ---
+                let ansArray = currentAnswer ? currentAnswer.split(',') : [];
 
-                    const textDiv = document.createElement('div');
-                    textDiv.className = 'option-text';
-                    textDiv.innerHTML = question[optionKey];
-                    
-                    label.appendChild(radio);
-                    label.appendChild(textDiv);
-                    cbtAnswerOptions.appendChild(label);
-                }
-            });
+                optionOrder.forEach(opt => {
+                    const optionKey = `pilihan${opt}`;
+                    if (question[optionKey]) {
+                        const label = document.createElement('label');
+                        label.className = 'cbt-option-label';
+                        
+                        const checkbox = document.createElement('input');
+                        checkbox.type = 'checkbox';
+                        checkbox.name = `question_${shuffledIndex}`;
+                        checkbox.value = opt;
+                        
+                        if (ansArray.includes(opt)) {
+                            checkbox.checked = true;
+                            label.classList.add('selected');
+                        }
+
+                        checkbox.onchange = async (e) => {
+                            if (e.target.checked) {
+                                if (!ansArray.includes(opt)) ansArray.push(opt);
+                            } else {
+                                ansArray = ansArray.filter(item => item !== opt);
+                            }
+                            ansArray.sort(); // Urutkan A,B,C,D agar kunci sinkron
+                            studentAnswers[originalIndex] = ansArray.length > 0 ? ansArray.join(',') : null;
+                            await postAnswerUpdate(originalIndex);
+                        };
+
+                        const textDiv = document.createElement('div');
+                        textDiv.className = 'option-text';
+                        textDiv.innerHTML = question[optionKey];
+                        
+                        label.appendChild(checkbox);
+                        label.appendChild(textDiv);
+                        cbtAnswerOptions.appendChild(label);
+                    }
+                });
+            } else if (tipeSoal === 'BS') {
+                // --- 3. RENDER BENAR/SALAH (TABEL RADIO) ---
+                const table = document.createElement('table');
+                table.className = 'bs-table';
+                table.innerHTML = `
+                    <tr>
+                        <th>Pernyataan</th>
+                        <th>Benar</th>
+                        <th>Salah</th>
+                    </tr>
+                `;
+
+                // Ambil daftar pernyataan yang sudah diacak (menggunakan optionOrder)
+                const activeStatementsCount = optionOrder.length;
+
+                let bsAnswers = currentAnswer ? currentAnswer.split(',') : [];
+                // Kita perlu array objek untuk mencocokkan jawaban dengan opsi yang benar
+                // Format penyimpanan di database: index ke-0 itu untuk PilihanA, index ke-1 untuk PilihanB, dll.
+                // Tapi saat dirender, PilihanC bisa saja muncul di urutan pertama karena diacak.
+                
+                // Urutan statis untuk kunci jawaban BS di database adalah A, B, C, D, E
+                const baseStatements = ['A', 'B', 'C', 'D', 'E'];
+                const activeBaseStatements = baseStatements.filter(opt => question[`pilihan${opt}`] && question[`pilihan${opt}`].trim() !== "");
+
+                while(bsAnswers.length < activeStatementsCount) bsAnswers.push("-"); // Jaga array tetap sesuai jumlah baris
+
+                let statementIndex = 0;
+                optionOrder.forEach((opt) => {
+                    const optionKey = `pilihan${opt}`;
+                    if (question[optionKey] && question[optionKey].trim() !== "") {
+                        const tr = document.createElement('tr');
+                        // Cari indeks asli dari opsi ini berdasarkan activeBaseStatements (A=0, B=1, dst yang aktif)
+                        const originalOptIndex = activeBaseStatements.indexOf(opt);
+                        const idx = statementIndex; 
+                        
+                        const tdPernyataan = document.createElement('td');
+                        tdPernyataan.innerHTML = question[optionKey];
+                        
+                        const tdBenar = document.createElement('td');
+                        tdBenar.style.textAlign = 'center';
+                        const rbBenar = document.createElement('input');
+                        rbBenar.type = 'radio';
+                        rbBenar.name = `bs_${shuffledIndex}_${idx}`;
+                        rbBenar.value = 'B';
+                        // Memuat jawaban sesuai posisi aslinya
+                        if (bsAnswers[originalOptIndex] === 'B') rbBenar.checked = true;
+
+                        const tdSalah = document.createElement('td');
+                        tdSalah.style.textAlign = 'center';
+                        const rbSalah = document.createElement('input');
+                        rbSalah.type = 'radio';
+                        rbSalah.name = `bs_${shuffledIndex}_${idx}`;
+                        rbSalah.value = 'S';
+                        // Memuat jawaban sesuai posisi aslinya
+                        if (bsAnswers[originalOptIndex] === 'S') rbSalah.checked = true;
+
+                        const handleBsChange = async () => {
+                            // Karena dirender acak, kita harus mengumpulkan jawaban dan mengurutkannya 
+                            // kembali sesuai A, B, C, D, E (activeBaseStatements) sebelum disimpan
+                            let currentAnswersInBaseOrder = [...bsAnswers]; // Copy array jawaban lama
+                            
+                            // Loop tabel yang sedang dirender
+                            for (let i = 0; i < activeStatementsCount; i++) {
+                                // Cari input yang dicek di baris ke-i
+                                let val = document.querySelector(`input[name="bs_${shuffledIndex}_${i}"]:checked`)?.value || "-";
+                                
+                                // Opsi apa yang sedang ada di baris ke-i ini?
+                                const renderedOpt = optionOrder[i];
+                                // Index berapa opsi ini di array asli (A, B, C...)?
+                                const baseIndexToUpdate = activeBaseStatements.indexOf(renderedOpt);
+                                
+                                // Update nilai di posisi aslinya
+                                currentAnswersInBaseOrder[baseIndexToUpdate] = val;
+                            }
+                            
+                            const newAnswer = currentAnswersInBaseOrder.join(',');
+                            studentAnswers[originalIndex] = newAnswer.replace(/,/g, '') === "-".repeat(activeStatementsCount) ? null : newAnswer;
+                            bsAnswers = currentAnswersInBaseOrder; // Update local state untuk render ulang
+                            await postAnswerUpdate(originalIndex);
+                        };
+
+                        rbBenar.onchange = handleBsChange;
+                        rbSalah.onchange = handleBsChange;
+
+                        tdBenar.appendChild(rbBenar);
+                        tdSalah.appendChild(rbSalah);
+                        tr.appendChild(tdPernyataan);
+                        tr.appendChild(tdBenar);
+                        tr.appendChild(tdSalah);
+                        table.appendChild(tr);
+                        
+                        statementIndex++;
+                    }
+                });
+                cbtAnswerOptions.appendChild(table);
+            }
 
             raguRaguCheckbox.checked = raguRaguStatus[originalIndex];
             
@@ -3293,31 +3578,6 @@
             renderQuestionGrid();
             updateSubmissionButtonState();
             startSidebarCollapseTimer(); 
-        }
-        
-        async function selectAnswer(originalIndex, choice) {
-            studentAnswers[originalIndex] = choice;
-            sessionStorage.setItem('studentAnswers', JSON.stringify(studentAnswers));
-            
-            // 1. Update UI secara langsung (Optimistic UI) agar terasa cepat
-            const shuffledIndex = shuffledQuestionIndices.indexOf(originalIndex);
-            if (shuffledIndex === currentQuestionIndex) {
-                document.querySelectorAll('.cbt-option-label').forEach(label => label.classList.remove('selected'));
-                const selectedRadio = document.querySelector(`input[name="question_${shuffledIndex}"][value="${choice}"]`);
-                if (selectedRadio && selectedRadio.parentElement) {
-                    selectedRadio.parentElement.classList.add('selected');
-                }
-            }
-            renderQuestionGrid();
-            updateSubmissionButtonState();
-
-            // 2. Coba simpan ke Server dan tangkap hasilnya
-            const isSaved = await saveStudentAnswersToFirebase();
-            
-            // 3. Jika gagal simpan, beri tahu siswa secara eksplisit
-            if (!isSaved) {
-                showToast("Gagal menyimpan ke server! Layar dikunci.", "error");
-            }
         }
 
         async function toggleRaguRagu() {
@@ -4018,7 +4278,6 @@
 
             const modalIphoneEnv = document.getElementById('modalIphoneEnv');
             if(modalIphoneEnv) modalIphoneEnv.addEventListener('click', e => e.target === modalIphoneEnv && modalIphoneEnv.classList.remove('show'));
-            
         });
         
         function startSubmissionStatusListener() {
