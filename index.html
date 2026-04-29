@@ -867,6 +867,33 @@
             vertical-align: middle;
         }
 
+        /* [BARU] STYLING UNTUK TABEL BAWAAN SOAL (DARI WORD/EDITOR) */
+        #questionContent table, .cbt-option-label .option-text table {
+            border-collapse: collapse !important;
+            width: 100% !important;
+            max-width: 100%;
+            margin: 15px 0;
+            background-color: transparent;
+            display: block;
+            overflow-x: auto; /* Agar tabel bisa di-scroll geser di HP */
+            -webkit-overflow-scrolling: touch;
+        }
+
+        #questionContent table th, #questionContent table td,
+        .cbt-option-label .option-text table th, .cbt-option-label .option-text table td {
+            border: 1px solid #888 !important;
+            padding: 8px 12px !important;
+            vertical-align: top;
+            text-align: left;
+        }
+
+        /* [BARU] RAPIKAN LIST (BULLET/NUMBER) BAWAAN SOAL */
+        #questionContent ul, #questionContent ol,
+        .cbt-option-label .option-text ul, .cbt-option-label .option-text ol {
+            padding-left: 25px;
+            margin: 10px 0;
+        }
+
         #cbtAnswerOptions {
             display: flex;
             flex-direction: column;
