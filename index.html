@@ -377,7 +377,7 @@
         }
         
         .custom-modal.static-backdrop {
-            background: rgba(0, 0, 0, 0.85); /* Lebih gelap untuk error */
+            background: rgba(0, 0, 0, 0.85);
             pointer-events: all;
         }
 
@@ -577,7 +577,6 @@
             transition: opacity 0.5s ease-in-out;
         }
 
-        /* [MODIFIKASI] HEADER UJIAN DI ATAS (DIPERKECIL ~5mm) */
         #examHeader {
             background-color: var(--primary-color);
             color: white;
@@ -590,8 +589,8 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            min-height: 24px; /* Sekitar 5-6mm */
-            font-size: 0.85em; /* Font diperkecil agar muat */
+            min-height: 24px;
+            font-size: 0.85em;
         }
 
         #studentIdentityDisplay {
@@ -609,7 +608,6 @@
             gap: 15px;
             flex-grow: 1;
             overflow-y: auto; 
-            /* [MODIFIKASI] PADDING BAWAH SUPER BESAR (±10cm / 400px) */
             padding-bottom: 400px; 
         }
 
@@ -631,7 +629,6 @@
             flex-shrink: 0;
         }
         
-        /* [MODIFIKASI] SIDEBAR HEADER / TIMER (DIPERKECIL ~10mm) */
         .sidebar-header {
             display: flex;
             justify-content: center;
@@ -640,20 +637,19 @@
             position: relative;
             border-bottom: 1px solid var(--border-color);
             background-color: #f8f9fa;
-            min-height: 40px; /* Sekitar 10mm */
+            min-height: 40px;
             height: 40px;
         }
         
         .sidebar-header #timerText {
             font-family: Arial, sans-serif;
             font-weight: bold;
-            font-size: 1.6em; /* Font timer diperkecil */
+            font-size: 1.6em;
             color: var(--danger-color);
             text-align: center;
             line-height: 1;
         }
         
-        /* === TOMBOL REFRESH (KIRI ATAS) === */
         #refreshSoalBtn {
             display: flex;
             position: absolute;
@@ -662,10 +658,10 @@
             transform: translateY(-50%);
             background-color: #17a2b8;
             color: white;
-            padding: 4px 8px; /* Padding diperkecil */
+            padding: 4px 8px;
             border-radius: 4px;
             font-weight: bold;
-            font-size: 0.75em; /* Font tombol diperkecil */
+            font-size: 0.75em;
             border: none;
             cursor: pointer;
             align-items: center;
@@ -679,15 +675,14 @@
         #refreshSoalBtn:hover { background-color: #138496; }
 
         #refreshSoalBtn svg {
-            width: 12px; /* Ikon diperkecil */
+            width: 12px;
             height: 12px;
         }
 
-        /* === TOMBOL UPDATE SOAL (FLOATING) === */
         #updateSoalBtn {
             display: none;
             position: fixed;
-            top: 90px; /* Sedikit diturunkan karena ada header baru */
+            top: 90px;
             right: 20px;
             background-color: #ff9800;
             color: white;
@@ -728,7 +723,7 @@
             cursor: pointer;
             padding: 5px;
             margin: 0;
-            width: 24px; /* Sedikit diperkecil */
+            width: 24px;
             height: 24px;
             position: absolute;
             right: 10px;
@@ -781,7 +776,6 @@
                 grid-template-columns: 1fr 2.5fr; 
                 padding: 25px;
                 gap: 25px;
-                /* [PERBAIKAN] Padding bawah dikembalikan normal (kecil) khusus untuk Desktop/Laptop */
                 padding-bottom: 25px;
             }
             #examMainContent {
@@ -843,7 +837,6 @@
             font-size: 1em;
         }
 
-
         #questionDisplayBox {
             flex-grow: 1;
             border: 1px solid var(--border-color);
@@ -867,7 +860,6 @@
             vertical-align: middle;
         }
 
-        /* [BARU] STYLING UNTUK TABEL BAWAAN SOAL (DARI WORD/EDITOR) */
         #questionContent table, .cbt-option-label .option-text table {
             border-collapse: collapse !important;
             width: 100% !important;
@@ -875,7 +867,7 @@
             margin: 15px 0;
             background-color: transparent;
             display: block;
-            overflow-x: auto; /* Agar tabel bisa di-scroll geser di HP */
+            overflow-x: auto;
             -webkit-overflow-scrolling: touch;
         }
 
@@ -887,7 +879,6 @@
             text-align: left;
         }
 
-        /* [BARU] RAPIKAN LIST (BULLET/NUMBER) BAWAAN SOAL */
         #questionContent ul, #questionContent ol,
         .cbt-option-label .option-text ul, .cbt-option-label .option-text ol {
             padding-left: 25px;
@@ -900,12 +891,11 @@
             gap: 15px;
         }
 
-        /* Tambahan untuk soal hibrid (PG Kompleks & Benar/Salah) */
         .petunjuk-soal {
-            font-size: 0.85em; /* Diperkecil */
+            font-size: 0.85em; 
             color: #666;
             margin-bottom: 10px;
-            text-align: left; /* Rata Kiri */
+            text-align: left;
         }
         .bs-table {
             width: 100%;
@@ -1208,7 +1198,6 @@
             user-select: none;
         }
 
-        /* Gaya Spinner */
         #loadingSpinner {
             display: none;
             flex-direction: column;
@@ -1240,7 +1229,6 @@
             font-weight: bold;
         }
 
-        /* Gaya untuk Overlay Blokir Akses */
         #accessBlockedOverlay {
             display: none;
             position: fixed;
@@ -1291,7 +1279,6 @@
             line-height: 1.5;
         }
 
-        /* === GAYA 3 TOMBOL PILIHAN PERANGKAT === */
         .device-btn-group {
             display: flex;
             flex-direction: column;
@@ -1363,7 +1350,6 @@
         .btn-premium-arrow { color: white; opacity: 0.5; display: flex; align-items: center;}
         .btn-premium-arrow svg { width: 14px; height: 14px; fill: currentColor; }
         
-        /* Tombol di dalam Modal Petunjuk */
         .modal-action-btn {
             padding: 15px; font-weight: bold; border-radius: 10px; font-size: 0.9em;
             letter-spacing: 0.5px; margin: 0 !important; margin-bottom: 10px !important; display: block; width: 100%; box-sizing: border-box; text-align: center; text-decoration: none;
@@ -1420,7 +1406,6 @@
             #examBody {
                 display: flex;
                 flex-direction: column;
-                /* [PERBAIKAN] Padding bawah sedang untuk ukuran Tablet/iPad */
                 padding-bottom: 120px;
             }
             #examMainContent {
@@ -1462,7 +1447,6 @@
             #examBody {
                 padding: 15px;
                 gap: 15px;
-                /* Pastikan padding bawah tetap super besar HANYA di Mobile Portrait (HP Berdiri) */
                 padding-bottom: 400px;
             }
             #questionDisplayBox {
@@ -1470,25 +1454,22 @@
             }
             #warningCountdown { font-size: 3em; }
             #warningMessage { font-size: 1.2em; }
-            /* Sesuaikan ukuran timer dan tombol di layar kecil */
             .sidebar-header #timerText {
-                 font-size: 1.4em; /* Sedikit dikecilkan agar muat */
+                 font-size: 1.4em;
             }
             #updateSoalBtn {
-                 top: 60px; /* Naikkan di mobile agar tidak tertutup navbar */
+                 top: 60px;
                  padding: 5px 10px;
                  font-size: 0.75em;
             }
         }
 
-        /* [PERBAIKAN BARU] Jika HP diputar menjadi Lanskap / Mendatar, padding bawah dinormalkan agar soal tetap terbaca */
         @media (max-height: 500px) and (orientation: landscape) {
             #examBody {
                 padding-bottom: 50px !important;
             }
         }
 
-        /* Overlay Spinner khusus Update/Refresh */
         #updateSpinnerOverlay {
             display: none;
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
@@ -1502,7 +1483,6 @@
             animation: spin 1s linear infinite; margin-bottom: 15px;
         }
 
-        /* === TOAST NOTIFIKASI === */
         #toastNotification {
             position: fixed;
             top: 20px;
@@ -1533,7 +1513,6 @@
             background-color: #dc3545;
         }
 
-        /* === [BARU] OVERLAY OFFLINE / KONEKSI TERPUTUS === */
         #offlineOverlay {
             display: none;
             position: fixed;
@@ -1542,7 +1521,7 @@
             width: 100%;
             height: 100%;
             background: rgba(0, 0, 0, 0.9);
-            z-index: 20000; /* Paling atas di atas segalanya */
+            z-index: 20000;
             justify-content: center;
             align-items: center;
             flex-direction: column;
@@ -1620,13 +1599,11 @@
         <p>Memuat aplikasi...</p>
     </div>
 
-    <!-- Spinner Khusus Update Soal -->
     <div id="updateSpinnerOverlay">
         <div class="spinner-border"></div>
         <p>Mengunduh soal terbaru...</p>
     </div>
 
-    <!-- [BARU] OVERLAY OFFLINE -->
     <div id="offlineOverlay">
         <div class="offline-content">
             <div class="offline-icon">📡❌</div>
@@ -1639,16 +1616,14 @@
             </button>
         </div>
     </div>
-    <!-- Gaya untuk Overlay Blokir Akses -->
+    
     <div id="accessBlockedOverlay">
         <div class="blocked-content">
             <h1 id="blockedTitle" class="no-select">APLIKASI UJIAN</h1>
             <h2 class="no-select">EXAM SPEROPA</h2>
             <p>Silakan pilih perangkat yang Anda gunakan untuk mengunduh atau membuka aplikasi ujian.</p>
             
-            <!-- 3 TOMBOL PILIHAN PERANGKAT (PREMIUM UI) -->
             <div class="device-btn-group">
-                <!-- Tombol Windows -->
                 <button id="btnWinPremium" class="btn-premium btn-windows">
                     <div class="btn-premium-inner">
                         <div class="btn-premium-content">
@@ -1666,7 +1641,6 @@
                     </div>
                 </button>
 
-                <!-- Tombol Android -->
                 <a href="https://drive.google.com/uc?export=download&id=1y3q9SDYzTdf-v4dXYQwVrAASZ6RgmFp1" target="_blank" class="btn-premium btn-android">
                     <div class="btn-premium-inner">
                         <div class="btn-premium-content">
@@ -1684,7 +1658,6 @@
                     </div>
                 </a>
 
-                <!-- Tombol iPhone -->
                 <button id="btnIosPremium" class="btn-premium btn-iphone">
                     <div class="btn-premium-inner">
                         <div class="btn-premium-content">
@@ -1710,7 +1683,6 @@
         <h2 id="welcomeTitle">SELAMAT DATANG</h2>
         <p id="welcomeMessage">Memuat pilihan ujian...</p>
         <div id="welcomeButtonsContainer" style="display: flex; flex-direction: column; gap: 15px;">
-            <!-- Tombol dinamis akan dimuat di sini -->
         </div>
     </div>
 
@@ -1775,12 +1747,10 @@
 
     
     <div id="examContainer" style="display: none;">
-        <!-- [TAMBAHAN] HEADER ATAS UJIAN -->
         <div id="examHeader">
              <span id="studentIdentityDisplay"></span>
         </div>
 
-        <!-- Tombol Update Soal Kembali ke Body (Floating) -->
         <button id="updateSoalBtn">
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
@@ -1791,7 +1761,6 @@
         <div id="examBody">
             <div id="examSidePanel">
                 <div class="sidebar-header">
-                    <!-- Tombol Refresh di dalam Header (Kiri) -->
                     <button id="refreshSoalBtn" title="Refresh">
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
@@ -1949,7 +1918,6 @@
         </div>
     </div>
 
-    <!-- Modal KILL SWITCH: Server Down / Auth Limit -->
     <div id="serverDownModal" class="custom-modal static-backdrop">
         <div class="custom-modal-content" style="text-align: center;">
             <h4 style="color: var(--danger-color); font-weight: bold; margin-bottom: 15px;">ERROR</h4>
@@ -1957,11 +1925,9 @@
                 <p style="margin-bottom: 15px;">Server sedang down, mohon tunggu sedang diperbaiki.</p>
                 <p>Silahkan laporkan ke pengawas atau admin dan tunggu informasi berikutnya.</p>
             </div>
-            <!-- TIDAK ADA TOMBOL -->
         </div>
     </div>
 
-    <!-- MODAL WINDOWS (Petunjuk) -->
     <div id="modalDesktopEnv" class="custom-modal" style="z-index: 10000;">
         <div class="custom-modal-content" style="text-align: left; max-width: 380px;">
             <div style="margin-bottom: 20px;">
@@ -1979,7 +1945,6 @@
         </div>
     </div>
 
-    <!-- MODAL IPHONE (Petunjuk) -->
     <div id="modalIphoneEnv" class="custom-modal" style="z-index: 10000;">
         <div class="custom-modal-content" style="text-align: left; max-width: 380px;">
             <div style="margin-bottom: 20px;">
@@ -2002,77 +1967,27 @@
         import { getDatabase, ref, get, child, runTransaction, set, onValue, off, update, remove, query, orderByChild, equalTo } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-database.js";
         import { getAuth, signInAnonymously, signOut } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-auth.js";
 
-        // --- KONFIGURASI MULTI-FIREBASE (Sama dengan Panel Admin) ---
-        
-        // 1. FIREBASE ATURAN
-        const configAturan = {
-            apiKey: "AIzaSyAoH-kHpL15GHnFa41ZdG7dWFUsUZ4QJKc",
-            authDomain: "aturan-694fe.firebaseapp.com",
-            databaseURL: "https://aturan-694fe-default-rtdb.asia-southeast1.firebasedatabase.app",
-            projectId: "aturan-694fe",
-            storageBucket: "aturan-694fe.firebasestorage.app",
-            messagingSenderId: "1008762962672",
-            appId: "1:1008762962672:web:57815d4f3c49f211ebf835"
-        };
+        // --- KONFIGURASI MULTI-FIREBASE ---
+        const configAturan = { apiKey: "AIzaSyAoH-kHpL15GHnFa41ZdG7dWFUsUZ4QJKc", authDomain: "aturan-694fe.firebaseapp.com", databaseURL: "https://aturan-694fe-default-rtdb.asia-southeast1.firebasedatabase.app", projectId: "aturan-694fe", storageBucket: "aturan-694fe.firebasestorage.app", messagingSenderId: "1008762962672", appId: "1:1008762962672:web:57815d4f3c49f211ebf835" };
+        const config7 = { apiKey: "AIzaSyBkhBZw3oADXUAJ9FXY9-g7XBsSmQhzZVk", authDomain: "def-ab5ee.firebaseapp.com", databaseURL: "https://def-ab5ee-default-rtdb.firebaseio.com", projectId: "def-ab5ee", storageBucket: "def-ab5ee.firebasestorage.app", messagingSenderId: "129712840107", appId: "1:129712840107:web:ab10576fed95f735dd46ee" };
+        const config8 = { apiKey: "AIzaSyAwilwwwEJ2MAdSf09BotxNH-z6RiXaHXY", authDomain: "abc-43e73.firebaseapp.com", databaseURL: "https://abc-43e73-default-rtdb.firebaseio.com", projectId: "abc-43e73", storageBucket: "abc-43e73.firebasestorage.app", messagingSenderId: "1043754727577", appId: "1:1043754727577:web:56c3732bf2a6ac900c2008" };
+        const config9 = { apiKey: "AIzaSyBZ6JR3ggnUiZFQ-wdrewbfhzMUwFaGGzQ", authDomain: "abc-d272a.firebaseapp.com", databaseURL: "https://abc-d272a-default-rtdb.firebaseio.com", projectId: "abc-d272a", storageBucket: "abc-d272a.firebasestorage.app", messagingSenderId: "1036605132828", appId: "1:1036605132828:web:2b59f91290d50afe304fd9" };
 
-        // 2. FIREBASE 7ABCDEF (Kelas 7)
-        const config7 = {
-            apiKey: "AIzaSyBkhBZw3oADXUAJ9FXY9-g7XBsSmQhzZVk",
-            authDomain: "def-ab5ee.firebaseapp.com",
-            databaseURL: "https://def-ab5ee-default-rtdb.firebaseio.com",
-            projectId: "def-ab5ee",
-            storageBucket: "def-ab5ee.firebasestorage.app",
-            messagingSenderId: "129712840107",
-            appId: "1:129712840107:web:ab10576fed95f735dd46ee"
-        };
-
-        // 3. FIREBASE 8ABCDEF (Kelas 8)
-        const config8 = {
-            apiKey: "AIzaSyAwilwwwEJ2MAdSf09BotxNH-z6RiXaHXY",
-            authDomain: "abc-43e73.firebaseapp.com",
-            databaseURL: "https://abc-43e73-default-rtdb.firebaseio.com",
-            projectId: "abc-43e73",
-            storageBucket: "abc-43e73.firebasestorage.app",
-            messagingSenderId: "1043754727577",
-            appId: "1:1043754727577:web:56c3732bf2a6ac900c2008"
-        };
-
-        // 4. FIREBASE 9ABCDEF (Kelas 9)
-        const config9 = {
-            apiKey: "AIzaSyBZ6JR3ggnUiZFQ-wdrewbfhzMUwFaGGzQ",
-            authDomain: "abc-d272a.firebaseapp.com",
-            databaseURL: "https://abc-d272a-default-rtdb.firebaseio.com",
-            projectId: "abc-d272a",
-            storageBucket: "abc-d272a.firebasestorage.app",
-            messagingSenderId: "1036605132828",
-            appId: "1:1036605132828:web:2b59f91290d50afe304fd9"
-        };
-
-        // Inisialisasi Apps
         const appAturan = initializeApp(configAturan, "appAturan");
         const app7 = initializeApp(config7, "app7");
         const app8 = initializeApp(config8, "app8");
         const app9 = initializeApp(config9, "app9");
 
-        // Inisialisasi Auth & Database untuk setiap App
-        const authAturan = getAuth(appAturan);
-        const dbAturan = getDatabase(appAturan);
+        const authAturan = getAuth(appAturan); const dbAturan = getDatabase(appAturan);
+        const auth7 = getAuth(app7); const db7 = getDatabase(app7);
+        const auth8 = getAuth(app8); const db8 = getDatabase(app8);
+        const auth9 = getAuth(app9); const db9 = getDatabase(app9);
 
-        const auth7 = getAuth(app7);
-        const db7 = getDatabase(app7);
-
-        const auth8 = getAuth(app8);
-        const db8 = getDatabase(app8);
-
-        const auth9 = getAuth(app9);
-        const db9 = getDatabase(app9);
-
-        // State Global untuk menyimpan DB aktif
         let currentDb = null;
         let currentAuth = null;
         let currentSelectedGrade = null;
+        let heartbeatInterval = null; // Variabel baru untuk fitur Detak Jantung
 
-        // Fungsi Helper untuk memilih DB berdasarkan Jenjang Kelas
         function getDbForGrade(grade) {
             const g = String(grade);
             if (g === '7') return { db: db7, auth: auth7 };
@@ -2081,30 +1996,18 @@
             return null;
         }
 
-        // Fungsi Login Otomatis ke SEMUA Firebase (Anonim)
         async function performAnonymousLogin() {
             try {
-                // Login ke semua instance secara paralel
-                await Promise.all([
-                    signInAnonymously(authAturan),
-                    signInAnonymously(auth7),
-                    signInAnonymously(auth8),
-                    signInAnonymously(auth9)
-                ]);
-                console.log("Login otomatis ke semua server berhasil.");
+                await Promise.all([ signInAnonymously(authAturan), signInAnonymously(auth7), signInAnonymously(auth8), signInAnonymously(auth9) ]);
                 return true;
             } catch (error) {
-                console.error("Gagal login otomatis:", error);
                 window.showCustomMessageModal("Kesalahan Autentikasi", `Gagal mengautentikasi ke database. Mohon hubungi administrator.`, 'error');
                 return false;
             }
         }
 
         function getDbRefs() {
-            if (!currentDb) {
-                console.error("Instance database (currentDb) tidak diinisialisasi.");
-                return null;
-            }
+            if (!currentDb) return null;
             return {
                 studentsRef: ref(currentDb, 'students'),
                 tokensRef: ref(currentDb, 'tokens'),
@@ -2116,7 +2019,6 @@
         }
         
         function getSetupDbRefs() {
-             // Menggunakan dbAturan untuk pengaturan global
              return {
                 settingsRef: ref(dbAturan, 'setlokasi'),
                 minDurationSettingsRef: ref(dbAturan, 'min_duration_settings'),
@@ -2124,6 +2026,34 @@
                 shuffleSettingsRef: ref(dbAturan, 'acaksoalpilgan'),
                 blockKeySettingsRef: ref(dbAturan, 'block_key_settings')
             };
+        }
+
+        // [BARU] FUNGSI HEARTBEAT (DETAK JANTUNG)
+        function startHeartbeat() {
+            if (heartbeatInterval) clearInterval(heartbeatInterval);
+            heartbeatInterval = setInterval(async () => {
+                // Hanya update jika sedang ujian, token dan DB valid
+                if (!isInExamMode || !foundTokenGlobal || !selectedStudentData || !currentDb) return;
+                
+                const dbRefs = getDbRefs();
+                if (!dbRefs) return;
+
+                try {
+                    const studentIdPadded = padStudentId(selectedStudentData.id);
+                    const accessStatusRef = child(dbRefs.examAccessStatusRef, `${foundTokenGlobal.key}/${studentIdPadded}`);
+                    // Mengirim sinyal kehidupan ke Admin
+                    await update(accessStatusRef, { lastAccessTimestamp: Date.now() });
+                } catch (e) {
+                    console.error("Gagal mengirim heartbeat", e);
+                }
+            }, 20000); // 20 detik (3x per menit) - sangat hemat data
+        }
+
+        function stopHeartbeat() {
+            if (heartbeatInterval) {
+                clearInterval(heartbeatInterval);
+                heartbeatInterval = null;
+            }
         }
 
         let isLocationEnabled = true;
@@ -2136,7 +2066,6 @@
         let isPilganAcakEnabled = true;
         let publicSettings = null;
         
-        // [MODIFIKASI] Variabel Global Kode Bypass Server
         let serverBypassCode = ""; 
 
         const allowedLatitude = -7.8589546;
@@ -2228,7 +2157,6 @@
         let sidebarCollapseTimer = null;
         let longPressTimer;
 
-        // [TAMBAHAN] Variabel untuk listener durasi
         let minDurationListenerRef = null;
 
         const customMessageModal = document.getElementById('customMessageModal');
@@ -2246,13 +2174,12 @@
         let submissionStatusListenerPath = null;
         let offlineStatusListenerRef = null;
 
-        // Fungsi Notifikasi Toast Diperbaiki
         function showToast(message, type) {
             const toastNotification = document.getElementById('toastNotification');
-            if (!toastNotification) return; // Mencegah error 'null' jika elemen belum ready
+            if (!toastNotification) return; 
             
             toastNotification.textContent = message;
-            toastNotification.className = ''; // Reset class
+            toastNotification.className = ''; 
             toastNotification.classList.add(type === 'success' ? 'toast-success' : 'toast-error');
             toastNotification.classList.add('toast-show');
             setTimeout(() => {
@@ -2314,21 +2241,15 @@
         }
 
         function isAllowedEnvironment() {
-            // CEK BYPASS (Satu-satunya cara akses yang diizinkan)
-            // Mengambil nilai parameter ?bypass=... dari URL browser
             const urlParams = new URLSearchParams(window.location.search);
             const bypassParam = urlParams.get('bypass');
 
-            // Jika kode bypass di server ada isinya, dan cocok dengan URL
             if (serverBypassCode && serverBypassCode !== "" && bypassParam === serverBypassCode) {
                 console.log("Akses diizinkan via Bypass URL");
                 return true; 
             }
 
-            // Ambil User Agent Browser/Aplikasi untuk keperluan log
             const ua = navigator.userAgent;
-
-            // BLOKIR SEMUA AKSES LAINNYA
             console.warn("Akses Ditolak: Hanya diizinkan via Bypass URL (" + ua + ")");
             return false;
         }
@@ -2483,7 +2404,6 @@
             }
         }
 
-        // Fungsi baru untuk mengambil list kelas langsung dari DB spesifik
         function loadClassDropdownForGrade(grade) {
             customSelectKelasDisplay.classList.add('disabled');
             customSelectNamaSiswaDisplay.classList.add('disabled');
@@ -2491,10 +2411,8 @@
             displayStudentId.value = "";
             message.innerHTML = `Memuat daftar kelas untuk kelas ${grade}... <span class="spinner"></span>`;
 
-            // Reset dropdown
             classModalList.innerHTML = '';
             
-            // Set Database Aktif
             const instances = getDbForGrade(grade);
             if (!instances) {
                 message.style.color = "red";
@@ -2504,11 +2422,8 @@
             currentDb = instances.db;
             currentAuth = instances.auth;
 
-            // Ambil semua siswa untuk mendapatkan list kelas yang unik
             const studentsRef = ref(currentDb, 'students');
             
-            // Mengambil semua siswa lalu memfilter kelas unik di client-side
-            // Ini karena structure DB students flat list
             get(studentsRef).then((snapshot) => {
                 const classSet = new Set();
                 if (snapshot.exists()) {
@@ -2520,7 +2435,6 @@
                     });
                 }
 
-                // Ubah Set ke Array dan Sortir
                 const classNames = Array.from(classSet).sort();
 
                 if (classNames.length > 0) {
@@ -2561,7 +2475,6 @@
             message.innerHTML = `Mengunduh data ${selectedClass}... <span class="spinner"></span>`;
 
             try {
-                // Query Siswa berdasarkan kelas
                 const studentsQuery = query(dbRefs.studentsRef, orderByChild('class'), equalTo(selectedClass));
                 const snapshot = await get(studentsQuery);
                 
@@ -2590,7 +2503,6 @@
             } catch (error) {
                 console.error("Gagal memuat data siswa:", error);
                 message.style.color = "red";
-                // Penanganan khusus jika index belum di-set di Firebase Rules
                 if (error.message && error.message.includes('Index not defined')) {
                     message.textContent = "Error Database: Index 'class' belum diatur di Rules.";
                 } else {
@@ -2650,7 +2562,6 @@
             inputTokenPrefix.disabled = true;
             displayStudentId.value = "";
             
-            // Load siswa dari DB yang sudah di-set saat pilih Grade
             await loadStudentsAndFilterByClass();
             updateLoginButtonStatus();
         }
@@ -2676,16 +2587,13 @@
             updateLoginButtonStatus();
         }
         
-        // --- FUNGSI PARSING MASTER KUNCI JAWABAN ---
         function parseKunjabString(str) {
             if (!str) return [];
             const matches = String(str).match(/\[.*?\]|[^,]+/g) || [];
             return matches.map(m => m.replace(/\[|\]/g, ''));
         }
 
-        // --- FUNGSI BARU UNTUK MENDETEKSI TIPE SOAL ---
         function getTipeSoalSiswa(questionObj) {
-            // 1. Cek tipe eksplisit (jika admin menyimpan data tipe_soal ke database)
             const tipeEksplisit = questionObj.tipe_soal || questionObj.jenis_soal || questionObj.tipe;
             if (tipeEksplisit) {
                 const t = String(tipeEksplisit).toUpperCase();
@@ -2694,29 +2602,23 @@
                 if (t === 'PG' || t === 'PILIHAN GANDA' || t === '1') return 'PG';
             }
 
-            // 2. Fallback: Deteksi dari Kunci Jawaban (Diperbarui untuk JSON Admin)
             const kunci = questionObj.jawaban || questionObj.kunci || questionObj.kunjab || questionObj.kunciJawaban || "";
-            if (!kunci) return 'PG'; // Default jika benar-benar kosong
+            if (!kunci) return 'PG'; 
 
-            // Bersihkan spasi dan kurung siku
             const cleanKunci = String(kunci).replace(/\[|\]|\s/g, '');
             const parts = cleanKunci.split(',');
 
-            // Deteksi Benar/Salah: Jika isinya hanya B atau S dan jumlahnya lebih dari 1
             const isBS = parts.every(p => p === 'B' || p === 'S');
             if (isBS && parts.length >= 2) return 'BS';
             
-            // Deteksi PG Kompleks: Jika ada koma tapi bukan BS
             if (parts.length > 1) return 'PGK';
             
-            // Default Pilihan Ganda Biasa
             return 'PG';
         }
 
         async function postAnswerUpdate(originalIndex) {
             sessionStorage.setItem('studentAnswers', JSON.stringify(studentAnswers));
             
-            // Update visual pada UI secara langsung (Optimistic UI)
             const shuffledIndex = shuffledQuestionIndices.indexOf(originalIndex);
             if (shuffledIndex === currentQuestionIndex) {
                 document.querySelectorAll('.cbt-option-label').forEach(label => {
@@ -2731,7 +2633,6 @@
             renderQuestionGrid();
             updateSubmissionButtonState();
 
-            // Simpan ke Server
             const isSaved = await saveStudentAnswersToFirebase();
             if (!isSaved) {
                 showToast("Gagal menyimpan ke server! Layar dikunci.", "error");
@@ -2742,7 +2643,6 @@
             if (!submitAnswersButton || !nextQuestionBtn) return;
 
             let isDisabled = true;
-            // Validasi Ketat: Semua soal harus terjawab (termasuk baris di tabel BS tidak boleh ada strip "-")
             const allAnswered = studentAnswers.every(ans => {
                 if (ans === null || ans === undefined || ans === "") return false;
                 if (typeof ans === 'string' && ans.includes('-')) return false; 
@@ -2750,12 +2650,10 @@
             });
             
             const infoEl = document.getElementById('submissionInfoMessage');
-            let timeConstraintActive = false;
 
             if (minDurationSettingsGlobal.isMinDurationEnabled) {
                 if (remainingTime > minDurationSettingsGlobal.minDurationSeconds) {
                     isDisabled = true;
-                    timeConstraintActive = true;
                     if (infoEl) {
                         const thresholdMins = Math.ceil(minDurationSettingsGlobal.minDurationSeconds / 60);
                         infoEl.textContent = `TOMBOL KIRIM AKAN AKTIF JIKA SISA WAKTU KURANG DARI ${thresholdMins} MENIT`;
@@ -2810,6 +2708,7 @@
             const dbRefs = getDbRefs();
             
             sessionStorage.clear();
+            stopHeartbeat(); // Matikan heartbeat
             stopAccessStatusListener();
             stopSubmissionStatusListener();
             stopExamUpdateListener();
@@ -2896,22 +2795,18 @@
                 if (isSoalAcakEnabled) shuffleArray(shuffledQuestionIndices);
 
                 shuffledOptionOrders = currentExamQuestions.map((q) => {
-                    // Deteksi tipe soal untuk mengacak opsi yang sesuai
                     const tipeSoal = getTipeSoalSiswa(q);
                     
                     if (tipeSoal === 'BS') {
-                         // Ambil opsi yang ada isinya (bisa sampai E)
                          const bsOptions = [];
                          ['A', 'B', 'C', 'D', 'E'].forEach(opt => {
                              if (q[`pilihan${opt}`] && q[`pilihan${opt}`].trim() !== "") {
                                  bsOptions.push(opt);
                              }
                          });
-                         // Acak baris pernyataan untuk Benar/Salah jika pengaturan acak diaktifkan
                          if (isPilganAcakEnabled) shuffleArray(bsOptions);
                          return bsOptions;
                     } else {
-                         // PG Biasa dan PGK biasanya A-D (sesuaikan jika ada E)
                          const options = ['A', 'B', 'C', 'D'];
                          if (q.pilihanE && q.pilihanE.trim() !== "") options.push('E');
                          
@@ -2972,12 +2867,13 @@
             timerInterval = setInterval(updateTimerDisplay, 1000);
             updateTimerDisplay();
 
+            startHeartbeat(); // Aktifkan detak jantung
+
             history.pushState(null, '', location.href);
             startAccessStatusListener();
             startSubmissionStatusListener();
             startMinDurationListener();
             
-            // [TAMBAHAN] Start Offline Listener
             if (currentDb) {
                 const connectedRef = ref(currentDb, ".info/connected");
                 offlineStatusListenerRef = onValue(connectedRef, (snap) => {
@@ -2988,7 +2884,6 @@
                              showToast("Koneksi internet terhubung kembali.", "success");
                         }
                     } else {
-                        // Hanya tampilkan jika sedang ujian
                         if (isInExamMode) {
                             const overlay = document.getElementById('offlineOverlay');
                             overlay.classList.add('active');
@@ -3028,12 +2923,10 @@
                 return false;
             }
 
-            // Restore Grade & Theme
             currentSelectedGrade = selectedGrade;
             document.body.classList.remove('theme-kelas7', 'theme-kelas8', 'theme-kelas9');
             document.body.classList.add(`theme-kelas${selectedGrade}`);
 
-            // Restore DB Connection based on Grade
             const instances = getDbForGrade(selectedGrade);
             if (!instances) {
                 sessionStorage.clear();
@@ -3064,34 +2957,27 @@
             }
         } 
 
-        // === [FITUR BARU] LISTENER REAL-TIME ATURAN DURASI (Di luar fungsi lain) ===
         function startMinDurationListener() {
-            stopMinDurationListener(); // Pastikan tidak ada listener ganda
+            stopMinDurationListener(); 
             
             const refs = getSetupDbRefs();
-            // Gunakan onValue agar terus memantau perubahan
             minDurationListenerRef = onValue(refs.minDurationSettingsRef, (snapshot) => {
                 if (snapshot.exists()) {
                     const data = snapshot.val();
                     
-                    // Simpan status lama untuk dibandingkan
                     const oldEnabled = minDurationSettingsGlobal.isMinDurationEnabled;
                     const oldSeconds = minDurationSettingsGlobal.minDurationSeconds;
 
-                    // Update variabel global dengan data baru dari Admin
                     minDurationSettingsGlobal.isMinDurationEnabled = data.isMinDurationEnabled ?? false;
                     minDurationSettingsGlobal.minDurationSeconds = data.minDurationSeconds ?? 1800;
 
-                    // Jika sedang dalam ujian, cek apakah ada perubahan signifikan
                     if (isInExamMode) {
                         const hasChanged = (oldEnabled !== minDurationSettingsGlobal.isMinDurationEnabled) || 
                                            (oldSeconds !== minDurationSettingsGlobal.minDurationSeconds);
                         
                         if (hasChanged) {
-                            // 1. Update status tombol "Kirim Jawaban" (Langsung aktif/nonaktif)
                             updateSubmissionButtonState();
 
-                            // 2. Beri Notifikasi ke Siswa
                             if (minDurationSettingsGlobal.isMinDurationEnabled) {
                                 const mins = Math.ceil(minDurationSettingsGlobal.minDurationSeconds / 60);
                                 showToast(`Update Aturan: Minimal waktu pengerjaan diubah menjadi ${mins} menit`, "info");
@@ -3150,7 +3036,6 @@
                     throw new Error("Struktur bank soal tidak valid atau kosong.");
                 }
                 
-                // --- PARSING MASTER KUNCI JAWABAN JIKA ADA (Format: A,B,[A,D],[B,S,B],C) ---
                 let parsedMasterKeys = [];
                 const masterKeyString = examData.kunjab || examData.kunciJawaban || examData.kunci_jawaban || examData.kunci || "";
                 if (masterKeyString) {
@@ -3158,7 +3043,6 @@
                 }
 
                 currentExamQuestions = examData.soal.slice(1).map((q, idx) => {
-                    // Injeksikan kunci dari master jika soal tidak punya kunci mandiri (Diperbarui untuk JSON)
                     if (!q.jawaban && !q.kunci && !q.kunjab && !q.kunciJawaban && parsedMasterKeys[idx]) {
                         q.kunjab = parsedMasterKeys[idx];
                     }
@@ -3178,25 +3062,23 @@
                     if (currentAccess === null || !currentAccess.isLoggedIn) {
                         let newExamStartTime = currentAccess?.examStartTime || now;
                         
-                        // [FITUR BARU] JEDA & LANJUTKAN: Koreksi waktu mulai jika ada lastResetTime
                         if (currentAccess && currentAccess.lastResetTime) {
                             const waktuOffline = now - currentAccess.lastResetTime;
                             newExamStartTime = newExamStartTime + waktuOffline;
                             
-                            // Safety Check: jangan sampai waktu bergeser melebihi waktu sekarang
                             if (newExamStartTime > now) {
                                 newExamStartTime = now;
                             }
                         }
 
+                        // Menghapus firstLoginTimestamp
                         return {
                             accessCount: (currentAccess?.accessCount || 0) + 1,
-                            firstLoginTimestamp: currentAccess?.firstLoginTimestamp || now,
                             lastAccessTimestamp: now,
                             isLoggedIn: true,
                             examStartTime: newExamStartTime,
                             studentId: studentId,
-                            lastResetTime: null // Hapus flag dari database karena sudah resume
+                            lastResetTime: null 
                         };
                     }
                     return;
@@ -3236,11 +3118,9 @@
                 const refreshBtn = document.getElementById('refreshSoalBtn');
 
                 if (serverUpdate && localTerakhirUpdate && serverUpdate !== localTerakhirUpdate) {
-                    // Jika ada update, tombol Update muncul, Refresh sembunyi
                     updateSoalBtn.style.display = 'flex';
                     if(refreshBtn) refreshBtn.style.display = 'none';
                 } else {
-                    // Jika tidak ada update, tombol Update sembunyi, Refresh muncul
                     updateSoalBtn.style.display = 'none';
                     if(refreshBtn) refreshBtn.style.display = 'flex';
                 }
@@ -3255,22 +3135,16 @@
             }
         }
 
-        // --- HELPER: BANDINGKAN SOAL LAMA & BARU ---
         function compareQuestions(oldArr, newArr) {
             let changes = [];
-            // Kita asumsikan jumlah soal sama atau bertambah/berkurang,
-            // yang penting kita cek indeks yang overlap dulu.
             let max = Math.max(oldArr.length, newArr.length);
             
             for(let i=0; i < max; i++) {
-                // Jika salah satu undefined (karena panjang beda), pasti berubah
                 if (!oldArr[i] || !newArr[i]) {
                     changes.push(i + 1);
                     continue;
                 }
                 
-                // Bandingkan konten (Pertanyaan, Opsi, Kunci Jawaban)
-                // Kita pakai JSON.stringify sederhana
                 let s1 = JSON.stringify(oldArr[i]);
                 let s2 = JSON.stringify(newArr[i]);
                 
@@ -3285,30 +3159,25 @@
             const storedExamPath = sessionStorage.getItem('currentExamPath');
             if (!storedExamPath || !currentDb) return;
 
-            // 1. Tampilkan Loading
             updateSpinnerOverlay.style.display = 'flex';
             updateSpinnerOverlay.querySelector('p').textContent = 'Mengecek detail perubahan...';
             
             try {
-                // 2. Ambil Data Baru
                 const snapshot = await get(ref(currentDb, storedExamPath));
                 if (!snapshot.exists()) throw new Error("Gagal mengambil data update.");
                 
                 const newDataFull = snapshot.val();
                 if (!newDataFull.soal || !Array.isArray(newDataFull.soal)) throw new Error("Format soal rusak.");
                 
-                const newQuestions = newDataFull.soal.slice(1); // Ingat, soal mulai index 1 di DB biasanya
+                const newQuestions = newDataFull.soal.slice(1); 
                 const oldQuestions = currentExamQuestions;
 
-                // 3. Bandingkan
                 const changedIndices = compareQuestions(oldQuestions, newQuestions);
                 
-                // Sembunyikan spinner sementara untuk menampilkan dialog konfirmasi
                 updateSpinnerOverlay.style.display = 'none';
                 
                 let confirmMsg = "";
                 if (changedIndices.length > 0) {
-                    // Batasi jika terlalu banyak
                     let listStr = changedIndices.join(", ");
                     if (changedIndices.length > 10) {
                         listStr = changedIndices.slice(0, 10).join(", ") + ", dst...";
@@ -3318,11 +3187,9 @@
                     confirmMsg = "Tidak terdeteksi perubahan isi soal, hanya pembaruan sistem. Lanjutkan update?";
                 }
 
-                // 4. Konfirmasi User
                 const isConfirmed = await window.showCustomConfirmModal("Pembaruan Tersedia", confirmMsg);
 
                 if (isConfirmed) {
-                    // 5. Tampilkan spinner lagi & Terapkan
                     updateSpinnerOverlay.style.display = 'flex';
                     updateSpinnerOverlay.querySelector('p').textContent = 'Sedang memperbarui...';
                     
@@ -3332,12 +3199,10 @@
                     sessionStorage.setItem('examData', JSON.stringify(currentExamQuestions));
                     sessionStorage.setItem('localTerakhirUpdate', localTerakhirUpdate);
                     
-                    // Render ulang soal saat ini agar perubahannya langsung terlihat
                     displayQuestion(currentQuestionIndex);
                     
                     setTimeout(() => {
                         updateSpinnerOverlay.style.display = 'none';
-                        // Sembunyikan tombol update, Munculkan refresh
                         updateSoalBtn.style.display = 'none';
                         const refreshBtn = document.getElementById('refreshSoalBtn');
                         if(refreshBtn) refreshBtn.style.display = 'flex';
@@ -3353,7 +3218,6 @@
             }
         }
 
-        // --- LOGIKA BARU: TOMBOL REFRESH SOAL ---
         async function handleRefreshSoalClick() {
             if (!navigator.onLine) {
                 showToast("Tidak ada koneksi internet, refresh gagal", "error");
@@ -3363,12 +3227,10 @@
             const storedExamPath = sessionStorage.getItem('currentExamPath');
             if (!storedExamPath || !currentDb) return;
 
-            // Tampilkan Spinner
             updateSpinnerOverlay.querySelector('p').textContent = 'Merefresh Data...';
             updateSpinnerOverlay.style.display = 'flex';
 
             try {
-                // Paksa download ulang dari Firebase
                 const snapshot = await get(ref(currentDb, storedExamPath));
                 
                 if (!snapshot.exists()) throw new Error("Data tidak ditemukan");
@@ -3376,7 +3238,6 @@
                 const newData = snapshot.val();
                 if (!newData.soal || !Array.isArray(newData.soal)) throw new Error("Format data rusak");
 
-                // Update data di memori & storage
                 currentExamQuestions = newData.soal.slice(1);
                 localTerakhirUpdate = newData.terakhirUpdate;
                 
@@ -3385,7 +3246,6 @@
                     sessionStorage.setItem('localTerakhirUpdate', localTerakhirUpdate);
                 }
 
-                // Render ulang soal saat ini (ini akan memaksa browser memuat ulang gambar)
                 displayQuestion(currentQuestionIndex);
 
                 setTimeout(() => {
@@ -3418,12 +3278,10 @@
             cbtAnswerOptions.innerHTML = '';
             const optionOrder = shuffledOptionOrders[originalIndex];
 
-            // Deteksi tipe soal (menggunakan fungsi deteksi yang sudah diupgrade)
             const tipeSoal = getTipeSoalSiswa(question);
             let currentAnswer = studentAnswers[originalIndex] || "";
 
             if (tipeSoal === 'PG') {
-                // --- 1. RENDER PILIHAN GANDA BIASA (RADIO) ---
                 optionOrder.forEach(opt => {
                     const optionKey = `pilihan${opt}`;
                     if (question[optionKey]) {
@@ -3455,7 +3313,6 @@
                     }
                 });
             } else if (tipeSoal === 'PGK') {
-                // --- 2. RENDER PG KOMPLEKS (CHECKBOX) ---
                 let ansArray = currentAnswer ? currentAnswer.split(',') : [];
 
                 optionOrder.forEach(opt => {
@@ -3480,7 +3337,7 @@
                             } else {
                                 ansArray = ansArray.filter(item => item !== opt);
                             }
-                            ansArray.sort(); // Urutkan A,B,C,D agar kunci sinkron
+                            ansArray.sort(); 
                             studentAnswers[originalIndex] = ansArray.length > 0 ? ansArray.join(',') : null;
                             await postAnswerUpdate(originalIndex);
                         };
@@ -3495,7 +3352,6 @@
                     }
                 });
             } else if (tipeSoal === 'BS') {
-                // --- 3. RENDER BENAR/SALAH (TABEL RADIO) ---
                 const table = document.createElement('table');
                 table.className = 'bs-table';
                 table.innerHTML = `
@@ -3506,26 +3362,20 @@
                     </tr>
                 `;
 
-                // Ambil daftar pernyataan yang sudah diacak (menggunakan optionOrder)
                 const activeStatementsCount = optionOrder.length;
 
                 let bsAnswers = currentAnswer ? currentAnswer.split(',') : [];
-                // Kita perlu array objek untuk mencocokkan jawaban dengan opsi yang benar
-                // Format penyimpanan di database: index ke-0 itu untuk PilihanA, index ke-1 untuk PilihanB, dll.
-                // Tapi saat dirender, PilihanC bisa saja muncul di urutan pertama karena diacak.
                 
-                // Urutan statis untuk kunci jawaban BS di database adalah A, B, C, D, E
                 const baseStatements = ['A', 'B', 'C', 'D', 'E'];
                 const activeBaseStatements = baseStatements.filter(opt => question[`pilihan${opt}`] && question[`pilihan${opt}`].trim() !== "");
 
-                while(bsAnswers.length < activeStatementsCount) bsAnswers.push("-"); // Jaga array tetap sesuai jumlah baris
+                while(bsAnswers.length < activeStatementsCount) bsAnswers.push("-"); 
 
                 let statementIndex = 0;
                 optionOrder.forEach((opt) => {
                     const optionKey = `pilihan${opt}`;
                     if (question[optionKey] && question[optionKey].trim() !== "") {
                         const tr = document.createElement('tr');
-                        // Cari indeks asli dari opsi ini berdasarkan activeBaseStatements (A=0, B=1, dst yang aktif)
                         const originalOptIndex = activeBaseStatements.indexOf(opt);
                         const idx = statementIndex; 
                         
@@ -3538,7 +3388,6 @@
                         rbBenar.type = 'radio';
                         rbBenar.name = `bs_${shuffledIndex}_${idx}`;
                         rbBenar.value = 'B';
-                        // Memuat jawaban sesuai posisi aslinya
                         if (bsAnswers[originalOptIndex] === 'B') rbBenar.checked = true;
 
                         const tdSalah = document.createElement('td');
@@ -3547,31 +3396,23 @@
                         rbSalah.type = 'radio';
                         rbSalah.name = `bs_${shuffledIndex}_${idx}`;
                         rbSalah.value = 'S';
-                        // Memuat jawaban sesuai posisi aslinya
                         if (bsAnswers[originalOptIndex] === 'S') rbSalah.checked = true;
 
                         const handleBsChange = async () => {
-                            // Karena dirender acak, kita harus mengumpulkan jawaban dan mengurutkannya 
-                            // kembali sesuai A, B, C, D, E (activeBaseStatements) sebelum disimpan
-                            let currentAnswersInBaseOrder = [...bsAnswers]; // Copy array jawaban lama
+                            let currentAnswersInBaseOrder = [...bsAnswers]; 
                             
-                            // Loop tabel yang sedang dirender
                             for (let i = 0; i < activeStatementsCount; i++) {
-                                // Cari input yang dicek di baris ke-i
                                 let val = document.querySelector(`input[name="bs_${shuffledIndex}_${i}"]:checked`)?.value || "-";
                                 
-                                // Opsi apa yang sedang ada di baris ke-i ini?
                                 const renderedOpt = optionOrder[i];
-                                // Index berapa opsi ini di array asli (A, B, C...)?
                                 const baseIndexToUpdate = activeBaseStatements.indexOf(renderedOpt);
                                 
-                                // Update nilai di posisi aslinya
                                 currentAnswersInBaseOrder[baseIndexToUpdate] = val;
                             }
                             
                             const newAnswer = currentAnswersInBaseOrder.join(',');
                             studentAnswers[originalIndex] = newAnswer.replace(/,/g, '') === "-".repeat(activeStatementsCount) ? null : newAnswer;
-                            bsAnswers = currentAnswersInBaseOrder; // Update local state untuk render ulang
+                            bsAnswers = currentAnswersInBaseOrder; 
                             await postAnswerUpdate(originalIndex);
                         };
 
@@ -3641,7 +3482,6 @@
             }
         }
 
-        // [OPTIMASI DATA] FUNGSI PENYIMPANAN HEMAT KUOTA
         async function saveStudentAnswersToFirebase() {
             if (!foundTokenGlobal || !selectedStudentData || !currentDb) return false;
             const dbRefs = getDbRefs();
@@ -3651,17 +3491,14 @@
             const studentAnswersPath = child(dbRefs.studentAnswersRef, `${foundTokenGlobal.key}/${studentIdPadded}`);
 
             try {
-                // CEK APAKAH INI PENYIMPANAN PERTAMA KALI?
                 const isInitialSave = !sessionStorage.getItem('data_statis_terkirim');
 
                 if (isInitialSave) {
-                    // --- MODE 1: SIMPAN PERTAMA (PAKAI SET) ---
-                    // Kirim SEMUA data termasuk konfigurasi acak soal yang berat
                     const payload = {
                         answers: JSON.stringify(studentAnswers),
                         ragu: JSON.stringify(raguRaguStatus),
-                        shuffledQuestionIndices: JSON.stringify(shuffledQuestionIndices), // <--- Berat
-                        shuffledOptionOrders: JSON.stringify(shuffledOptionOrders),        // <--- Berat
+                        shuffledQuestionIndices: JSON.stringify(shuffledQuestionIndices), 
+                        shuffledOptionOrders: JSON.stringify(shuffledOptionOrders),        
                         timestamp: Date.now(),
                         studentName: selectedStudentData.name,
                         studentClass: selectedStudentData.class,
@@ -3671,12 +3508,9 @@
                     };
                     await set(studentAnswersPath, payload);
                     
-                    // Tandai bahwa data berat sudah terkirim
                     sessionStorage.setItem('data_statis_terkirim', 'true');
                     
                 } else {
-                    // --- MODE 2: UPDATE JAWABAN (PAKAI UPDATE) ---
-                    // HANYA kirim jawaban yang berubah. Sangat ringan (hemat bytes).
                     const payload = {
                         answers: JSON.stringify(studentAnswers),
                         ragu: JSON.stringify(raguRaguStatus),
@@ -3685,14 +3519,13 @@
                     await update(studentAnswersPath, payload);
                 }
 
-                // Hilangkan overlay offline jika berhasil
                 document.getElementById('offlineOverlay').classList.remove('active');
-                return true; // Berhasil menyimpan
+                return true; 
                 
             } catch (error) {
                 console.error("Gagal menyimpan jawaban siswa ke Firebase:", error);
                 document.getElementById('offlineOverlay').classList.add('active');
-                return false; // Gagal menyimpan
+                return false; 
             }
         }
         
@@ -3703,15 +3536,12 @@
             btn.disabled = true;
             spinner.style.display = 'inline-block';
             
-            // Coba kirim data lagi untuk memancing koneksi
             await saveStudentAnswersToFirebase();
             
-            // Tambahkan sedikit delay agar spinner terlihat
             setTimeout(() => {
                 btn.disabled = false;
                 spinner.style.display = 'none';
                 
-                // Cek apakah overlay masih aktif (berarti gagal)
                 const overlay = document.getElementById('offlineOverlay');
                 if (overlay.classList.contains('active')) {
                      showToast("Masih belum terhubung. Cek koneksi Anda!", "error");
@@ -3759,7 +3589,6 @@
             } catch (error) {
                 console.error("Gagal mengirimkan jawaban:", error);
                 submissionWarningMessage.textContent = 'Gagal mengirim. Cek koneksi internet dan coba lagi.';
-                // Jika error saat submit, munculkan overlay offline juga
                 document.getElementById('offlineOverlay').classList.add('active');
                 submitAnswersButton.disabled = false;
                 submitAnswersButton.textContent = 'KIRIM JAWABAN';
@@ -3919,41 +3748,32 @@
             isAnyModalOpen = false;
         }
 
-        // --- FUNGSI SELECT GRADE (Diperbaiki dengan Error Handling & Expose ke Window) ---
         window.selectGrade = async function(grade) {
             try {
                 console.log(`Memulai selectGrade untuk Kelas ${grade}`);
                 
-                // 1. Tampilkan Loading Sementara (agar user tahu ada proses)
                 loadingSpinner.style.display = 'flex';
                 loadingSpinner.querySelector('p').textContent = `Menyiapkan Kelas ${grade}...`;
 
                 currentSelectedGrade = grade;
                 
-                // 2. Ganti Tema
                 document.body.classList.remove('theme-kelas7', 'theme-kelas8', 'theme-kelas9');
                 document.body.classList.add(`theme-kelas${grade}`);
 
-                // 3. Update UI Login
                 loginJudulUjian.textContent = `UJIAN KELAS ${grade}`;
                 classModalTitle.textContent = `Pilih Kelas ${grade}`;
 
-                // 4. Reset & Load Data Kelas
-                // Pastikan DB sudah siap
                 const instances = getDbForGrade(grade);
                 if (!instances) {
                     throw new Error("Konfigurasi Database tidak ditemukan.");
                 }
                 
-                // Set Global DB Active
                 currentDb = instances.db;
-                currentAuth = instances.auth; // (Optional, jika butuh auth spesifik)
+                currentAuth = instances.auth; 
 
-                // 5. Pindah Layar
                 welcomeScreen.style.display = 'none';
                 loginContainer.classList.add('show');
 
-                // 6. Cek Lokasi / Tampilkan Form
                 if (isLocationEnabled) {
                     mainLoginControls.style.display = 'none';
                     getLocation();
@@ -3961,18 +3781,15 @@
                     showMainLoginForm();
                 }
 
-                // 7. Load Data Kelas (Async)
                 await loadClassDropdownForGrade(grade);
 
             } catch (error) {
                 console.error("Error di selectGrade:", error);
                 alert("Terjadi kesalahan saat memilih kelas: " + error.message);
-                // Kembalikan ke welcome screen jika error fatal
                 loadingSpinner.style.display = 'none';
                 loginContainer.classList.remove('show');
                 welcomeScreen.style.display = 'flex';
             } finally {
-                // Sembunyikan loading jika sukses pindah layar (atau sudah di-handle di atas)
                 if (loginContainer.classList.contains('show')) {
                      loadingSpinner.style.display = 'none';
                 }
@@ -3992,12 +3809,10 @@
             const identityDisplay = document.getElementById('studentIdentityDisplay');
             if (identityDisplay && selectedStudentData) {
                 let displayName = selectedStudentData.name;
-                // Sedikit kurangi batas karakter nama agar ID muat
                 if (displayName.length > 20) { 
                     displayName = displayName.substring(0, 17) + '...';
                 }
                 
-                // Tambahkan ID Siswa ke tampilan
                 const studentId = padStudentId(selectedStudentData.id);
                 
                 identityDisplay.textContent = `${displayName} | ${studentId} | ${selectedStudentData.class}`;
@@ -4017,7 +3832,6 @@
                 if (isInExamMode && snapshot.exists()) {
                     const data = snapshot.val();
                     if (data.isLoggedIn === false && !manualSubmissionInProgress) {
-                        // [MODIFIKASI] Lempar parameter true jika sedang dijeda (ada lastResetTime)
                         showForceLogoutModal(!!data.lastResetTime);
                     }
                 }
@@ -4034,12 +3848,12 @@
             }
         }
 
-        // [MODIFIKASI] Menerima parameter isPaused agar pesan bisa disesuaikan
         function showForceLogoutModal(isPaused = false) {
+            stopHeartbeat(); // Matikan heartbeat
             stopAccessStatusListener();
             stopSubmissionStatusListener();
             stopExamUpdateListener();
-            stopMinDurationListener(); // [TAMBAHAN] Matikan listener saat logout paksa
+            stopMinDurationListener(); 
             if (timerInterval) clearInterval(timerInterval);
             isInExamMode = false;
 
@@ -4061,7 +3875,6 @@
             isAnyModalOpen = true;
         }
 
-        // [MODIFIKASI] Fungsi helper untuk menangani sukses login (Restore state atau tampilkan Welcome)
         async function processLoginSuccess() {
             const isRestored = await restoreExamState();
             if (!isRestored) {
@@ -4076,10 +3889,8 @@
         async function initializeAppFlow() {
             loadingSpinner.style.display = 'flex';
             
-            // Cek Offline via Navigator dulu (Quick Check)
             if (!navigator.onLine) {
                  loadingSpinner.style.display = 'none';
-                 // Langsung tampilkan modal mati kutu
                  document.getElementById('serverDownModal').classList.add('show');
                  isAnyModalOpen = true;
                  return;
@@ -4088,17 +3899,15 @@
             async function fetchGlobalSettings() {
                 const refs = getSetupDbRefs();
                 
-                // [MODIFIKASI] Tambahkan ref khusus untuk bypass
                 const bypassRef = ref(dbAturan, 'akses/bypass');
 
-                // Tambahkan bypassSnap ke Promise.all
                 const [locSnap, minDurSnap, pubSetSnap, shuffleSnap, blockKeySnap, bypassSnap] = await Promise.all([
                     get(refs.settingsRef), 
                     get(refs.minDurationSettingsRef), 
                     get(refs.publicSettingsRef),
                     get(refs.shuffleSettingsRef),
                     get(refs.blockKeySettingsRef),
-                    get(bypassRef) // <--- AMBIL DATA BYPASS
+                    get(bypassRef) 
                 ]);
 
                 if (locSnap.exists()) {
@@ -4108,11 +3917,8 @@
                     locationAccessKey = s.currentKey || "";
                 }
                 
-                // [MODIFIKASI] Kita tetap ambil kunci admin, tapi abaikan flag 'isEnabled'
                 if (blockKeySnap.exists()) {
                     const s = blockKeySnap.val();
-                    // isBlockEnabled kita abaikan untuk det自由 lingkungan otomatis, 
-                    // tapi blockAccessKey tetap disimpan untuk fitur "Buka Akses" admin.
                     blockAccessKey = s.key || ""; 
                 }
                 
@@ -4131,54 +3937,40 @@
                     isPilganAcakEnabled = true;
                 }
                 
-                // [MODIFIKASI] Simpan nilai bypass dari server ke variabel global
                 if (bypassSnap.exists()) {
-                    // Mengubah nilai menjadi string agar aman
                     serverBypassCode = String(bypassSnap.val());
                     console.log("Kode Bypass Server Dimuat.");
                 }
             }
 
             try {
-                // Mencoba Login Otomatis ke SEMUA Database
                 const loginSuccess = await performAnonymousLogin();
                 
                 if (loginSuccess) {
                     await fetchGlobalSettings();
 
-                    // === [PERBAIKAN LOGIKA UTAMA: VALIDASI LINGKUNGAN WAJIB] ===
-                    
-                    // Cek apakah lingkungan valid (Aplikasi Speropa / SEB / Bypass URL)
-                    // Kita HAPUS syarat "isBlockEnabled" agar pengecekan selalu berjalan.
                     if (!isAllowedEnvironment()) { 
                         
-                        // JIKA DI BROWSER BIASA -> BLOKIR AKSES
                         loadingSpinner.style.display = 'none';
-                        accessBlockedOverlay.style.display = 'flex'; // Tampilkan layar blokir
+                        accessBlockedOverlay.style.display = 'flex'; 
 
                     } else {
-                        // JIKA DI APLIKASI SPEROPA / SEB / BYPASS -> LANJUT
                         await processLoginSuccess();
                     }
 
                 } else {
-                    // Jika login gagal total
                     throw new Error("Gagal login otomatis");
                 }
             } catch (error) {
                 console.error("Inisialisasi aplikasi gagal:", error);
                 loadingSpinner.style.display = 'none';
 
-                // KILL SWITCH: Jika gagal login (karena kuota penuh, server down, atau sinyal mati)
                 document.getElementById('serverDownModal').classList.add('show');
                 isAnyModalOpen = true; 
             }
         }
 
-        // --- DETEKSI KONEKSI BARU ---
         function updateOnlineStatus() {
-            // Kita sekarang mengandalkan listener Firebase .info/connected di startExamProcess
-            // Namun, untuk navigasi umum (sebelum ujian), ini masih berguna
             if (!isInExamMode) {
                  const overlay = document.getElementById('offlineOverlay');
                  if (navigator.onLine) {
@@ -4192,11 +3984,9 @@
         document.addEventListener('DOMContentLoaded', async () => {
             await initializeAppFlow();
             
-            // AKTIFKAN DETEKTOR OFFLINE
             window.addEventListener('online', updateOnlineStatus);
             window.addEventListener('offline', updateOnlineStatus);
             
-            // Cek status saat pertama load
             if (!navigator.onLine) {
                 updateOnlineStatus();
             }
@@ -4237,7 +4027,6 @@
                  displayStudentId.value = '';
                  message.textContent = '';
                  
-                 // RESET WARNA KE DEFAULT (Hapus class tema)
                  document.body.classList.remove('theme-kelas7', 'theme-kelas8', 'theme-kelas9');
             });
             
@@ -4284,7 +4073,6 @@
             updateDateTime();
             setInterval(updateDateTime, 1000);
             
-            // LOGIKA BARU: TOMBOL PILIHAN PERANGKAT & MODAL
             const btnWinPremium = document.getElementById('btnWinPremium');
             if (btnWinPremium) {
                 btnWinPremium.addEventListener('click', () => {
@@ -4299,7 +4087,6 @@
                 });
             }
 
-            // Fungsi untuk menutup modal ketika mengklik area luar
             const modalDesktopEnv = document.getElementById('modalDesktopEnv');
             if(modalDesktopEnv) modalDesktopEnv.addEventListener('click', e => e.target === modalDesktopEnv && modalDesktopEnv.classList.remove('show'));
 
@@ -4318,10 +4105,11 @@
             submissionStatusListenerPath = child(dbRefs.submittedExamsRef, `${foundTokenGlobal.key}/${padStudentId(selectedStudentId)}`);
             submissionStatusListenerRef = onValue(submissionStatusListenerPath, (snapshot) => {
                 if (isInExamMode && snapshot.exists() && snapshot.val().isSubmitted) {
+                    stopHeartbeat(); // Matikan heartbeat
                     stopAccessStatusListener();
                     stopSubmissionStatusListener();
                     stopExamUpdateListener();
-                    stopMinDurationListener(); // [TAMBAHAN] Matikan listener saat selesai
+                    stopMinDurationListener(); 
                     if (timerInterval) clearInterval(timerInterval);
                     isInExamMode = false;
                     
@@ -4373,23 +4161,15 @@
             }
 
             try {
-                // --- PERBAIKAN OPTIMASI: Query Token Spesifik (Server-Side) ---
-                // Menggunakan query untuk mencari token yang spesifik saja, bukan download semua.
-                // WAJIB: Tambahkan "tokens": { ".indexOn": ["token"] } di Firebase Rules
-                
-                // 1. Query ke Firebase: Cari data di 'tokens' yang field 'token' == tokenPrefix
                 const tokenQuery = query(dbRefs.tokensRef, orderByChild('token'), equalTo(tokenPrefix));
                 const tokensSnapshot = await get(tokenQuery);
                 
                 let foundToken = null;
                 let tokenFoundForOtherClass = false;
 
-                // 2. Iterasi hasil query (Hanya data yang token-nya cocok yang didownload)
                 if (tokensSnapshot.exists()) {
                     tokensSnapshot.forEach(child => {
                         const data = child.val();
-                        // Query sudah memfilter 'token' (equalTo), sekarang validasi kelas
-                        // Pastikan token yang diketik cocok dengan kelas siswa
                         if (String(data.kelas) === String(studentClassNum)) {
                              foundToken = { ...data, key: child.key };
                         } else {
@@ -4415,7 +4195,6 @@
                 const startTime = new Date(foundToken.startTime).getTime();
                 const endTime = new Date(foundToken.endTime).getTime();
                 
-                // --- LOGIKA PESAN WAKTU TOKEN (DIPERBARUI) ---
                 if (!foundToken.isForceActive) {
                     if (now < startTime) {
                         const timeOptions = { hour: '2-digit', minute: '2-digit', hour12: false };
@@ -4433,7 +4212,6 @@
                 
                 const accessStatus = (await get(child(dbRefs.examAccessStatusRef, `${foundToken.key}/${studentId}`))).val();
                 
-                // --- LOGIKA PESAN LOGIN (DIPERBARUI) ---
                 if (accessStatus?.isLoggedIn) throw new Error("Akun anda masih Login, minta reset ke pengawas atau admin!");
                 
                 message.textContent = "";
@@ -4445,7 +4223,6 @@
                 document.getElementById("modalMapel").textContent = foundToken.subject;
                 modalExamDuration.textContent = `${foundToken.durationMinutes} Menit`;
                 
-                // --- LOGIKA SISA WAKTU (RESUME) ---
                 const trSisaWaktu = document.getElementById("trSisaWaktu");
                 const modalSisaWaktu = document.getElementById("modalSisaWaktu");
                 
@@ -4454,7 +4231,6 @@
                     const examStartTime = accessStatus.examStartTime;
                     let elapsedMs = 0;
                     
-                    // Hitung waktu yang sudah berlalu (jika dijeda ambil dari lastResetTime)
                     if (accessStatus.lastResetTime) {
                         elapsedMs = accessStatus.lastResetTime - examStartTime;
                     } else {
@@ -4471,7 +4247,6 @@
                     modalSisaWaktu.textContent = `${remainingMinutes} Menit ${remainingSeconds} Detik`;
                     if (trSisaWaktu) trSisaWaktu.style.display = 'table-row';
                 } else {
-                    // Jika pertama kali masuk, sembunyikan baris sisa waktu
                     if (trSisaWaktu) trSisaWaktu.style.display = 'none';
                 }
                 
