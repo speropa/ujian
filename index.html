@@ -1590,6 +1590,70 @@
             margin-right: 10px;
             display: none;
         }
+        
+        /* GAYA BARU UNTUK FATAL MEMORY ERROR */
+        #fatalMemoryOverlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: #111; /* Hitam gelap */
+            z-index: 30000; /* Paling tinggi */
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            color: white;
+            text-align: center;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+        #fatalMemoryOverlay.active {
+            display: flex;
+        }
+        .fatal-content {
+            background: #2c3e50;
+            padding: 40px;
+            border-radius: 12px;
+            max-width: 450px;
+            width: 100%;
+            border: 3px solid #e74c3c;
+            box-shadow: 0 0 30px rgba(231, 76, 60, 0.6);
+        }
+        .fatal-icon {
+            font-size: 5em;
+            margin-bottom: 20px;
+            color: #e74c3c;
+        }
+        .fatal-content h2 {
+            font-size: 2em;
+            margin-bottom: 15px;
+            color: #e74c3c;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+        .fatal-content p {
+            font-size: 1.1em;
+            line-height: 1.6;
+            margin-bottom: 25px;
+            color: #ecf0f1;
+        }
+        .fatal-content button {
+            background-color: #e74c3c;
+            color: white;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.2em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.3s;
+            text-transform: uppercase;
+        }
+        .fatal-content button:hover {
+            background-color: #c0392b;
+        }
     </style>
 </head>
 <body>
@@ -1604,16 +1668,27 @@
         <p>Mengunduh soal terbaru...</p>
     </div>
 
+    <!-- SATPAM 1: OVERLAY OFFLINE (KONEKSI TERPUTUS) -->
     <div id="offlineOverlay">
         <div class="offline-content">
             <div class="offline-icon">📡❌</div>
-            <h2>GAGAL MENYIMPAN!</h2>
-            <p>Sistem gagal menuliskan jawaban Anda ke server. Layar dikunci sementara untuk mencegah jawaban Anda hilang/kosong.</p>
-            <p><strong>Jangan tutup aplikasi!</strong><br>Mohon periksa koneksi internet/WiFi Anda. Klik "Coba sambungkan lagi", jika dalam beberapa menit tidak ada perubahan apapun, laporkan ke pengawas!</p>
+            <h2>KONEKSI TERPUTUS!</h2>
+            <p>Perangkat Anda terputus dari server. Pekerjaan Anda dihentikan sementara agar jawaban tidak hilang.</p>
+            <p><strong>Mohon periksa koneksi internet/WiFi Anda segera!</strong></p>
             <button id="retryConnectionBtn" onclick="window.handleRetryConnection()">
                 <span class="btn-spinner"></span>
                 <span>Coba Sambungkan Lagi</span>
             </button>
+        </div>
+    </div>
+    
+    <!-- SATPAM 2: OVERLAY FATAL MEMORY ERROR (ARRAY KOSONG) -->
+    <div id="fatalMemoryOverlay">
+        <div class="fatal-content">
+            <div class="fatal-icon">⚠️</div>
+            <h2>MEMORI ERROR</h2>
+            <p>Sistem mendeteksi memori aplikasi Anda terhapus secara tiba-tiba (mungkin karena perangkat tertidur atau aplikasi ditutup paksa).<br><br>Untuk mencegah nilai Anda menjadi 0, aplikasi dikunci.</p>
+            <button onclick="window.location.reload(true)">MUAT ULANG SOAL (REFRESH)</button>
         </div>
     </div>
     
@@ -1986,7 +2061,8 @@
         let currentDb = null;
         let currentAuth = null;
         let currentSelectedGrade = null;
-        let heartbeatInterval = null; // Variabel baru untuk fitur Detak Jantung
+        let heartbeatInterval = null; 
+        let memoryWatchdogInterval = null; // SATPAM MEMORI
 
         function getDbForGrade(grade) {
             const g = String(grade);
@@ -2028,11 +2104,10 @@
             };
         }
 
-        // [BARU] FUNGSI HEARTBEAT (DETAK JANTUNG)
+        // --- SATPAM 1: KONEKSI (HEARTBEAT) ---
         function startHeartbeat() {
             if (heartbeatInterval) clearInterval(heartbeatInterval);
             heartbeatInterval = setInterval(async () => {
-                // Hanya update jika sedang ujian, token dan DB valid
                 if (!isInExamMode || !foundTokenGlobal || !selectedStudentData || !currentDb) return;
                 
                 const dbRefs = getDbRefs();
@@ -2041,18 +2116,53 @@
                 try {
                     const studentIdPadded = padStudentId(selectedStudentData.id);
                     const accessStatusRef = child(dbRefs.examAccessStatusRef, `${foundTokenGlobal.key}/${studentIdPadded}`);
-                    // Mengirim sinyal kehidupan ke Admin
+                    
                     await update(accessStatusRef, { lastAccessTimestamp: Date.now() });
+                    // Jika sukses, pastikan overlay offline hilang
+                    document.getElementById('offlineOverlay').classList.remove('active');
                 } catch (e) {
-                    console.error("Gagal mengirim heartbeat", e);
+                    console.warn("Heartbeat gagal! Sinyal terputus.");
+                    // JIKA GAGAL PING SERVER, LANGSUNG KUNCI LAYAR!
+                    document.getElementById('offlineOverlay').classList.add('active');
                 }
-            }, 20000); // 20 detik (3x per menit) - sangat hemat data
+            }, 20000); 
         }
 
         function stopHeartbeat() {
             if (heartbeatInterval) {
                 clearInterval(heartbeatInterval);
                 heartbeatInterval = null;
+            }
+        }
+
+        // --- SATPAM 2: MEMORI (WATCHDOG) ---
+        function startMemoryWatchdog() {
+            if (memoryWatchdogInterval) clearInterval(memoryWatchdogInterval);
+            memoryWatchdogInterval = setInterval(() => {
+                if (isInExamMode) {
+                    // Cek apakah variabel penting tiba-tiba kosong (misal karena tab dibekukan OS)
+                    if (!currentExamQuestions || currentExamQuestions.length === 0 ||
+                        !shuffledQuestionIndices || shuffledQuestionIndices.length === 0 ||
+                        !studentAnswers || studentAnswers.length === 0) {
+                        
+                        console.error("FATAL: Memori RAM terhapus secara tiba-tiba!");
+                        
+                        // KUNCI LAYAR SEKARANG JUGA!
+                        document.getElementById('fatalMemoryOverlay').classList.add('active');
+                        
+                        // Matikan semuanya agar tidak melakukan auto-submit
+                        stopMemoryWatchdog();
+                        stopHeartbeat();
+                        if (timerInterval) clearInterval(timerInterval);
+                    }
+                }
+            }, 5000); // Patroli setiap 5 detik
+        }
+
+        function stopMemoryWatchdog() {
+            if (memoryWatchdogInterval) {
+                clearInterval(memoryWatchdogInterval);
+                memoryWatchdogInterval = null;
             }
         }
 
@@ -2633,9 +2743,10 @@
             renderQuestionGrid();
             updateSubmissionButtonState();
 
-            const isSaved = await saveStudentAnswersToFirebase();
-            if (!isSaved) {
-                showToast("Gagal menyimpan ke server! Layar dikunci.", "error");
+            try {
+                await saveStudentAnswersToFirebase();
+            } catch (error) {
+                showToast(error.message, "error");
             }
         }
 
@@ -2696,7 +2807,10 @@
                 timerText.textContent = "00:00";
                 warningOverlay.classList.remove('show');
                 if (submitAnswersButton) submitAnswersButton.disabled = true;
-                submitAnswers(true);
+                
+                if (!manualSubmissionInProgress) {
+                    submitAnswers(true);
+                }
                 return;
             }
             remainingTime--;
@@ -2708,7 +2822,8 @@
             const dbRefs = getDbRefs();
             
             sessionStorage.clear();
-            stopHeartbeat(); // Matikan heartbeat
+            stopHeartbeat(); 
+            stopMemoryWatchdog(); 
             stopAccessStatusListener();
             stopSubmissionStatusListener();
             stopExamUpdateListener();
@@ -2745,9 +2860,10 @@
                     if (dbRefs && tokenFirebaseKey && studentId) {
                         try {
                             const accessStatusRef = child(dbRefs.examAccessStatusRef, `${tokenFirebaseKey}/${studentId}`);
-                            await update(accessStatusRef, { isLoggedIn: false });
+                            const timeoutPromise = new Promise((_, reject) => setTimeout(() => reject(new Error("Timeout")), 3000));
+                            await Promise.race([ update(accessStatusRef, { isLoggedIn: false }), timeoutPromise ]);
                         } catch (err) {
-                            console.error("Gagal saat failsafe logout:", err);
+                            console.error("Failsafe logout:", err.message);
                         }
                     }
                     window.location.reload(true);
@@ -2787,11 +2903,19 @@
         }
         
         async function startExamProcess(examDurationMinutes, examStartTime, initialData) {
-            if (initialData.shuffledQuestionIndices && initialData.shuffledOptionOrders) {
+            
+            const numQuestions = currentExamQuestions.length;
+            if (numQuestions === 0) {
+                alert("Kesalahan Sistem: Data soal tidak terdeteksi. Silakan hubungi pengawas atau refresh halaman.");
+                loadingSpinner.style.display = 'none';
+                return;
+            }
+
+            if (initialData.shuffledQuestionIndices && initialData.shuffledOptionOrders && initialData.shuffledQuestionIndices.length > 0) {
                 shuffledQuestionIndices = initialData.shuffledQuestionIndices;
                 shuffledOptionOrders = initialData.shuffledOptionOrders;
             } else {
-                shuffledQuestionIndices = Array.from({ length: currentExamQuestions.length }, (_, i) => i);
+                shuffledQuestionIndices = Array.from({ length: numQuestions }, (_, i) => i);
                 if (isSoalAcakEnabled) shuffleArray(shuffledQuestionIndices);
 
                 shuffledOptionOrders = currentExamQuestions.map((q) => {
@@ -2814,7 +2938,12 @@
                          return options;
                     }
                 });
-                await saveStudentAnswersToFirebase();
+                
+                try {
+                    await saveStudentAnswersToFirebase(); 
+                } catch(e) {
+                    console.warn("Save inisial gagal karena offline, tapi siswa tetap bisa lanjut:", e.message);
+                }
             }
             
             sessionStorage.setItem('shuffledQuestionIndices', JSON.stringify(shuffledQuestionIndices));
@@ -2833,8 +2962,12 @@
             }
             sessionStorage.setItem('localTerakhirUpdate', localTerakhirUpdate);
 
-            const numQuestions = currentExamQuestions.length;
-            studentAnswers = (initialData.answers && initialData.answers.length === numQuestions) ? initialData.answers : Array(numQuestions).fill(null);
+            if (initialData.answers && initialData.answers.length === numQuestions) {
+                studentAnswers = initialData.answers;
+            } else {
+                studentAnswers = Array(numQuestions).fill(null);
+            }
+            
             raguRaguStatus = (initialData.ragu && initialData.ragu.length === numQuestions) ? initialData.ragu : Array(numQuestions).fill(false);
             const lastQuestionIndex = initialData.lastQuestionIndex || 0;
 
@@ -2867,7 +3000,8 @@
             timerInterval = setInterval(updateTimerDisplay, 1000);
             updateTimerDisplay();
 
-            startHeartbeat(); // Aktifkan detak jantung
+            startHeartbeat();
+            startMemoryWatchdog(); 
 
             history.pushState(null, '', location.href);
             startAccessStatusListener();
@@ -2910,15 +3044,18 @@
             let examStartTime = Number(sessionStorage.getItem('examStartTime'));
             localTerakhirUpdate = sessionStorage.getItem('localTerakhirUpdate');
 
+            let parsedAnswers = [];
+            try { parsedAnswers = JSON.parse(sessionStorage.getItem('studentAnswers')) || []; } catch(e) {}
+            
             const initialData = {
-                answers: JSON.parse(sessionStorage.getItem('studentAnswers')),
+                answers: parsedAnswers,
                 ragu: JSON.parse(sessionStorage.getItem('raguRaguStatus')),
                 lastQuestionIndex: parseInt(sessionStorage.getItem('lastQuestionIndex') || '0', 10),
                 shuffledQuestionIndices: JSON.parse(sessionStorage.getItem('shuffledQuestionIndices')),
                 shuffledOptionOrders: JSON.parse(sessionStorage.getItem('shuffledOptionOrders'))
             };
             
-            if (!selectedStudentData || !foundTokenGlobal || !currentExamQuestions || isNaN(examDurationMinutes) || !selectedClass || !selectedGrade || isNaN(examStartTime) || !initialData.shuffledQuestionIndices) {
+            if (!selectedStudentData || !foundTokenGlobal || !currentExamQuestions || currentExamQuestions.length === 0 || isNaN(examDurationMinutes) || !selectedClass || !selectedGrade || isNaN(examStartTime) || !initialData.shuffledQuestionIndices) {
                 sessionStorage.clear();
                 return false;
             }
@@ -2945,6 +3082,17 @@
                 examContainer.style.display = 'flex';
                 examContainer.style.opacity = 1;
                 await startExamProcess(examDurationMinutes, examStartTime, initialData);
+                
+                // MENGUNCI ULANG ADMIN SAAT BANGUN DARI ERROR
+                try {
+                    const dbRefs = getDbRefs();
+                    if(dbRefs) {
+                        const studentIdPadded = padStudentId(selectedStudentData.id);
+                        const accessStatusRef = child(dbRefs.examAccessStatusRef, `${foundTokenGlobal.key}/${studentIdPadded}`);
+                        await update(accessStatusRef, { lastAccessTimestamp: Date.now() });
+                    }
+                } catch(e) { console.warn("Gagal ping admin saat resume", e.message); }
+                
                 return true;
             } else {
                 sessionStorage.clear();
@@ -3071,7 +3219,6 @@
                             }
                         }
 
-                        // Menghapus firstLoginTimestamp
                         return {
                             accessCount: (currentAccess?.accessCount || 0) + 1,
                             lastAccessTimestamp: now,
@@ -3088,12 +3235,30 @@
                     const examStartTime = Number(transactionResult.snapshot.val().examStartTime);
                     const savedAnswersSnapshot = await get(child(dbRefs.studentAnswersRef, `${tokenFirebaseKey}/${studentId}`));
                     const initialData = {};
+                    
                     if (savedAnswersSnapshot.exists()) {
                         const savedData = savedAnswersSnapshot.val();
-                        initialData.answers = JSON.parse(savedData.answers || 'null');
-                        initialData.ragu = JSON.parse(savedData.ragu || 'null');
-                        if (savedData.shuffledQuestionIndices) initialData.shuffledQuestionIndices = JSON.parse(savedData.shuffledQuestionIndices);
-                        if (savedData.shuffledOptionOrders) initialData.shuffledOptionOrders = JSON.parse(savedData.shuffledOptionOrders);
+                        try {
+                            const parsedA = JSON.parse(savedData.answers || 'null');
+                            initialData.answers = Array.isArray(parsedA) && parsedA.length > 0 ? parsedA : null;
+                        } catch(e) {}
+                        
+                        try {
+                            const parsedR = JSON.parse(savedData.ragu || 'null');
+                            initialData.ragu = Array.isArray(parsedR) && parsedR.length > 0 ? parsedR : null;
+                        } catch(e) {}
+                        
+                        if (savedData.shuffledQuestionIndices) {
+                             try {
+                                 const parsedI = JSON.parse(savedData.shuffledQuestionIndices);
+                                 initialData.shuffledQuestionIndices = Array.isArray(parsedI) && parsedI.length > 0 ? parsedI : null;
+                             } catch(e){}
+                        }
+                        if (savedData.shuffledOptionOrders) {
+                             try {
+                                 initialData.shuffledOptionOrders = JSON.parse(savedData.shuffledOptionOrders);
+                             } catch(e){}
+                        }
                     }
                     await startExamProcess(foundToken.durationMinutes, examStartTime, initialData);
                     loadingSpinner.style.display = 'none';
@@ -3455,9 +3620,10 @@
             
             renderQuestionGrid();
 
-            const isSaved = await saveStudentAnswersToFirebase();
-            if (!isSaved) {
-                showToast("Gagal menyimpan status ragu-ragu!", "error");
+            try {
+                await saveStudentAnswersToFirebase();
+            } catch (error) {
+                showToast(error.message, "error");
             }
         }
 
@@ -3483,9 +3649,18 @@
         }
 
         async function saveStudentAnswersToFirebase() {
-            if (!foundTokenGlobal || !selectedStudentData || !currentDb) return false;
+            if (!foundTokenGlobal || !selectedStudentData || !currentDb) {
+                throw new Error("Sistem belum siap. Gagal menyimpan.");
+            }
             const dbRefs = getDbRefs();
-            if (!dbRefs) return false;
+            if (!dbRefs) {
+                throw new Error("Database tidak merespon.");
+            }
+
+            // [PROTEKSI ANTI WIPE DATA]
+            if (!studentAnswers || studentAnswers.length === 0 || !shuffledQuestionIndices || shuffledQuestionIndices.length === 0) {
+                throw new Error("MENCEGAH WIPE DATA: Memori kosong!");
+            }
 
             const studentIdPadded = padStudentId(selectedStudentData.id);
             const studentAnswersPath = child(dbRefs.studentAnswersRef, `${foundTokenGlobal.key}/${studentIdPadded}`);
@@ -3506,7 +3681,9 @@
                         subject: foundTokenGlobal.subject,
                         studentId: studentIdPadded
                     };
-                    await set(studentAnswersPath, payload);
+                    
+                    const timeoutPromise = new Promise((_, reject) => setTimeout(() => reject(new Error("Koneksi Firebase Timeout (10d)")), 10000));
+                    await Promise.race([ set(studentAnswersPath, payload), timeoutPromise ]);
                     
                     sessionStorage.setItem('data_statis_terkirim', 'true');
                     
@@ -3516,16 +3693,17 @@
                         ragu: JSON.stringify(raguRaguStatus),
                         timestamp: Date.now()
                     };
-                    await update(studentAnswersPath, payload);
+                    const timeoutPromise = new Promise((_, reject) => setTimeout(() => reject(new Error("Koneksi Firebase Timeout (10d)")), 10000));
+                    await Promise.race([ update(studentAnswersPath, payload), timeoutPromise ]);
                 }
 
                 document.getElementById('offlineOverlay').classList.remove('active');
                 return true; 
                 
             } catch (error) {
-                console.error("Gagal menyimpan jawaban siswa ke Firebase:", error);
                 document.getElementById('offlineOverlay').classList.add('active');
-                return false; 
+                // Melempar error spesifik agar caller bisa menampilkan toast yang sesuai
+                throw new Error(error.message === "Koneksi Firebase Timeout (10d)" ? "Sinyal sangat lemah/terputus." : "Gagal menyimpan data.");
             }
         }
         
@@ -3533,22 +3711,40 @@
             const btn = document.getElementById('retryConnectionBtn');
             const spinner = btn.querySelector('.btn-spinner');
             
+            // Cegah Double Click/Race Condition jika masih loading
+            if (btn.disabled) return;
+            
+            // Cek navigator online murni dari HP
+            if (!navigator.onLine) {
+                 showToast("Koneksi HP belum aktif. Nyalakan WiFi/Data!", "error");
+                 return;
+            }
+
             btn.disabled = true;
             spinner.style.display = 'inline-block';
             
-            await saveStudentAnswersToFirebase();
-            
-            setTimeout(() => {
-                btn.disabled = false;
-                spinner.style.display = 'none';
-                
-                const overlay = document.getElementById('offlineOverlay');
-                if (overlay.classList.contains('active')) {
-                     showToast("Masih belum terhubung. Cek koneksi Anda!", "error");
-                } else {
-                     showToast("Berhasil terhubung kembali!", "success");
+            try {
+                await saveStudentAnswersToFirebase();
+                // Jika lolos dari try, berarti sinyal ada
+                if (foundTokenGlobal && selectedStudentData && currentDb) {
+                     const dbRefs = getDbRefs();
+                     const studentIdPadded = padStudentId(selectedStudentData.id);
+                     const accessStatusRef = child(dbRefs.examAccessStatusRef, `${foundTokenGlobal.key}/${studentIdPadded}`);
+                     await update(accessStatusRef, { lastAccessTimestamp: Date.now() });
                 }
-            }, 1000);
+                
+                document.getElementById('offlineOverlay').classList.remove('active');
+                showToast("Berhasil terhubung kembali!", "success");
+            } catch (error) {
+                // Jika dilempar ke catch, Firebase masih putus
+                showToast(error.message, "error");
+            } finally {
+                // Beri jeda 2 detik sebelum tombol bisa ditekan lagi agar tidak di-spam
+                setTimeout(() => {
+                    btn.disabled = false;
+                    spinner.style.display = 'none';
+                }, 2000);
+            }
         }
 
         async function submitAnswers(isAutoSubmit = false) {
@@ -3578,20 +3774,27 @@
             
             try {
                 manualSubmissionInProgress = true;
+                
+                // Syarat Mutlak: Coba save dulu sebelum submit
                 await saveStudentAnswersToFirebase();
+
                 const studentId = padStudentId(selectedStudentData.id);
                 const tokenKey = foundTokenGlobal.key;
                 
-                await set(child(dbRefs.submittedExamsRef, `${tokenKey}/${studentId}`), { isSubmitted: true, timestamp: Date.now(), studentId });
-                await update(child(dbRefs.examAccessStatusRef, `${tokenKey}/${studentId}`), { isLoggedIn: false, studentId });
+                const timeoutPromise1 = new Promise((_, reject) => setTimeout(() => reject(new Error("TimeoutKirim")), 5000));
+                await Promise.race([ set(child(dbRefs.submittedExamsRef, `${tokenKey}/${studentId}`), { isSubmitted: true, timestamp: Date.now(), studentId }), timeoutPromise1 ]);
+                
+                const timeoutPromise2 = new Promise((_, reject) => setTimeout(() => reject(new Error("TimeoutStatus")), 5000));
+                await Promise.race([ update(child(dbRefs.examAccessStatusRef, `${tokenKey}/${studentId}`), { isLoggedIn: false, studentId }), timeoutPromise2 ]);
                 
                 showSubmissionConfirmationOverlay(isAutoSubmit);
             } catch (error) {
-                console.error("Gagal mengirimkan jawaban:", error);
-                submissionWarningMessage.textContent = 'Gagal mengirim. Cek koneksi internet dan coba lagi.';
-                document.getElementById('offlineOverlay').classList.add('active');
+                console.error("Gagal mengirimkan jawaban:", error.message);
+                submissionWarningMessage.textContent = error.message;
+                
                 submitAnswersButton.disabled = false;
                 submitAnswersButton.textContent = 'KIRIM JAWABAN';
+                nextQuestionBtn.disabled = false;
             } finally {
                 manualSubmissionInProgress = false;
             }
@@ -3849,7 +4052,8 @@
         }
 
         function showForceLogoutModal(isPaused = false) {
-            stopHeartbeat(); // Matikan heartbeat
+            stopHeartbeat(); 
+            stopMemoryWatchdog();
             stopAccessStatusListener();
             stopSubmissionStatusListener();
             stopExamUpdateListener();
@@ -4040,14 +4244,21 @@
 
             window.onpopstate = e => isInExamMode && history.pushState(null, '', location.href);
 
-            prevQuestionBtn.addEventListener('click', () => displayQuestion(currentQuestionIndex - 1));
-            nextQuestionBtn.addEventListener('click', () => {
+            // AUTO-SAVE SAAT NAVIGASI PINDAH SOAL
+            prevQuestionBtn.addEventListener('click', async () => {
+                try { await saveStudentAnswersToFirebase(); } catch(e) {} // Silent auto-save
+                displayQuestion(currentQuestionIndex - 1);
+            });
+            
+            nextQuestionBtn.addEventListener('click', async () => {
                 if (currentQuestionIndex === currentExamQuestions.length - 1) {
                     submitAnswers(false);
                 } else {
+                    try { await saveStudentAnswersToFirebase(); } catch(e) {} // Silent auto-save
                     displayQuestion(currentQuestionIndex + 1);
                 }
             });
+            
             raguRaguCheckbox.addEventListener('change', toggleRaguRagu);
             submitAnswersButton.addEventListener('click', () => submitAnswers(false));
             
@@ -4105,7 +4316,8 @@
             submissionStatusListenerPath = child(dbRefs.submittedExamsRef, `${foundTokenGlobal.key}/${padStudentId(selectedStudentId)}`);
             submissionStatusListenerRef = onValue(submissionStatusListenerPath, (snapshot) => {
                 if (isInExamMode && snapshot.exists() && snapshot.val().isSubmitted) {
-                    stopHeartbeat(); // Matikan heartbeat
+                    stopHeartbeat(); 
+                    stopMemoryWatchdog();
                     stopAccessStatusListener();
                     stopSubmissionStatusListener();
                     stopExamUpdateListener();
