@@ -1668,7 +1668,6 @@
         <p>Mengunduh soal terbaru...</p>
     </div>
 
-    <!-- SATPAM 1: OVERLAY OFFLINE (KONEKSI TERPUTUS) -->
     <div id="offlineOverlay">
         <div class="offline-content">
             <div class="offline-icon">📡❌</div>
@@ -1682,7 +1681,6 @@
         </div>
     </div>
     
-    <!-- SATPAM 2: OVERLAY FATAL MEMORY ERROR (ARRAY KOSONG) -->
     <div id="fatalMemoryOverlay">
         <div class="fatal-content">
             <div class="fatal-icon">⚠️</div>
@@ -1751,6 +1749,41 @@
                 </button>
             </div>
             
+        </div>
+    </div>
+
+    <div id="videoTutorialModal" class="custom-modal" style="z-index: 10005;">
+        <div class="custom-modal-content" style="text-align: center; max-width: 400px;">
+            
+            <div id="videoSelectionContainer">
+                <h4 style="color: var(--primary-color); margin-bottom: 10px;">Tonton Video Tutorial?</h4>
+                <p style="margin-bottom: 20px; font-size: 0.95em; color: #555;">Pilih perangkat Anda untuk melihat panduan instalasi dan cara akses ujian.</p>
+
+                <button class="modal-action-btn modal-btn-light" disabled style="opacity: 0.5; cursor: not-allowed; margin-bottom: 10px;">
+                    Tutorial Laptop / PC (Segera)
+                </button>
+
+                <button id="btnWatchAndroid" class="modal-action-btn modal-btn-primary" style="background: linear-gradient(to right, #059669, #10b981) !important; margin-bottom: 10px;">
+                    Tutorial HP Android
+                </button>
+
+                <button class="modal-action-btn modal-btn-light" disabled style="opacity: 0.5; cursor: not-allowed; margin-bottom: 15px;">
+                    Tutorial HP iPhone (Segera)
+                </button>
+
+                <button class="modal-action-btn modal-btn-close" onclick="document.getElementById('videoTutorialModal').classList.remove('show')">
+                    Lewati & Lanjut Download
+                </button>
+            </div>
+
+            <div id="videoPlayerContainer" style="display: none;">
+                <h4 style="color: var(--primary-color); margin-bottom: 15px; font-size: 1.2em;">Tutorial Android</h4>
+                <div style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; margin-bottom: 15px; border-radius: 8px; background: #000;">
+                    <iframe id="tutorialIframe" src="" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                </div>
+                <button class="modal-action-btn modal-btn-close" onclick="window.closeVideoPlayer()">Tutup Video</button>
+            </div>
+
         </div>
     </div>
 
@@ -2265,7 +2298,6 @@
         let shuffledQuestionIndices = [];
         let shuffledOptionOrders = [];
         let sidebarCollapseTimer = null;
-        let longPressTimer;
 
         let minDurationListenerRef = null;
 
@@ -2869,14 +2901,6 @@
                     window.location.reload(true);
                 };
             }, 500);
-        }
-
-        function hideSubmissionConfirmationOverlay() {
-            submissionConfirmationOverlay.classList.remove('show');
-            setTimeout(() => {
-                document.body.style.overflow = '';
-                isAnyModalOpen = false;
-            }, 300);
         }
 
         function toggleExamSecurityFeatures(enable) {
@@ -4157,6 +4181,9 @@
                         
                         loadingSpinner.style.display = 'none';
                         accessBlockedOverlay.style.display = 'flex'; 
+                        
+                        // Tampilkan modal video tutorial otomatis
+                        document.getElementById('videoTutorialModal').classList.add('show');
 
                     } else {
                         await processLoginSuccess();
@@ -4303,6 +4330,37 @@
 
             const modalIphoneEnv = document.getElementById('modalIphoneEnv');
             if(modalIphoneEnv) modalIphoneEnv.addEventListener('click', e => e.target === modalIphoneEnv && modalIphoneEnv.classList.remove('show'));
+
+            // --- LOGIKA MODAL VIDEO TUTORIAL ---
+            const btnWatchAndroid = document.getElementById('btnWatchAndroid');
+            const videoSelectionContainer = document.getElementById('videoSelectionContainer');
+            const videoPlayerContainer = document.getElementById('videoPlayerContainer');
+            const tutorialIframe = document.getElementById('tutorialIframe');
+            const videoTutorialModal = document.getElementById('videoTutorialModal');
+
+            if (btnWatchAndroid) {
+                btnWatchAndroid.addEventListener('click', () => {
+                    // Sembunyikan tombol pilihan, tampilkan pemutar video
+                    videoSelectionContainer.style.display = 'none';
+                    videoPlayerContainer.style.display = 'block';
+                    
+                    // Memasukkan link embed YouTube
+                    tutorialIframe.src = "https://www.youtube.com/embed/5N7qD4wXh4s?autoplay=1";
+                });
+            }
+
+            window.closeVideoPlayer = function() {
+                // Hentikan pemutaran video dengan mengosongkan source
+                tutorialIframe.src = ""; 
+                videoTutorialModal.classList.remove('show');
+                
+                // Kembalikan ke tampilan tombol 
+                setTimeout(() => {
+                    videoSelectionContainer.style.display = 'block';
+                    videoPlayerContainer.style.display = 'none';
+                }, 300);
+            }
+            // -----------------------------------
         });
         
         function startSubmissionStatusListener() {
