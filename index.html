@@ -1714,7 +1714,7 @@
                     </div>
                 </button>
 
-                <a href="https://drive.google.com/uc?export=download&id=1EHyA-_qpyp5rY1cug8C2DT6BeTr7XHU7" target="_blank" class="btn-premium btn-android">
+                <button id="btnAndroidPremium" class="btn-premium btn-android">
                     <div class="btn-premium-inner">
                         <div class="btn-premium-content">
                             <div class="btn-premium-icon">
@@ -1722,14 +1722,14 @@
                             </div>
                             <div class="btn-premium-text">
                                 <div class="btn-premium-title">HP Android</div>
-                                <div class="btn-premium-subtitle subtitle-emerald">Download Aplikasi APK</div>
+                                <div class="btn-premium-subtitle subtitle-emerald">Download & Tutorial</div>
                             </div>
                         </div>
                         <div class="btn-premium-arrow">
                             <svg viewBox="0 0 512 512"><path d="M288 32c0-17.7-14.3-32-32-32s-32 14.3-32 32V274.7l-73.4-73.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3l128 128c12.5 12.5 32.8 12.5 45.3 0l128-128c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L288 274.7V32zM64 352c-35.3 0-64 28.7-64 64v32c0 35.3 28.7 64 64 64H448c35.3 0 64-28.7 64-64V416c0-35.3-28.7-64-64-64H346.5l-45.3 45.3c-25 25-65.5 25-90.5 0L165.5 352H64zm368 56a24 24 0 1 1 0 48 24 24 0 1 1 0-48z"/></svg>
                         </div>
                     </div>
-                </a>
+                </button>
 
                 <button id="btnIosPremium" class="btn-premium btn-iphone">
                     <div class="btn-premium-inner">
@@ -1754,7 +1754,6 @@
 
     <div id="videoTutorialModal" class="custom-modal" style="z-index: 10005;">
         <div class="custom-modal-content" style="text-align: center; max-width: 400px;">
-            
             <div id="videoSelectionContainer">
                 <h4 style="color: var(--primary-color); margin-bottom: 10px;">Tonton Video Tutorial?</h4>
                 <p style="margin-bottom: 20px; font-size: 0.95em; color: #555;">Pilih perangkat Anda untuk melihat panduan instalasi dan cara akses ujian.</p>
@@ -1763,27 +1762,18 @@
                     Tutorial Laptop / PC (Segera)
                 </button>
 
-                <button id="btnWatchAndroid" class="modal-action-btn modal-btn-primary" style="background: linear-gradient(to right, #059669, #10b981) !important; margin-bottom: 10px;">
+                <a href="https://youtube.com/shorts/GrjKaGsx99c?si=rrC9u-Sw36xkRYK4" target="_blank" class="modal-action-btn modal-btn-primary" style="background: linear-gradient(to right, #059669, #10b981) !important; margin-bottom: 10px; display: block; text-decoration: none;">
                     Tutorial HP Android
-                </button>
+                </a>
 
                 <button class="modal-action-btn modal-btn-light" disabled style="opacity: 0.5; cursor: not-allowed; margin-bottom: 15px;">
                     Tutorial HP iPhone (Segera)
                 </button>
 
-                <button class="modal-action-btn modal-btn-close" onclick="document.getElementById('videoTutorialModal').classList.remove('show')">
+                <button class="modal-action-btn" style="background-color: #dc3545; color: white; border: none; box-shadow: 0 4px 6px rgba(220, 53, 69, 0.3); margin-top: 10px;" onclick="document.getElementById('videoTutorialModal').classList.remove('show')">
                     Lewati & Lanjut Download
                 </button>
             </div>
-
-            <div id="videoPlayerContainer" style="display: none;">
-                <h4 style="color: var(--primary-color); margin-bottom: 15px; font-size: 1.2em;">Tutorial Android</h4>
-                <div style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; margin-bottom: 15px; border-radius: 8px; background: #000;">
-                    <iframe id="tutorialIframe" src="" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-                </div>
-                <button class="modal-action-btn modal-btn-close" onclick="window.closeVideoPlayer()">Tutup Video</button>
-            </div>
-
         </div>
     </div>
 
@@ -2067,6 +2057,23 @@
             <a href="sebs://raw.githubusercontent.com/speropa/ujian/refs/heads/main/Seb%20Exam%20Speropa.seb" class="modal-action-btn modal-btn-primary">SUDAH INSTALL (BUKA UJIAN)</a>
             
             <button class="modal-action-btn modal-btn-close" onclick="document.getElementById('modalIphoneEnv').classList.remove('show')">Tutup</button>
+        </div>
+    </div>
+    
+    <div id="modalAndroidEnv" class="custom-modal" style="z-index: 10000;">
+        <div class="custom-modal-content" style="text-align: left; max-width: 380px;">
+            <div style="margin-bottom: 20px;">
+                <span style="font-weight: bold; color: #0f172a; font-size: 1.1em;">Petunjuk Android:</span>
+                <p style="font-size: 0.95em; line-height: 1.6; color: #475569; margin-top: 10px;">
+                    1. Tonton video tutorial terlebih dahulu jika belum mengerti cara akses ujian.<br>
+                    2. Klik DOWNLOAD APLIKASI (APK) untuk mengunduh aplikasi EXAM SPEROPA.
+                </p>
+            </div>
+            
+            <a href="https://youtube.com/shorts/GrjKaGsx99c?si=rrC9u-Sw36xkRYK4" target="_blank" class="modal-action-btn" style="background-color: #dc3545; color: white; display: block; text-decoration: none;">TONTON VIDEO TUTORIAL</a>
+            <a href="https://drive.google.com/uc?export=download&id=1EHyA-_qpyp5rY1cug8C2DT6BeTr7XHU7" target="_blank" class="modal-action-btn modal-btn-primary" style="background: linear-gradient(to right, #059669, #10b981) !important; display: block; text-decoration: none;">DOWNLOAD APLIKASI (APK)</a>
+            
+            <button class="modal-action-btn modal-btn-close" onclick="document.getElementById('modalAndroidEnv').classList.remove('show')">Tutup</button>
         </div>
     </div>
 
@@ -2901,6 +2908,14 @@
                     window.location.reload(true);
                 };
             }, 500);
+        }
+
+        function hideSubmissionConfirmationOverlay() {
+            submissionConfirmationOverlay.classList.remove('show');
+            setTimeout(() => {
+                document.body.style.overflow = '';
+                isAnyModalOpen = false;
+            }, 300);
         }
 
         function toggleExamSecurityFeatures(enable) {
@@ -4331,34 +4346,21 @@
             const modalIphoneEnv = document.getElementById('modalIphoneEnv');
             if(modalIphoneEnv) modalIphoneEnv.addEventListener('click', e => e.target === modalIphoneEnv && modalIphoneEnv.classList.remove('show'));
 
-            // --- LOGIKA MODAL VIDEO TUTORIAL ---
-            const btnWatchAndroid = document.getElementById('btnWatchAndroid');
-            const videoSelectionContainer = document.getElementById('videoSelectionContainer');
-            const videoPlayerContainer = document.getElementById('videoPlayerContainer');
-            const tutorialIframe = document.getElementById('tutorialIframe');
-            const videoTutorialModal = document.getElementById('videoTutorialModal');
-
-            if (btnWatchAndroid) {
-                btnWatchAndroid.addEventListener('click', () => {
-                    // Sembunyikan tombol pilihan, tampilkan pemutar video
-                    videoSelectionContainer.style.display = 'none';
-                    videoPlayerContainer.style.display = 'block';
-                    
-                    // Memasukkan link embed YouTube
-                    tutorialIframe.src = "https://www.youtube.com/embed/5N7qD4wXh4s?autoplay=1";
+            // --- LOGIKA MODAL HP ANDROID ---
+            const btnAndroidPremium = document.getElementById('btnAndroidPremium');
+            if (btnAndroidPremium) {
+                btnAndroidPremium.addEventListener('click', () => {
+                    document.getElementById('modalAndroidEnv').classList.add('show');
                 });
             }
 
-            window.closeVideoPlayer = function() {
-                // Hentikan pemutaran video dengan mengosongkan source
-                tutorialIframe.src = ""; 
-                videoTutorialModal.classList.remove('show');
-                
-                // Kembalikan ke tampilan tombol 
-                setTimeout(() => {
-                    videoSelectionContainer.style.display = 'block';
-                    videoPlayerContainer.style.display = 'none';
-                }, 300);
+            const modalAndroidEnv = document.getElementById('modalAndroidEnv');
+            if(modalAndroidEnv) {
+                modalAndroidEnv.addEventListener('click', e => {
+                    if(e.target === modalAndroidEnv) {
+                        modalAndroidEnv.classList.remove('show');
+                    }
+                });
             }
             // -----------------------------------
         });
