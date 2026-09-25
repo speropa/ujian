@@ -3711,6 +3711,20 @@
                     await Promise.race([ update(studentAnswersPath, payload), timeoutPromise ]);
                 }
 
+                // [MONITOR PROGRES REAL-TIME UNTUK ADMIN]
+                // Numpang di node exam_access_status yang SUDAH dipantau live oleh panel admin,
+                // supaya tidak perlu listener/koneksi baru. Best-effort & non-blocking:
+                // kalau ini gagal, TIDAK menggagalkan proses simpan jawaban utama di atas.
+                try {
+                    const jumlahDijawab = studentAnswers.filter(a => a).length;
+                    const progressPath = child(dbRefs.examAccessStatusRef, `${foundTokenGlobal.key}/${studentIdPadded}`);
+                    update(progressPath, {
+                        jumlahDijawab: jumlahDijawab,
+                        totalSoal: studentAnswers.length,
+                        lastAnswerSaveTimestamp: Date.now()
+                    }).catch(() => {});
+                } catch (e) { /* abaikan, tidak kritikal */ }
+
                 document.getElementById('offlineOverlay').classList.remove('active');
                 return true; 
                 
